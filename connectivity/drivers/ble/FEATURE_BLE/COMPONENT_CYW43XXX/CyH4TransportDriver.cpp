@@ -46,6 +46,7 @@ namespace cypress_ble {
 
 using namespace std::chrono_literals;
 
+
 CyH4TransportDriver::CyH4TransportDriver(PinName tx, PinName rx, PinName cts, PinName rts, PinName bt_power_name, int baud, PinName bt_host_wake_name, PinName bt_device_wake_name, uint8_t host_wake_irq, uint8_t dev_wake_irq) :
 #if defined(CYW43XXX_UNBUFFERED_UART)
     uart(tx, rx),

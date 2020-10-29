@@ -174,6 +174,8 @@ void CyH4TransportDriver::initialize()
 
     uart.baud(DEF_BT_BAUD_RATE);
 
+    uart.baud(DEF_BT_BAUD_RATE);
+
     uart.format(
         /* bits */ 8,
         /* parity */ mbed::SerialBase::None,

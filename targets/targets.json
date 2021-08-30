@@ -6427,6 +6427,52 @@
             "CONFIG_GPIO_AS_PINRESET"
         ]
     },
+    "ARDUINO_NANO33ZIGBEE": {
+        "inherits": [
+            "MCU_NRF52840"
+        ],
+        "features_add": [
+            "STORAGE"
+        ],
+        "features_remove": [
+            "CRYPTOCELL310",
+            "BLE"
+        ],
+        "components_remove": [
+            "QSPIF"
+        ],
+        "device_has_remove": [
+            "QSPI",
+            "ITM"
+        ],
+        "macros_add": [
+            "APP_TIMER_V2",
+            "APP_TIMER_V2_RTC1_ENABLED",
+            "CONFIG_GPIO_AS_PINRESET",
+            "FLOAT_ABI_HARD",
+            "INITIALIZE_USER_SECTIONS",
+            "DNO_VTOR_CONFIG",
+            "ZB_TRACE_LEVEL=0",
+            "ZB_TRACE_MASK=0", 
+            "ENABLE_FEM",
+            "NRF5"
+        ],
+        "macros_remove": [
+            "MBEDTLS_CONFIG_HW_SUPPORT",
+            "BOARD_PCA10056"
+        ],
+        "extra_labels_remove": [
+            "NRF52",
+            "SDK_15_0",
+            "CORDIO",
+            "CORDIO_LL",
+            "NORDIC_CORDIO"
+        ],
+        "extra_labels_add": [
+            "SDK_THREAD_ZIGBEE_4_1"
+        ]
+
+    },
     "EDGE_CONTROL": {
         "inherits": ["MCU_NRF52840"],
         "features_add": ["STORAGE"],

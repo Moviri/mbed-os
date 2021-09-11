@@ -6446,12 +6446,10 @@
             "ITM"
         ],
         "macros_add": [
-            "APP_TIMER_V2",
-            "APP_TIMER_V2_RTC1_ENABLED",
             "CONFIG_GPIO_AS_PINRESET",
             "FLOAT_ABI_HARD",
             "INITIALIZE_USER_SECTIONS",
-            "DNO_VTOR_CONFIG",
+            "NO_VTOR_CONFIG",
             "ZB_TRACE_LEVEL=0",
             "ZB_TRACE_MASK=0", 
             "ENABLE_FEM",

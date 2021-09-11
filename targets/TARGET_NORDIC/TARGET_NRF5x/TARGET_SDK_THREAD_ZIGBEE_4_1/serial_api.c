@@ -903,12 +903,12 @@ void serial_init(serial_t *obj, PinName tx, PinName rx)
         nrf_uarte_enable(nordic_nrf5_uart_register[instance]);
 
         /* In order to support printing with interrupts disabled serial_putc
-         * must busy wait on NRF_UARTE_EVENT_TXDDY. This event cannot be set
+         * must busy wait on NRF_UARTE_EVENT_TXDRDY. This event cannot be set
          * manually but must be set by the UARTE module after a character has
          * been sent.
          *
          * The following code sends a dummy character into the void so that
-         * NRF_UARTE_EVENT_TXDDY is correctly set.
+         * NRF_UARTE_EVENT_TXDRDY is correctly set.
          */
 
         /* Ensure pins are disconnected. */
@@ -927,11 +927,11 @@ void serial_init(serial_t *obj, PinName tx, PinName rx)
         nrf_uarte_event_clear(nordic_nrf5_uart_register[instance], NRF_UARTE_EVENT_ENDTX);
         nrf_uarte_task_trigger(nordic_nrf5_uart_register[instance], NRF_UARTE_TASK_STARTTX);
 
-        /* Wait until NRF_UARTE_EVENT_TXDDY is set before proceeding. */
+        /* Wait until NRF_UARTE_EVENT_TXDRDY is set before proceeding. */
         bool done = false;
         do {
             done = nrf_uarte_event_check(nordic_nrf5_uart_register[instance],
-                                         NRF_UARTE_EVENT_TXDDY);
+                                         NRF_UARTE_EVENT_TXDRDY);
         } while (done == false);
     }
 
@@ -1279,7 +1279,7 @@ void serial_irq_set(serial_t *obj, SerialIrq irq, uint32_t enable)
             Driver uses DMA to perform uart transfer and TxIrq is generated after the transfer is finished.
             Trigger TxIrq interrupt manually on enabling the TxIrq. */
         if (irq == TxIrq) {
-            if (nrf_uarte_event_check(nordic_nrf5_uart_register[instance], NRF_UARTE_EVENT_TXDDY)) {
+            if (nrf_uarte_event_check(nordic_nrf5_uart_register[instance], NRF_UARTE_EVENT_TXDRDY)) {
                 nordic_swi_tx_trigger(instance);
             }
         }
@@ -1360,10 +1360,10 @@ void serial_putc(serial_t *obj, int character)
 
     /* Wait until UART is ready to send next character. */
     do {
-        done = nrf_uarte_event_check(nordic_nrf5_uart_register[instance], NRF_UARTE_EVENT_TXDDY);
+        done = nrf_uarte_event_check(nordic_nrf5_uart_register[instance], NRF_UARTE_EVENT_TXDRDY);
     } while (done == false);
 
-    nrf_uarte_event_clear(nordic_nrf5_uart_register[instance], NRF_UARTE_EVENT_TXDDY);
+    nrf_uarte_event_clear(nordic_nrf5_uart_register[instance], NRF_UARTE_EVENT_TXDRDY);
 
     /* Arm Tx DMA buffer. */
     nordic_nrf5_uart_state[instance].tx_data = character;
@@ -1426,7 +1426,7 @@ int serial_writable(serial_t *obj)
     int instance = uart_object->instance;
 
     return (!core_util_atomic_load_bool(&nordic_nrf5_uart_state[instance].tx_in_progress) &&
-            (nrf_uarte_event_check(nordic_nrf5_uart_register[instance], NRF_UARTE_EVENT_TXDDY)));
+            (nrf_uarte_event_check(nordic_nrf5_uart_register[instance], NRF_UARTE_EVENT_TXDRDY)));
 }
 
 const PinMap *serial_tx_pinmap()

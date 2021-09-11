@@ -59,52 +59,52 @@ const ticker_info_t* us_ticker_get_info()
 void us_ticker_init(void)
 {
     if (us_ticker_initialized) {
-        nrf_timer_event_clear(NRF_TIMER1, NRF_TIMER_EVENT_COMPARE0);
-        nrf_timer_int_disable(NRF_TIMER1, nrf_timer_compare_int_get(NRF_TIMER_CC_CHANNEL0));
+        nrf_timer_event_clear(NRF_TIMER4, NRF_TIMER_EVENT_COMPARE0);
+        nrf_timer_int_disable(NRF_TIMER4, nrf_timer_compare_int_get(NRF_TIMER_CC_CHANNEL0));
         return;
     }
 
-    nrf_timer_task_trigger(NRF_TIMER1, NRF_TIMER_TASK_STOP);
+    nrf_timer_task_trigger(NRF_TIMER4, NRF_TIMER_TASK_STOP);
 
-    nrf_timer_int_disable(NRF_TIMER1, nrf_timer_compare_int_get(NRF_TIMER_CC_CHANNEL0));
+    nrf_timer_int_disable(NRF_TIMER4, nrf_timer_compare_int_get(NRF_TIMER_CC_CHANNEL0));
 
     /* Configure timer as follows:
      * - timer mode,
      * - timer width 16 bits for NRF51 and 32 bits for NRF52,
      * - timer freq 1 MHz.
      */
-    nrf_timer_mode_set(NRF_TIMER1, NRF_TIMER_MODE_TIMER);
+    nrf_timer_mode_set(NRF_TIMER4, NRF_TIMER_MODE_TIMER);
 
-    nrf_timer_frequency_set(NRF_TIMER1, NRF_TIMER_FREQ_1MHz);
+    nrf_timer_frequency_set(NRF_TIMER4, NRF_TIMER_FREQ_1MHz);
 
-#ifdef TARGET_NRF52
-    nrf_timer_bit_width_set(NRF_TIMER1, NRF_TIMER_BIT_WIDTH_32);
+#if defined(TARGET_NRF52) || defined(TARGET_SDK_THREAD_ZIGBEE_4_1)
+    nrf_timer_bit_width_set(NRF_TIMER4, NRF_TIMER_BIT_WIDTH_32);
 #else
-    nrf_timer_bit_width_set(NRF_TIMER1, NRF_TIMER_BIT_WIDTH_16);
+    nrf_timer_bit_width_set(NRF_TIMER4, NRF_TIMER_BIT_WIDTH_16);
 #endif
 
-    nrf_timer_cc_write(NRF_TIMER1, NRF_TIMER_CC_CHANNEL0, 0);
+    nrf_timer_cc_write(NRF_TIMER4, NRF_TIMER_CC_CHANNEL0, 0);
 
-    nrf_timer_event_clear(NRF_TIMER1, NRF_TIMER_EVENT_COMPARE0);
+    nrf_timer_event_clear(NRF_TIMER4, NRF_TIMER_EVENT_COMPARE0);
 
-    NVIC_SetVector(TIMER1_IRQn, (uint32_t)us_ticker_irq_handler);
+    NVIC_SetVector(TIMER4_IRQn, (uint32_t)us_ticker_irq_handler);
 
-    NRFX_IRQ_PRIORITY_SET(TIMER1_IRQn, APP_IRQ_PRIORITY_HIGH);
-    NRFX_IRQ_ENABLE(TIMER1_IRQn);
+    NRFX_IRQ_PRIORITY_SET(TIMER4_IRQn, APP_IRQ_PRIORITY_HIGH);
+    NRFX_IRQ_ENABLE(TIMER4_IRQn);
 
-    nrf_timer_task_trigger(NRF_TIMER1, NRF_TIMER_TASK_START);
+    nrf_timer_task_trigger(NRF_TIMER4, NRF_TIMER_TASK_START);
 
     /* Bug fix. First value can't be trusted. */
-    nrf_timer_task_trigger(NRF_TIMER1, NRF_TIMER_TASK_CAPTURE1);
+    nrf_timer_task_trigger(NRF_TIMER4, NRF_TIMER_TASK_CAPTURE1);
 
     us_ticker_initialized = true;
 }
 
 uint32_t us_ticker_read()
 {
-    nrf_timer_task_trigger(NRF_TIMER1, NRF_TIMER_TASK_CAPTURE1);
+    nrf_timer_task_trigger(NRF_TIMER4, NRF_TIMER_TASK_CAPTURE1);
 
-    return nrf_timer_cc_read(NRF_TIMER1, NRF_TIMER_CC_CHANNEL1);
+    return nrf_timer_cc_read(NRF_TIMER4, NRF_TIMER_CC_CHANNEL1);
 }
 
 void us_ticker_set_interrupt(timestamp_t timestamp)
@@ -113,11 +113,11 @@ void us_ticker_set_interrupt(timestamp_t timestamp)
 
     const uint32_t counter_mask = ((1ULL << US_TICKER_COUNTER_BITS) - 1);
 
-    nrf_timer_cc_write(NRF_TIMER1, NRF_TIMER_CC_CHANNEL0, timestamp & counter_mask);
+    nrf_timer_cc_write(NRF_TIMER4, NRF_TIMER_CC_CHANNEL0, timestamp & counter_mask);
 
-    if (!nrf_timer_int_enable_check(NRF_TIMER1, nrf_timer_compare_int_get(NRF_TIMER_CC_CHANNEL0))) {
-        nrf_timer_event_clear(NRF_TIMER1, NRF_TIMER_EVENT_COMPARE0);
-        nrf_timer_int_enable(NRF_TIMER1, nrf_timer_compare_int_get(NRF_TIMER_CC_CHANNEL0));
+    if (!nrf_timer_int_enable_check(NRF_TIMER4, nrf_timer_compare_int_get(NRF_TIMER_CC_CHANNEL0))) {
+        nrf_timer_event_clear(NRF_TIMER4, NRF_TIMER_EVENT_COMPARE0);
+        nrf_timer_int_enable(NRF_TIMER4, nrf_timer_compare_int_get(NRF_TIMER_CC_CHANNEL0));
     }
 
     core_util_critical_section_exit();
@@ -125,24 +125,24 @@ void us_ticker_set_interrupt(timestamp_t timestamp)
 
 void us_ticker_fire_interrupt(void)
 {
-    NVIC_SetPendingIRQ(TIMER1_IRQn);
+    NVIC_SetPendingIRQ(TIMER4_IRQn);
 }
 
 void us_ticker_disable_interrupt(void)
 {
-    nrf_timer_int_disable(NRF_TIMER1, nrf_timer_compare_int_get(NRF_TIMER_CC_CHANNEL0));
+    nrf_timer_int_disable(NRF_TIMER4, nrf_timer_compare_int_get(NRF_TIMER_CC_CHANNEL0));
 }
 
 void us_ticker_clear_interrupt(void)
 {
-    nrf_timer_event_clear(NRF_TIMER1, NRF_TIMER_EVENT_COMPARE0);
+    nrf_timer_event_clear(NRF_TIMER4, NRF_TIMER_EVENT_COMPARE0);
 }
 
 void us_ticker_free(void)
 {
-    nrf_timer_task_trigger(NRF_TIMER1, NRF_TIMER_TASK_STOP);
-    nrf_timer_task_trigger(NRF_TIMER1, NRF_TIMER_TASK_SHUTDOWN);
-    nrf_timer_int_disable(NRF_TIMER1, nrf_timer_compare_int_get(NRF_TIMER_CC_CHANNEL0));
-    NVIC_DisableIRQ(TIMER1_IRQn);
+    nrf_timer_task_trigger(NRF_TIMER4, NRF_TIMER_TASK_STOP);
+    nrf_timer_task_trigger(NRF_TIMER4, NRF_TIMER_TASK_SHUTDOWN);
+    nrf_timer_int_disable(NRF_TIMER4, nrf_timer_compare_int_get(NRF_TIMER_CC_CHANNEL0));
+    NVIC_DisableIRQ(TIMER4_IRQn);
     us_ticker_initialized = false;
 }

@@ -1,30 +1,30 @@
 /**
- * Copyright (c) 2016 - 2018, Nordic Semiconductor ASA
- * 
+ * Copyright (c) 2016 - 2020, Nordic Semiconductor ASA
+ *
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice, this
  *    list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form, except as embedded into a Nordic
  *    Semiconductor ASA integrated circuit in a product or a software update for
  *    such product, must reproduce the above copyright notice, this list of
  *    conditions and the following disclaimer in the documentation and/or other
  *    materials provided with the distribution.
- * 
+ *
  * 3. Neither the name of Nordic Semiconductor ASA nor the names of its
  *    contributors may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
- * 
+ *
  * 4. This software, with or without modification, must only be used with a
  *    Nordic Semiconductor ASA integrated circuit.
- * 
+ *
  * 5. Any software provided in binary form under this license must not be reverse
  *    engineered, decompiled, modified and/or disassembled.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
  * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -35,7 +35,7 @@
  * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  */
 #ifndef NRF_SECTION_H__
 #define NRF_SECTION_H__
@@ -66,7 +66,7 @@ extern "C" {
  * param[in]    section_name    Name of the section.
  * @hideinitializer
  */
-#if defined(__ARMCC_VERSION)
+#if defined(__CC_ARM)
 #define NRF_SECTION_START_ADDR(section_name)       &CONCAT_2(section_name, $$Base)
 
 #elif defined(__GNUC__)
@@ -82,7 +82,7 @@ extern "C" {
  * @param[in]   section_name    Name of the section.
  * @hideinitializer
  */
-#if defined(__ARMCC_VERSION)
+#if defined(__CC_ARM)
 #define NRF_SECTION_END_ADDR(section_name)         &CONCAT_2(section_name, $$Limit)
 
 #elif defined(__GNUC__)
@@ -111,7 +111,7 @@ extern "C" {
  * @warning Data type must be word aligned to prevent padding.
  * @hideinitializer
  */
-#if defined(__ARMCC_VERSION)
+#if defined(__CC_ARM)
 #define NRF_SECTION_DEF(section_name, data_type)                \
     extern data_type * CONCAT_2(section_name, $$Base);          \
     extern void      * CONCAT_2(section_name, $$Limit)
@@ -140,7 +140,7 @@ extern "C" {
  * @param[in]   section_var     Variable to register in the given section.
  * @hideinitializer
  */
-#if defined(__ARMCC_VERSION)
+#if defined(__CC_ARM)
 #define NRF_SECTION_ITEM_REGISTER(section_name, section_var) \
     section_var __attribute__ ((section(STRINGIFY(section_name)))) __attribute__((used))
 

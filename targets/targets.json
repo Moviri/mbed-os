@@ -6435,8 +6435,7 @@
             "STORAGE"
         ],
         "features_remove": [
-            "CRYPTOCELL310",
-            "BLE"
+            "CRYPTOCELL310"
         ],
         "components_remove": [
             "QSPIF"
@@ -6461,10 +6460,7 @@
         ],
         "extra_labels_remove": [
             "NRF52",
-            "SDK_15_0",
-            "CORDIO",
-            "CORDIO_LL",
-            "NORDIC_CORDIO"
+            "SDK_15_0"
         ],
         "extra_labels_add": [
             "SDK_THREAD_ZIGBEE_4_1"

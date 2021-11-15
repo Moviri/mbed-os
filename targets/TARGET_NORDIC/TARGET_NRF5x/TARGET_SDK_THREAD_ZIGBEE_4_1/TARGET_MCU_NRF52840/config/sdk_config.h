@@ -46,6 +46,405 @@
 #endif
 
 
+// <h> nRF_BLE
+
+//==========================================================
+// <q> BLE_ADVERTISING_ENABLED  - ble_advertising - Advertising module
+ 
+
+#ifndef BLE_ADVERTISING_ENABLED
+#define BLE_ADVERTISING_ENABLED 0
+#endif
+
+// <q> BLE_DTM_ENABLED  - ble_dtm - Module for testing RF/PHY using DTM commands
+ 
+
+#ifndef BLE_DTM_ENABLED
+#define BLE_DTM_ENABLED 0
+#endif
+
+// <q> BLE_RACP_ENABLED  - ble_racp - Record Access Control Point library
+ 
+
+#ifndef BLE_RACP_ENABLED
+#define BLE_RACP_ENABLED 0
+#endif
+
+// <e> NRF_BLE_QWR_ENABLED - nrf_ble_qwr - Queued writes support module (prepare/execute write)
+//==========================================================
+#ifndef NRF_BLE_QWR_ENABLED
+#define NRF_BLE_QWR_ENABLED 0
+#endif
+// <o> NRF_BLE_QWR_MAX_ATTR - Maximum number of attribute handles that can be registered. This number must be adjusted according to the number of attributes for which Queued Writes will be enabled. If it is zero, the module will reject all Queued Write requests. 
+#ifndef NRF_BLE_QWR_MAX_ATTR
+#define NRF_BLE_QWR_MAX_ATTR 0
+#endif
+
+// </e>
+
+// <e> PEER_MANAGER_ENABLED - peer_manager - Peer Manager
+//==========================================================
+#ifndef PEER_MANAGER_ENABLED
+#define PEER_MANAGER_ENABLED 0
+#endif
+// <o> PM_MAX_REGISTRANTS - Number of event handlers that can be registered. 
+#ifndef PM_MAX_REGISTRANTS
+#define PM_MAX_REGISTRANTS 3
+#endif
+
+// <o> PM_FLASH_BUFFERS - Number of internal buffers for flash operations. 
+// <i> Decrease this value to lower RAM usage.
+
+#ifndef PM_FLASH_BUFFERS
+#define PM_FLASH_BUFFERS 2
+#endif
+
+// <q> PM_CENTRAL_ENABLED  - Enable/disable central-specific Peer Manager functionality.
+ 
+
+// <i> Enable/disable central-specific Peer Manager functionality.
+
+#ifndef PM_CENTRAL_ENABLED
+#define PM_CENTRAL_ENABLED 1
+#endif
+
+// <q> PM_SERVICE_CHANGED_ENABLED  - Enable/disable the service changed management for GATT server in Peer Manager.
+ 
+
+// <i> If not using a GATT server, or using a server wihout a service changed characteristic,
+// <i> disable this to save code space.
+
+#ifndef PM_SERVICE_CHANGED_ENABLED
+#define PM_SERVICE_CHANGED_ENABLED 1
+#endif
+
+// <q> PM_PEER_RANKS_ENABLED  - Enable/disable the peer rank management in Peer Manager.
+ 
+
+// <i> Set this to false to save code space if not using the peer rank API.
+
+#ifndef PM_PEER_RANKS_ENABLED
+#define PM_PEER_RANKS_ENABLED 1
+#endif
+
+// </e>
+
+// </h> 
+//==========================================================
+
+// <h> nRF_BLE_Services 
+
+//==========================================================
+// <q> BLE_ANCS_C_ENABLED  - ble_ancs_c - Apple Notification Service Client
+ 
+
+#ifndef BLE_ANCS_C_ENABLED
+#define BLE_ANCS_C_ENABLED 0
+#endif
+
+// <q> BLE_ANS_C_ENABLED  - ble_ans_c - Alert Notification Service Client
+ 
+
+#ifndef BLE_ANS_C_ENABLED
+#define BLE_ANS_C_ENABLED 0
+#endif
+
+// <q> BLE_BAS_C_ENABLED  - ble_bas_c - Battery Service Client
+ 
+
+#ifndef BLE_BAS_C_ENABLED
+#define BLE_BAS_C_ENABLED 0
+#endif
+
+// <e> BLE_BAS_ENABLED - ble_bas - Battery Service
+//==========================================================
+#ifndef BLE_BAS_ENABLED
+#define BLE_BAS_ENABLED 0
+#endif
+// <e> BLE_BAS_CONFIG_LOG_ENABLED - Enables logging in the module.
+//==========================================================
+#ifndef BLE_BAS_CONFIG_LOG_ENABLED
+#define BLE_BAS_CONFIG_LOG_ENABLED 0
+#endif
+// <o> BLE_BAS_CONFIG_LOG_LEVEL  - Default Severity level
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef BLE_BAS_CONFIG_LOG_LEVEL
+#define BLE_BAS_CONFIG_LOG_LEVEL 3
+#endif
+
+// <o> BLE_BAS_CONFIG_INFO_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan
+// <8=> White 
+
+#ifndef BLE_BAS_CONFIG_INFO_COLOR
+#define BLE_BAS_CONFIG_INFO_COLOR 0
+#endif
+
+// <o> BLE_BAS_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef BLE_BAS_CONFIG_DEBUG_COLOR
+#define BLE_BAS_CONFIG_DEBUG_COLOR 0
+#endif
+
+// </e>
+
+// </e>
+
+// <q> BLE_CSCS_ENABLED  - ble_cscs - Cycling Speed and Cadence Service
+ 
+
+#ifndef BLE_CSCS_ENABLED
+#define BLE_CSCS_ENABLED 0
+#endif
+
+// <q> BLE_CTS_C_ENABLED  - ble_cts_c - Current Time Service Client
+ 
+
+#ifndef BLE_CTS_C_ENABLED
+#define BLE_CTS_C_ENABLED 0
+#endif
+
+// <q> BLE_DIS_ENABLED  - ble_dis - Device Information Service
+ 
+
+#ifndef BLE_DIS_ENABLED
+#define BLE_DIS_ENABLED 0
+#endif
+
+// <q> BLE_GLS_ENABLED  - ble_gls - Glucose Service
+ 
+
+#ifndef BLE_GLS_ENABLED
+#define BLE_GLS_ENABLED 0
+#endif
+
+// <q> BLE_HIDS_ENABLED  - ble_hids - Human Interface Device Service
+ 
+
+#ifndef BLE_HIDS_ENABLED
+#define BLE_HIDS_ENABLED 0
+#endif
+
+// <q> BLE_HRS_C_ENABLED  - ble_hrs_c - Heart Rate Service Client
+ 
+
+#ifndef BLE_HRS_C_ENABLED
+#define BLE_HRS_C_ENABLED 0
+#endif
+
+// <q> BLE_HRS_ENABLED  - ble_hrs - Heart Rate Service
+ 
+
+#ifndef BLE_HRS_ENABLED
+#define BLE_HRS_ENABLED 0
+#endif
+
+// <q> BLE_HTS_ENABLED  - ble_hts - Health Thermometer Service
+ 
+
+#ifndef BLE_HTS_ENABLED
+#define BLE_HTS_ENABLED 0
+#endif
+
+// <q> BLE_IAS_C_ENABLED  - ble_ias_c - Immediate Alert Service Client
+ 
+
+#ifndef BLE_IAS_C_ENABLED
+#define BLE_IAS_C_ENABLED 0
+#endif
+
+// <e> BLE_IAS_ENABLED - ble_ias - Immediate Alert Service
+//==========================================================
+#ifndef BLE_IAS_ENABLED
+#define BLE_IAS_ENABLED 0
+#endif
+// <e> BLE_IAS_CONFIG_LOG_ENABLED - Enables logging in the module.
+//==========================================================
+#ifndef BLE_IAS_CONFIG_LOG_ENABLED
+#define BLE_IAS_CONFIG_LOG_ENABLED 0
+#endif
+// <o> BLE_IAS_CONFIG_LOG_LEVEL  - Default Severity level
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef BLE_IAS_CONFIG_LOG_LEVEL
+#define BLE_IAS_CONFIG_LOG_LEVEL 3
+#endif
+
+// <o> BLE_IAS_CONFIG_INFO_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef BLE_IAS_CONFIG_INFO_COLOR
+#define BLE_IAS_CONFIG_INFO_COLOR 0
+#endif
+
+// <o> BLE_IAS_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef BLE_IAS_CONFIG_DEBUG_COLOR
+#define BLE_IAS_CONFIG_DEBUG_COLOR 0
+#endif
+
+// </e>
+
+// </e>
+
+// <q> BLE_LBS_C_ENABLED  - ble_lbs_c - Nordic LED Button Service Client
+ 
+
+#ifndef BLE_LBS_C_ENABLED
+#define BLE_LBS_C_ENABLED 0
+#endif
+
+// <q> BLE_LBS_ENABLED  - ble_lbs - LED Button Service
+ 
+
+#ifndef BLE_LBS_ENABLED
+#define BLE_LBS_ENABLED 0
+#endif
+
+// <q> BLE_LLS_ENABLED  - ble_lls - Link Loss Service
+ 
+
+#ifndef BLE_LLS_ENABLED
+#define BLE_LLS_ENABLED 0
+#endif
+
+// <q> BLE_NUS_C_ENABLED  - ble_nus_c - Nordic UART Central Service
+ 
+
+#ifndef BLE_NUS_C_ENABLED
+#define BLE_NUS_C_ENABLED 0
+#endif
+
+// <e> BLE_NUS_ENABLED - ble_nus - Nordic UART Service
+//==========================================================
+#ifndef BLE_NUS_ENABLED
+#define BLE_NUS_ENABLED 0
+#endif
+// <e> BLE_NUS_CONFIG_LOG_ENABLED - Enables logging in the module.
+//==========================================================
+#ifndef BLE_NUS_CONFIG_LOG_ENABLED
+#define BLE_NUS_CONFIG_LOG_ENABLED 0
+#endif
+// <o> BLE_NUS_CONFIG_LOG_LEVEL  - Default Severity level
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef BLE_NUS_CONFIG_LOG_LEVEL
+#define BLE_NUS_CONFIG_LOG_LEVEL 3
+#endif
+
+// <o> BLE_NUS_CONFIG_INFO_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef BLE_NUS_CONFIG_INFO_COLOR
+#define BLE_NUS_CONFIG_INFO_COLOR 0
+#endif
+
+// <o> BLE_NUS_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef BLE_NUS_CONFIG_DEBUG_COLOR
+#define BLE_NUS_CONFIG_DEBUG_COLOR 0
+#endif
+
+// </e>
+
+// </e>
+
+// <q> BLE_RSCS_C_ENABLED  - ble_rscs_c - Running Speed and Cadence Client
+ 
+
+#ifndef BLE_RSCS_C_ENABLED
+#define BLE_RSCS_C_ENABLED 0
+#endif
+
+// <q> BLE_RSCS_ENABLED  - ble_rscs - Running Speed and Cadence Service
+ 
+
+#ifndef BLE_RSCS_ENABLED
+#define BLE_RSCS_ENABLED 0
+#endif
+
+// <q> BLE_TPS_ENABLED  - ble_tps - TX Power Service
+ 
+
+#ifndef BLE_TPS_ENABLED
+#define BLE_TPS_ENABLED 0
+#endif
+
+// </h> 
+//==========================================================
+
 // <h> Application 
 
 //==========================================================

@@ -3262,11 +3262,11 @@ bool nrf_802154_core_last_rssi_measurement_get(int8_t * p_rssi)
     return result;
 }
 
-// #if NRF_802154_INTERNAL_RADIO_IRQ_HANDLING
-// void RADIO_IRQHandler(void)
-// #else // NRF_802154_INTERNAL_RADIO_IRQ_HANDLING
+#if NRF_802154_INTERNAL_RADIO_IRQ_HANDLING
+void RADIO_IRQHandler(void)
+#else // NRF_802154_INTERNAL_RADIO_IRQ_HANDLING
 void nrf_802154_core_irq_handler(void)
-//#endif  // NRF_802154_INTERNAL_RADIO_IRQ_HANDLING
+#endif  // NRF_802154_INTERNAL_RADIO_IRQ_HANDLING
 {
     irq_handler();
 }

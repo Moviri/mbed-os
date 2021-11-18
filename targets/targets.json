@@ -6434,9 +6434,6 @@
         "features_add": [
             "STORAGE"
         ],
-        "features_remove": [
-            "CRYPTOCELL310"
-        ],
         "components_remove": [
             "QSPIF"
         ],
@@ -6455,7 +6452,6 @@
             "NRF5"
         ],
         "macros_remove": [
-            "MBEDTLS_CONFIG_HW_SUPPORT",
             "BOARD_PCA10056"
         ],
         "extra_labels_remove": [

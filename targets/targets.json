@@ -6272,7 +6272,8 @@
         ],
         "components_add": [
             "QSPIF",
-            "FLASHIAP"
+            "FLASHIAP",
+            "SOFTLIB"
         ],
         "core": "Cortex-M4F",
         "macros": [
@@ -6434,8 +6435,12 @@
         "features_add": [
             "STORAGE"
         ],
+        "components_add": [
+            "HARDLIB"
+        ],
         "components_remove": [
-            "QSPIF"
+            "QSPIF",
+            "SOFTLIB"
         ],
         "device_has_remove": [
             "QSPI",
@@ -6443,7 +6448,6 @@
         ],
         "macros_add": [
             "CONFIG_GPIO_AS_PINRESET",
-            "FLOAT_ABI_HARD",
             "INITIALIZE_USER_SECTIONS",
             "NO_VTOR_CONFIG",
             "ZB_TRACE_LEVEL=0",

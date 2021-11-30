@@ -17,7 +17,6 @@ limitations under the License.
 """
 import re
 import fnmatch
-import json
 from os.path import join, basename, splitext, dirname, exists
 from os import getcwd, getenv
 from distutils.spawn import find_executable
@@ -125,18 +124,14 @@ class GCC(mbedToolchain):
         if core == "Cortex-M4F":
             found = False
             for key in build_profile["common"]:
-                print(key)
                 if key == "-mfloat-abi=hard":
                     found = True
-                    print(found)
             if found == True:
                 self.cpu.append("-mfpu=fpv4-sp-d16")
                 self.cpu.append("-mfloat-abi=hard")
-                print("Compilazione hard")
             else:
                 self.cpu.append("-mfpu=fpv4-sp-d16")
                 self.cpu.append("-mfloat-abi=softfp")
-                print("Compilazione soft")
 
         elif core == "Cortex-M7F" or core.startswith("Cortex-M33F"):
             self.cpu.append("-mfpu=fpv5-sp-d16")

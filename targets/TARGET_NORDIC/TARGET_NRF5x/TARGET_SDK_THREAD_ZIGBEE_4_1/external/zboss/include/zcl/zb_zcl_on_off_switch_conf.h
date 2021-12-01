@@ -1,46 +1,29 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: On/Off switch configuration definitoins
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: On/Off switch configuration definitions
 */
 
-#if ! defined ZB_ZCL_ON_OFF_SWITCH_CONF_H
-#define ZB_ZCL_ON_OFF_SWITCH_CONF_H
+#ifndef ZB_ZCL_ON_OFF_SWITCH_CONF_H
+#define ZB_ZCL_ON_OFF_SWITCH_CONF_H 1
 
 #include "zcl/zb_zcl_common.h"
 #include "zcl/zb_zcl_commands.h"
@@ -86,14 +69,16 @@ enum zb_zcl_on_off_switch_configuration_attr_e
 enum zb_zcl_on_off_switch_configuration_switch_type_e
 {
   /*! Toggle switch */
-  ZB_ZCL_ON_OFF_SWITCH_CONFIGURATION_SWITCH_TYPE_TOGGLE     = 0,
+  ZB_ZCL_ON_OFF_SWITCH_CONFIGURATION_SWITCH_TYPE_TOGGLE        = 0,
   /*! Momentary switch */
-  ZB_ZCL_ON_OFF_SWITCH_CONFIGURATION_SWITCH_TYPE_MOMENTARY  = 1
+  ZB_ZCL_ON_OFF_SWITCH_CONFIGURATION_SWITCH_TYPE_MOMENTARY     = 1,
+  /*! Multifunction switch */
+  ZB_ZCL_ON_OFF_SWITCH_CONFIGURATION_SWITCH_TYPE_MULTIFUNCTION = 2
 };
 
 /*! @brief Maximal value for switch type attribute */
 #define ZB_ZCL_ON_OFF_SWITCH_CONFIGURATION_SWITCH_TYPE_MAX_VALUE \
-  (ZB_ZCL_ON_OFF_SWITCH_CONFIGURATION_SWITCH_TYPE_MOMENTARY)
+  (ZB_ZCL_ON_OFF_SWITCH_CONFIGURATION_SWITCH_TYPE_MULTIFUNCTION)
 
 /* Switch type attribute has no default value */
 
@@ -142,7 +127,7 @@ enum zb_zcl_on_off_switch_configuration_switch_actions_e
     ZB_ZCL_ATTR_ON_OFF_SWITCH_CONFIGURATION_SWITCH_TYPE_ID,                                      \
     ZB_ZCL_ATTR_TYPE_8BIT_ENUM,                                           \
     ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                         \
-    (zb_voidp_t) data_ptr                                                 \
+    (void*) data_ptr                                                 \
   }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_ON_OFF_SWITCH_CONFIGURATION_SWITCH_ACTIONS_ID(data_ptr) \
@@ -150,7 +135,7 @@ enum zb_zcl_on_off_switch_configuration_switch_actions_e
     ZB_ZCL_ATTR_ON_OFF_SWITCH_CONFIGURATION_SWITCH_ACTIONS_ID,                                     \
     ZB_ZCL_ATTR_TYPE_8BIT_ENUM,                                             \
     ZB_ZCL_ATTR_ACCESS_READ_WRITE,                                          \
-    (zb_voidp_t) data_ptr                                                   \
+    (void*) data_ptr                                                   \
   }
 
 /** @internal Number of attributes mandatory for reporting on On/Off switch configuration cluster */
@@ -159,7 +144,7 @@ enum zb_zcl_on_off_switch_configuration_switch_actions_e
 /*! @}
  *  @endcond */ /* internals_doc */
 
-/** @brief Declare attribute list for ON/OFF Swith configuration cluster
+/** @brief Declare attribute list for ON/OFF Switch configuration cluster
     @param attr_list - attribute list name
     @param switch_type - pointer to variable to store switch type attribute value
     @param switch_actions - pointer to variable to store switch action attribute value
@@ -176,9 +161,9 @@ enum zb_zcl_on_off_switch_configuration_switch_actions_e
 
 /** @endcond */ /* DOXYGEN_ZCL_SECTION */
 
-zb_void_t zb_zcl_on_off_switch_config_init_server(void);
-zb_void_t zb_zcl_on_off_switch_config_init_client(void);
+void zb_zcl_on_off_switch_config_init_server(void);
+void zb_zcl_on_off_switch_config_init_client(void);
 #define ZB_ZCL_CLUSTER_ID_ON_OFF_SWITCH_CONFIG_SERVER_ROLE_INIT zb_zcl_on_off_switch_config_init_server
 #define ZB_ZCL_CLUSTER_ID_ON_OFF_SWITCH_CONFIG_CLIENT_ROLE_INIT zb_zcl_on_off_switch_config_init_client
 
-#endif /* ! defined ZB_ZCL_ON_OFF_SWITCH_CONF_H */
+#endif /* ZB_ZCL_ON_OFF_SWITCH_CONF_H */

@@ -1,25 +1,25 @@
-/***************************************************************************
-*                  ZBOSS Zigbee software protocol stack                    *
-*                                                                          *
-*          Copyright (c) 2012-2017 DSR Corporation Denver CO, USA.         *
-*                       http://www.dsr-zboss.com                           *
-*                       http://www.dsr-company.com                         *
-*                                                                          *
-*                            All rights reserved.                          *
-*                                                                          *
-*                                                                          *
-* ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR   *
-* Corporation                                                              *
-*                                                                          *
-* Commercial Usage                                                         *
-* Licensees holding valid DSR Commercial licenses may use                  *
-* this file in accordance with the DSR Commercial License                  *
-* Agreement provided with the Software or, alternatively, in accordance    *
-* with the terms contained in a written agreement between you and          *
-* DSR.                                                                     *
-*                                                                          *
-****************************************************************************
-PURPOSE: Definitions of SE's Keep-Alive cluster (SE spec, Annex A.3)
+/* ZBOSS Zigbee software protocol stack
+ *
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
+ * All rights reserved.
+ *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
+ *
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
+ *
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: Definitions of SE's Keep-Alive cluster (SE spec, Annex A.3)
 */
 
 #ifndef ZB_SE_KEEP_ALIVE_H
@@ -78,7 +78,7 @@ enum zb_zcl_keep_alive_attr_e
   ZB_ZCL_ATTR_KEEP_ALIVE_TC_KEEP_ALIVE_BASE_ID,                                         \
   ZB_ZCL_ATTR_TYPE_U8,                                                                 \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                        \
-  (zb_voidp_t) data_ptr                                                                \
+  (void*) data_ptr                                                                \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_KEEP_ALIVE_TC_KEEP_ALIVE_JITTER_ID(data_ptr) \
@@ -86,7 +86,7 @@ enum zb_zcl_keep_alive_attr_e
   ZB_ZCL_ATTR_KEEP_ALIVE_TC_KEEP_ALIVE_JITTER_ID,                                       \
   ZB_ZCL_ATTR_TYPE_U16,                                                                \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                        \
-  (zb_voidp_t) data_ptr                                                                \
+  (void*) data_ptr                                                                \
 }
 
 /** @internal @brief Declare attribute list for Keep-Alive cluster

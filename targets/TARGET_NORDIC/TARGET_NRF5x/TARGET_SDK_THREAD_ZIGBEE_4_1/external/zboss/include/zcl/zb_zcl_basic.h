@@ -1,45 +1,28 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: ZCL Basic Cluster definitions
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: ZCL Basic Cluster definitions
 */
-#if ! defined ZB_ZCL_BASIC_H
-#define ZB_ZCL_BASIC_H
+#ifndef ZB_ZCL_BASIC_H
+#define ZB_ZCL_BASIC_H 1
 
 #include "zcl/zb_zcl_common.h"
 #include "zcl/zb_zcl_commands.h"
@@ -163,7 +146,7 @@ enum zb_zcl_basic_alarm_mask_e
 */
 typedef struct zb_zcl_basic_disable_local_conf_s
 {
-  /*! Reset to factry defaults disabled */
+  /*! Reset to factory defaults disabled */
   zb_bitfield_t reset_disabled  : 1;
   /*! Device configuration enabled */
   zb_bitfield_t config_enabled  : 1;
@@ -172,7 +155,7 @@ typedef struct zb_zcl_basic_disable_local_conf_s
 } zb_zcl_basic_disable_local_conf_t;
 
 /** @brief Default value for ZCL version attribute */
-#define ZB_ZCL_BASIC_ZCL_VERSION_DEFAULT_VALUE ((zb_uint8_t)0x02)
+#define ZB_ZCL_BASIC_ZCL_VERSION_DEFAULT_VALUE ((zb_uint8_t)ZB_ZCL_VERSION)
 
 /** @brief Default value for Application version attribute */
 #define ZB_ZCL_BASIC_APPLICATION_VERSION_DEFAULT_VALUE ((zb_uint8_t)0x00)
@@ -246,7 +229,7 @@ typedef struct zb_zcl_basic_disable_local_conf_s
   ZB_ZCL_ATTR_BASIC_ZCL_VERSION_ID,                                       \
   ZB_ZCL_ATTR_TYPE_U8,                                                    \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                           \
-  (zb_voidp_t) data_ptr                                                   \
+  (void*) data_ptr                                                   \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_BASIC_APPLICATION_VERSION_ID(data_ptr) \
@@ -254,7 +237,7 @@ typedef struct zb_zcl_basic_disable_local_conf_s
   ZB_ZCL_ATTR_BASIC_APPLICATION_VERSION_ID,                                       \
   ZB_ZCL_ATTR_TYPE_U8,                                                            \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                   \
-  (zb_voidp_t) data_ptr                                                           \
+  (void*) data_ptr                                                           \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_BASIC_STACK_VERSION_ID(data_ptr) \
@@ -262,7 +245,7 @@ typedef struct zb_zcl_basic_disable_local_conf_s
   ZB_ZCL_ATTR_BASIC_STACK_VERSION_ID,                                       \
   ZB_ZCL_ATTR_TYPE_U8,                                                      \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                             \
-  (zb_voidp_t) data_ptr                                                     \
+  (void*) data_ptr                                                     \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_BASIC_HW_VERSION_ID(data_ptr) \
@@ -270,7 +253,7 @@ typedef struct zb_zcl_basic_disable_local_conf_s
   ZB_ZCL_ATTR_BASIC_HW_VERSION_ID,                                       \
   ZB_ZCL_ATTR_TYPE_U8,                                                   \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                          \
-  (zb_voidp_t) data_ptr                                                  \
+  (void*) data_ptr                                                  \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_BASIC_MANUFACTURER_NAME_ID(data_ptr) \
@@ -278,7 +261,7 @@ typedef struct zb_zcl_basic_disable_local_conf_s
   ZB_ZCL_ATTR_BASIC_MANUFACTURER_NAME_ID,                                       \
   ZB_ZCL_ATTR_TYPE_CHAR_STRING,                                                 \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                 \
-  (zb_voidp_t) data_ptr                                                         \
+  (void*) data_ptr                                                         \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_BASIC_MODEL_IDENTIFIER_ID(data_ptr) \
@@ -286,7 +269,7 @@ typedef struct zb_zcl_basic_disable_local_conf_s
   ZB_ZCL_ATTR_BASIC_MODEL_IDENTIFIER_ID,                                       \
   ZB_ZCL_ATTR_TYPE_CHAR_STRING,                                                \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                \
-  (zb_voidp_t) data_ptr                                                        \
+  (void*) data_ptr                                                        \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_BASIC_DATE_CODE_ID(data_ptr) \
@@ -294,7 +277,7 @@ typedef struct zb_zcl_basic_disable_local_conf_s
   ZB_ZCL_ATTR_BASIC_DATE_CODE_ID,                                       \
   ZB_ZCL_ATTR_TYPE_CHAR_STRING,                                         \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                         \
-  (zb_voidp_t) data_ptr                                                 \
+  (void*) data_ptr                                                 \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_BASIC_POWER_SOURCE_ID(data_ptr) \
@@ -302,7 +285,7 @@ typedef struct zb_zcl_basic_disable_local_conf_s
   ZB_ZCL_ATTR_BASIC_POWER_SOURCE_ID,                                       \
   ZB_ZCL_ATTR_TYPE_8BIT_ENUM,                                              \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                            \
-  (zb_voidp_t) data_ptr                                                    \
+  (void*) data_ptr                                                    \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_BASIC_LOCATION_DESCRIPTION_ID(data_ptr) \
@@ -310,7 +293,7 @@ typedef struct zb_zcl_basic_disable_local_conf_s
   ZB_ZCL_ATTR_BASIC_LOCATION_DESCRIPTION_ID,                                       \
   ZB_ZCL_ATTR_TYPE_CHAR_STRING,                                                    \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                                                   \
-  (zb_voidp_t) data_ptr                                                            \
+  (void*) data_ptr                                                            \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_BASIC_PHYSICAL_ENVIRONMENT_ID(data_ptr) \
@@ -318,7 +301,7 @@ typedef struct zb_zcl_basic_disable_local_conf_s
   ZB_ZCL_ATTR_BASIC_PHYSICAL_ENVIRONMENT_ID,                                       \
   ZB_ZCL_ATTR_TYPE_8BIT_ENUM,                                                      \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                                                   \
-  (zb_voidp_t) data_ptr                                                            \
+  (void*) data_ptr                                                            \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_BASIC_DEVICE_ENABLED_ID(data_ptr) \
@@ -326,7 +309,7 @@ typedef struct zb_zcl_basic_disable_local_conf_s
   ZB_ZCL_ATTR_BASIC_DEVICE_ENABLED_ID,                                       \
   ZB_ZCL_ATTR_TYPE_BOOL,                                                     \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                                             \
-  (zb_voidp_t) data_ptr                                                      \
+  (void*) data_ptr                                                      \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_BASIC_SW_BUILD_ID(data_ptr)          \
@@ -334,11 +317,11 @@ typedef struct zb_zcl_basic_disable_local_conf_s
   ZB_ZCL_ATTR_BASIC_SW_BUILD_ID,                                                \
   ZB_ZCL_ATTR_TYPE_CHAR_STRING,                                                 \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                 \
-  (zb_voidp_t) data_ptr                                                         \
+  (void*) data_ptr                                                         \
 }
 
 #if defined ZB_ZCL_SUPPORT_CLUSTER_SCENES
-/*! Scenes fieldset length for Basic cluster */
+/*! Scenes field set length for Basic cluster */
 #define ZB_ZCL_CLUSTER_ID_BASIC_SCENE_FIELD_SETS_LENGTH 0
 #endif /* defined ZB_ZCL_SUPPORT_CLUSTER_SCENES */
 
@@ -348,6 +331,8 @@ typedef struct zb_zcl_basic_disable_local_conf_s
     @param attr_list - attribute list name
     @param zcl_version - pointer to variable to store zcl version  attribute value
     @param power_source - pointer to variable to store power source attribute value
+
+    @snippet lighting/dimmable_light_tl/light_device_zr.c BASIC_CLUSTER_DECLARE
 */
 #define ZB_ZCL_DECLARE_BASIC_ATTRIB_LIST(attr_list, zcl_version, power_source) \
     ZB_ZCL_START_DECLARE_ATTRIB_LIST(attr_list)                                \
@@ -508,4 +493,4 @@ void zb_zcl_basic_init_client(void);
 #define ZB_ZCL_CLUSTER_ID_BASIC_SERVER_ROLE_INIT zb_zcl_basic_init_server
 #define ZB_ZCL_CLUSTER_ID_BASIC_CLIENT_ROLE_INIT zb_zcl_basic_init_client
 
-#endif /* ! defined ZB_ZCL_BASIC_H */
+#endif /* ZB_ZCL_BASIC_H */

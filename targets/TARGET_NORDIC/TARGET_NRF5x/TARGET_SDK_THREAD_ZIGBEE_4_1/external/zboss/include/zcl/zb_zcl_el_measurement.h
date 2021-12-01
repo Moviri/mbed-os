@@ -1,46 +1,29 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: Electrical Measurement cluster defintions
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: Electrical Measurement cluster definitions
 */
 
-#if ! defined ZB_ZCL_ELECTRICAL_MEASUREMENT_H
-#define ZB_ZCL_ELECTRICAL_MEASUREMENT_H
+#ifndef ZB_ZCL_ELECTRICAL_MEASUREMENT_H
+#define ZB_ZCL_ELECTRICAL_MEASUREMENT_H 1
 
 #include "zcl/zb_zcl_common.h"
 #include "zcl/zb_zcl_commands.h"
@@ -762,7 +745,7 @@ enum zb_zcl_electrical_measurement_measurement_type_e
 /*! @brief Electrical Measurement cluster server command identifiers
     @see ZCL spec, subclause 4.9.2.3.1
 */
-enum zb_zcl_on_off_srv_cmd_e
+enum zb_zcl_electrical_measurement_srv_cmd_e
 {
   /** This command is generated when the Client command GetProfileInfo is received. */
   ZB_ZCL_CMD_ELECTRICAL_MEASUREMENT_GET_PROFILE_INFO_RESPONSE_COMMAND        = 0x00,
@@ -773,7 +756,7 @@ enum zb_zcl_on_off_srv_cmd_e
 /*! @brief Electrical Measurement cluster client command identifiers
     @see ZCL spec, subclause 4.9.2.4.1
 */
-enum zb_zcl_on_off_cli_cmd_e
+enum zb_zcl_electrical_measurement_cli_cmd_e
 {
   /** Get Profile Info Command */
   ZB_ZCL_CMD_ELECTRICAL_MEASUREMENT_GET_PROFILE_INFO_COMMAND                 = 0x00,
@@ -792,7 +775,7 @@ enum zb_zcl_on_off_cli_cmd_e
   ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_MEASUREMENT_TYPE_ID,                                       \
     ZB_ZCL_ATTR_TYPE_32BITMAP,                                          \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                 \
-  (zb_voidp_t) data_ptr                                                                         \
+  (void*) data_ptr                                                                         \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_DCPOWER_ID(data_ptr) \
@@ -800,7 +783,7 @@ enum zb_zcl_on_off_cli_cmd_e
   ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_DCPOWER_ID,                                       \
   ZB_ZCL_ATTR_TYPE_S16,                                                                \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_REPORTING,                         \
-  (zb_voidp_t) data_ptr                                                                \
+  (void*) data_ptr                                                                \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMSVOLTAGE_ID(data_ptr) \
@@ -808,7 +791,7 @@ enum zb_zcl_on_off_cli_cmd_e
   ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMSVOLTAGE_ID,                                       \
   ZB_ZCL_ATTR_TYPE_U16,                                                                   \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_REPORTING,                            \
-  (zb_voidp_t) data_ptr                                                                   \
+  (void*) data_ptr                                                                   \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMSCURRENT_ID(data_ptr) \
@@ -816,7 +799,7 @@ enum zb_zcl_on_off_cli_cmd_e
   ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMSCURRENT_ID,                                       \
   ZB_ZCL_ATTR_TYPE_U16,                                                                   \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_REPORTING,                            \
-  (zb_voidp_t) data_ptr                                                                   \
+  (void*) data_ptr                                                                   \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_ID(data_ptr)     \
@@ -824,7 +807,7 @@ enum zb_zcl_on_off_cli_cmd_e
   ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_ID,                                           \
   ZB_ZCL_ATTR_TYPE_S16,                                                                         \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_REPORTING,                                  \
-  (zb_voidp_t) data_ptr                                                                         \
+  (void*) data_ptr                                                                         \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_POWER_FACTOR_ID(data_ptr)     \
@@ -832,7 +815,7 @@ enum zb_zcl_on_off_cli_cmd_e
   ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_POWER_FACTOR_ID,                                           \
   ZB_ZCL_ATTR_TYPE_S8,                                                                          \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_REPORTING,                                  \
-  (zb_voidp_t) data_ptr                                                                         \
+  (void*) data_ptr                                                                         \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACPOWER_MULTIPLIER_ID(data_ptr) \
@@ -840,7 +823,7 @@ enum zb_zcl_on_off_cli_cmd_e
   ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACPOWER_MULTIPLIER_ID,                                       \
   ZB_ZCL_ATTR_TYPE_U16,                                                                           \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                   \
-  (zb_voidp_t) data_ptr                                                                           \
+  (void*) data_ptr                                                                           \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACPOWER_DIVISOR_ID(data_ptr) \
@@ -848,7 +831,7 @@ enum zb_zcl_on_off_cli_cmd_e
   ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACPOWER_DIVISOR_ID,                                       \
   ZB_ZCL_ATTR_TYPE_U16,                                                                        \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                \
-  (zb_voidp_t) data_ptr                                                                        \
+  (void*) data_ptr                                                                        \
 }
 
 /*!
@@ -866,13 +849,58 @@ enum zb_zcl_on_off_cli_cmd_e
   ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_DCPOWER_ID, (dcpower))                   \
   ZB_ZCL_FINISH_DECLARE_ATTRIB_LIST
 
-/*! 
+/*!
     @cond internals_doc
   @{
-  @internal Number of attributes mandatory for reporting in Electrical Measurement cluster 
+  @internal Number of attributes mandatory for reporting in Electrical Measurement cluster
 */
 #define ZB_ZCL_ELECTRICAL_MEASUREMENT_REPORT_ATTR_COUNT 2
 
+#define ZB_ZCL_ELECTRICAL_MEASUREMENT_SEND_GET_PROFILE_INFO_RESP(                                 \
+  buffer, addr, dst_addr_mode, dst_ep, ep, prfl_id, def_resp, cb,                                 \
+  profile_count, profile_interval_period, max_number_of_intervals,                                \
+  list_of_attributes, list_of_attributes_size)                                                    \
+{                                                                                                 \
+  zb_uint8_t ind;                                                                                 \
+  zb_uint8_t* ptr = ZB_ZCL_START_PACKET(buffer);                                                  \
+  ZB_ZCL_CONSTRUCT_SPECIFIC_COMMAND_RES_FRAME_CONTROL(ptr);                                       \
+  ZB_ZCL_CONSTRUCT_COMMAND_HEADER(ptr, ZB_ZCL_GET_SEQ_NUM(),                                      \
+    ZB_ZCL_CMD_ELECTRICAL_MEASUREMENT_GET_PROFILE_INFO_RESPONSE_COMMAND);                         \
+  ZB_ZCL_PACKET_PUT_DATA8(ptr, (profile_count));                                                  \
+  ZB_ZCL_PACKET_PUT_DATA8(ptr, (profile_interval_period));                                        \
+  ZB_ZCL_PACKET_PUT_DATA8(ptr, (max_number_of_intervals));                                        \
+  for (ind=0; ind < list_of_attributes_size; ind++)                                               \
+  {                                                                                               \
+    ZB_ZCL_PACKET_PUT_DATA16_VAL(ptr, (list_of_attributes[ind]));                                 \
+  }                                                                                               \
+  ZB_ZCL_FINISH_PACKET((buffer), ptr)                                                             \
+  ZB_ZCL_SEND_COMMAND_SHORT(buffer, addr, dst_addr_mode, dst_ep, ep,                              \
+    prfl_id, ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT, cb);                                       \
+}
+
+#define ZB_ZCL_ELECTRICAL_MEASUREMENT_SEND_GET_MEASUREMENT_PROFILE_INFO_RESP(                     \
+  buffer, addr, dst_addr_mode, dst_ep, ep, prfl_id, def_resp, cb,                                 \
+  start_time, status, profile_interval_period, number_of_intervals_delivered, attr_id,            \
+  list_of_intervals)                                                                              \
+{                                                                                                 \
+  zb_uint8_t ind;                                                                                 \
+  zb_uint8_t* ptr = ZB_ZCL_START_PACKET(buffer)                                                   \
+  ZB_ZCL_CONSTRUCT_SPECIFIC_COMMAND_RES_FRAME_CONTROL(ptr, def_resp)                              \
+  ZB_ZCL_CONSTRUCT_COMMAND_HEADER(ptr, ZB_ZCL_GET_SEQ_NUM(),                                      \
+    ZB_ZCL_CMD_ELECTRICAL_MEASUREMENT_GET_MEASUREMENT_PROFILE_RESPONSE_COMMAND);                  \
+  ZB_ZCL_PACKET_PUT_DATA32_VAL(ptr, (start_time));                                                \
+  ZB_ZCL_PACKET_PUT_DATA8(ptr, (status));                                                         \
+  ZB_ZCL_PACKET_PUT_DATA8(ptr, (profile_interval_period));                                        \
+  ZB_ZCL_PACKET_PUT_DATA8(ptr, (number_of_intervals_delivered));                                  \
+  ZB_ZCL_PACKET_PUT_DATA16_VAL(ptr, (attr_id));                                                   \
+  for (ind=0; ind < number_of_intervals_delivered; ind++)                                         \
+  {                                                                                               \
+                                                                                                  \
+  }                                                                                               \
+  ZB_ZCL_FINISH_PACKET(buffer, ptr)                                                               \
+  ZB_ZCL_SEND_COMMAND_SHORT(buffer, addr, dst_addr_mode, dst_ep, ep,                              \
+    prfl_id, ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT, cb);                                       \
+}
 /*! @}
     @endcond */ /* Electrical Measurement cluster internals */
 
@@ -886,4 +914,4 @@ void zb_zcl_el_measurement_init_client(void);
 #define ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT_SERVER_ROLE_INIT zb_zcl_el_measurement_init_server
 #define ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT_CLIENT_ROLE_INIT zb_zcl_el_measurement_init_client
 
-#endif /* ! defined ZB_ZCL_ELECTRICAL_MEASUREMENT_H */
+#endif /* ZB_ZCL_ELECTRICAL_MEASUREMENT_H */

@@ -1,46 +1,29 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: Binary Input cluster
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: Binary Input cluster
 */
 
-#if !defined ZB_ZCL_BINARY_INPUT_H
-#define ZB_ZCL_BINARY_INPUT_H
+#ifndef ZB_ZCL_BINARY_INPUT_H
+#define ZB_ZCL_BINARY_INPUT_H 1
 
 #include "zcl/zb_zcl_common.h"
 #include "zcl/zb_zcl_commands.h"
@@ -122,7 +105,7 @@ enum zb_zcl_binary_input_status_flag_value_e
   ZB_ZCL_BINARY_INPUT_STATUS_FLAG_NORMAL    = 0x00,       /**< Normal (default) state. */
   ZB_ZCL_BINARY_INPUT_STATUS_FLAG_IN_ALARM  = 0x01,       /**< In alarm bit. */
   ZB_ZCL_BINARY_INPUT_STATUS_FLAG_FAULT     = 0x02,       /**< Fault bit. */
-  ZB_ZCL_BINARY_INPUT_STATUS_FLAG_OVERRIDEN = 0x04,       /**< Overriden bit. */
+  ZB_ZCL_BINARY_INPUT_STATUS_FLAG_OVERRIDEN = 0x04,       /**< Overridden bit. */
   ZB_ZCL_BINARY_INPUT_STATUS_FLAG_OUT_OF_SERVICE = 0x08,  /**< Out of service bit. */
 };
 
@@ -220,7 +203,7 @@ enum zb_zcl_binary_input_status_flag_value_e
   }                                                                                         \
 }
 
-/** @brief Set overriden operating mode
+/** @brief Set overridden operating mode
    @param ep - endpoint number
 */
 #define ZB_ZCL_BINARY_INPUT_SET_OVERRIDEN_MODE(ep)                                     \
@@ -255,7 +238,7 @@ enum zb_zcl_binary_input_status_flag_value_e
   ZB_ZCL_ATTR_BINARY_INPUT_OUT_OF_SERVICE_ID,                       \
   ZB_ZCL_ATTR_TYPE_BOOL,                                            \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_WRITE_OPTIONAL, \
-  (zb_voidp_t) data_ptr                                             \
+  (void*) data_ptr                                             \
 }
 
 /* Optionally, access to this attribute may be changed to READ_WRITE */
@@ -264,7 +247,7 @@ enum zb_zcl_binary_input_status_flag_value_e
   ZB_ZCL_ATTR_BINARY_INPUT_PRESENT_VALUE_ID,                        \
   ZB_ZCL_ATTR_TYPE_BOOL,                                            \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_WRITE_OPTIONAL | ZB_ZCL_ATTR_ACCESS_REPORTING, \
-  (zb_voidp_t) data_ptr                                             \
+  (void*) data_ptr                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_BINARY_INPUT_STATUS_FLAG_ID(data_ptr) \
@@ -272,7 +255,7 @@ enum zb_zcl_binary_input_status_flag_value_e
   ZB_ZCL_ATTR_BINARY_INPUT_STATUS_FLAG_ID,                          \
   ZB_ZCL_ATTR_TYPE_8BITMAP,                                         \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_REPORTING,      \
-  (zb_voidp_t) data_ptr                                             \
+  (void*) data_ptr                                             \
 }
 
 /*! Number of attributes mandatory for reporting in Binary Input cluster */
@@ -286,8 +269,8 @@ enum zb_zcl_binary_input_status_flag_value_e
 
 /** @endcond */ /* DOXYGEN_ZCL_SECTION */
 
-zb_void_t zb_zcl_binary_input_init_server(void);
-zb_void_t zb_zcl_binary_input_init_client(void);
+void zb_zcl_binary_input_init_server(void);
+void zb_zcl_binary_input_init_client(void);
 #define ZB_ZCL_CLUSTER_ID_BINARY_INPUT_SERVER_ROLE_INIT zb_zcl_binary_input_init_server
 #define ZB_ZCL_CLUSTER_ID_BINARY_INPUT_CLIENT_ROLE_INIT zb_zcl_binary_input_init_client
 

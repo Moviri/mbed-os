@@ -1,46 +1,29 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: Color control cluster definitions
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: Color control cluster definitions
 */
 
-#if !defined ZB_ZCL_COLOR_CONTROL_H
-#define ZB_ZCL_COLOR_CONTROL_H
+#ifndef ZB_ZCL_COLOR_CONTROL_H
+#define ZB_ZCL_COLOR_CONTROL_H 1
 
 #include "zcl/zb_zcl_common.h"
 #include "zcl/zb_zcl_commands.h"
@@ -547,7 +530,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_CURRENT_HUE_ID,                                         \
   ZB_ZCL_ATTR_TYPE_U8,                                                              \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_REPORTING,                      \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_CURRENT_SATURATION_ID(data_ptr)    \
@@ -555,7 +538,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_CURRENT_SATURATION_ID,                                          \
   ZB_ZCL_ATTR_TYPE_U8,                                                                      \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_REPORTING | ZB_ZCL_ATTR_ACCESS_SCENE,   \
-  (zb_voidp_t) data_ptr                                                                     \
+  (void*) data_ptr                                                                     \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_REMAINING_TIME_ID(data_ptr) \
@@ -563,7 +546,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_REMAINING_TIME_ID,                                       \
   ZB_ZCL_ATTR_TYPE_U16,                                                              \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                      \
-  (zb_voidp_t) data_ptr                                                              \
+  (void*) data_ptr                                                              \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_CURRENT_X_ID(data_ptr)           \
@@ -571,7 +554,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_CURRENT_X_ID,                                                 \
   ZB_ZCL_ATTR_TYPE_U16,                                                                   \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_REPORTING | ZB_ZCL_ATTR_ACCESS_SCENE, \
-  (zb_voidp_t) data_ptr                                                                   \
+  (void*) data_ptr                                                                   \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_CURRENT_Y_ID(data_ptr)           \
@@ -579,7 +562,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_CURRENT_Y_ID,                                                 \
   ZB_ZCL_ATTR_TYPE_U16,                                                                   \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_REPORTING | ZB_ZCL_ATTR_ACCESS_SCENE, \
-  (zb_voidp_t) data_ptr                                                                   \
+  (void*) data_ptr                                                                   \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_DRIFT_COMPENSATION_ID(data_ptr)  \
@@ -587,7 +570,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_DRIFT_COMPENSATION_ID,                                        \
   ZB_ZCL_ATTR_TYPE_8BIT_ENUM,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                           \
-  (zb_voidp_t) data_ptr                                                                   \
+  (void*) data_ptr                                                                   \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_COMPENSATION_TEXT_ID(data_ptr)   \
@@ -595,7 +578,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_COMPENSATION_TEXT_ID,                                         \
   ZB_ZCL_ATTR_TYPE_CHAR_STRING,                                                           \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                           \
-  (zb_voidp_t) data_ptr                                                                   \
+  (void*) data_ptr                                                                   \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_COLOR_TEMPERATURE_ID(data_ptr)   \
@@ -603,7 +586,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_COLOR_TEMPERATURE_ID,                                         \
   ZB_ZCL_ATTR_TYPE_U16,                                                                   \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_REPORTING | ZB_ZCL_ATTR_ACCESS_SCENE, \
-  (zb_voidp_t) data_ptr                                                                   \
+  (void*) data_ptr                                                                   \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_COLOR_MODE_ID(data_ptr)    \
@@ -611,7 +594,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_COLOR_MODE_ID,                                          \
   ZB_ZCL_ATTR_TYPE_8BIT_ENUM,                                                       \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_OPTIONS_ID(data_ptr)       \
@@ -619,7 +602,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_OPTIONS_ID,                                             \
   ZB_ZCL_ATTR_TYPE_8BITMAP,                                                         \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                                                    \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_ENHANCED_CURRENT_HUE_ID(data_ptr)  \
@@ -627,7 +610,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_ENHANCED_CURRENT_HUE_ID,                                \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_SCENE,                          \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_ENHANCED_COLOR_MODE_ID(data_ptr)  \
@@ -635,7 +618,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_ENHANCED_COLOR_MODE_ID,                                 \
   ZB_ZCL_ATTR_TYPE_8BIT_ENUM,                                                       \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_COLOR_LOOP_ACTIVE_ID(data_ptr)  \
@@ -643,7 +626,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_COLOR_LOOP_ACTIVE_ID,                                   \
   ZB_ZCL_ATTR_TYPE_U8,                                                              \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_SCENE,                          \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_COLOR_LOOP_DIRECTION_ID(data_ptr)  \
@@ -651,7 +634,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_COLOR_LOOP_DIRECTION_ID,                                \
   ZB_ZCL_ATTR_TYPE_U8,                                                              \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_SCENE,                          \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_COLOR_LOOP_TIME_ID(data_ptr)  \
@@ -659,7 +642,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_COLOR_LOOP_TIME_ID,                                     \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_SCENE,                          \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_COLOR_LOOP_START_ENHANCED_HUE_ID(data_ptr)  \
@@ -667,7 +650,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_COLOR_LOOP_START_ENHANCED_HUE_ID,                       \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_COLOR_LOOP_STORED_ENHANCED_HUE_ID(data_ptr)  \
@@ -675,7 +658,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_COLOR_LOOP_STORED_ENHANCED_HUE_ID,                      \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_COLOR_CAPABILITIES_ID(data_ptr)  \
@@ -683,7 +666,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_COLOR_CAPABILITIES_ID,                                  \
   ZB_ZCL_ATTR_TYPE_16BITMAP,                                                        \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_COLOR_TEMP_PHYSICAL_MIN_MIREDS_ID(data_ptr)  \
@@ -691,7 +674,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_COLOR_TEMP_PHYSICAL_MIN_MIREDS_ID,                      \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_COLOR_TEMP_PHYSICAL_MAX_MIREDS_ID(data_ptr)  \
@@ -699,7 +682,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_COLOR_TEMP_PHYSICAL_MAX_MIREDS_ID,                      \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_COUPLE_COLOR_TEMP_TO_LEVEL_MIN_MIREDS_ID(data_ptr)  \
@@ -707,7 +690,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_COUPLE_COLOR_TEMP_TO_LEVEL_MIN_MIREDS_ID,               \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_START_UP_COLOR_TEMPERATURE_MIREDS_ID(data_ptr)  \
@@ -715,7 +698,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_START_UP_COLOR_TEMPERATURE_MIREDS_ID,                   \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                                                    \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_NUMBER_OF_PRIMARIES_ID(data_ptr) \
@@ -723,7 +706,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_NUMBER_OF_PRIMARIES_ID,                                 \
   ZB_ZCL_ATTR_TYPE_U8,                                                              \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_1_X_ID(data_ptr)   \
@@ -731,7 +714,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_1_X_ID,                                         \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_1_Y_ID(data_ptr)   \
@@ -739,7 +722,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_1_Y_ID,                                         \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_1_INTENSITY_ID(data_ptr) \
@@ -747,7 +730,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_1_INTENSITY_ID,                                 \
   ZB_ZCL_ATTR_TYPE_U8,                                                              \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_2_X_ID(data_ptr)   \
@@ -755,7 +738,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_2_X_ID,                                         \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_2_Y_ID(data_ptr)   \
@@ -763,7 +746,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_2_Y_ID,                                         \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_2_INTENSITY_ID(data_ptr) \
@@ -771,7 +754,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_2_INTENSITY_ID,                                 \
   ZB_ZCL_ATTR_TYPE_U8,                                                              \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_3_X_ID(data_ptr)   \
@@ -779,7 +762,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_3_X_ID,                                         \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_3_Y_ID(data_ptr)   \
@@ -787,7 +770,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_3_Y_ID,                                         \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_3_INTENSITY_ID(data_ptr) \
@@ -795,7 +778,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_3_INTENSITY_ID,                                 \
   ZB_ZCL_ATTR_TYPE_U8,                                                              \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_4_X_ID(data_ptr)   \
@@ -803,7 +786,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_4_X_ID,                                         \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_4_Y_ID(data_ptr)   \
@@ -811,7 +794,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_4_Y_ID,                                         \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_4_INTENSITY_ID(data_ptr) \
@@ -819,7 +802,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_4_INTENSITY_ID,                                 \
   ZB_ZCL_ATTR_TYPE_U8,                                                              \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_5_X_ID(data_ptr)   \
@@ -827,7 +810,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_5_X_ID,                                         \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_5_Y_ID(data_ptr)   \
@@ -835,7 +818,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_5_Y_ID,                                         \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_5_INTENSITY_ID(data_ptr) \
@@ -843,7 +826,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_5_INTENSITY_ID,                                 \
   ZB_ZCL_ATTR_TYPE_U8,                                                              \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_6_X_ID(data_ptr)   \
@@ -851,7 +834,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_6_X_ID,                                         \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_6_Y_ID(data_ptr)   \
@@ -859,7 +842,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_6_Y_ID,                                         \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_6_INTENSITY_ID(data_ptr) \
@@ -867,7 +850,7 @@ enum zb_zcl_color_control_color_capabilities_e
   ZB_ZCL_ATTR_COLOR_CONTROL_PRIMARY_6_INTENSITY_ID,                                 \
   ZB_ZCL_ATTR_TYPE_U8,                                                              \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 /** @internal Structure of Move variables for Move alarm
@@ -1120,7 +1103,7 @@ enum zb_zcl_color_control_step_mode_e
 
 /* command request structure */
 
-/*! @brief Structured representsation of Level Control command payload (optional part)
+/*! @brief Structured representation of Level Control command payload (optional part)
     @see ZCL spec, subclause 3.10.2.3.1.1*/
 typedef ZB_PACKED_PRE struct zb_zcl_color_control_req_options_s
 {
@@ -1141,7 +1124,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_req_options_s
   (req_options_ptr) = zb_buf_len(data_buf) >=                               \
     ZB_ZCL_COLOR_CONTROL_REQ_OPTIONS_PAYLOAD_LEN ?                          \
     (zb_zcl_color_control_req_options_t*)zb_buf_begin(data_buf) : NULL;     \
-  if (req_options_ptr)                                                      \
+  if (req_options_ptr != NULL)                                              \
   {                                                                         \
     req_options.options_mask = req_options_ptr->options_mask;               \
     req_options.options_override = req_options_ptr->options_override;       \
@@ -1170,7 +1153,7 @@ enum zb_zcl_color_control_move_to_hue_direction_e
   ZB_ZCL_CMD_COLOR_CONTROL_MOVE_TO_HUE_DOWN     = 0x03
 };
 
-/*! @brief Structure representsation of Move To Hue command payload
+/*! @brief Structure representation of Move To Hue command payload
     @see ZCL spec, subclause 5.2.2.3.2 */
 typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_to_hue_req_s
 {
@@ -1226,7 +1209,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_to_hue_req_s
   (move_to_hue_req_ptr) = zb_buf_len(buffer) >=                                              \
     ZB_ZCL_COLOR_CONTROL_MOVE_TO_HUE_REQ_PAYLOAD_LEN ?                                       \
     (zb_zcl_color_control_move_to_hue_req_t*)zb_buf_begin(buffer) : NULL;                    \
-  if (move_to_hue_req_ptr)                                                                   \
+  if (move_to_hue_req_ptr != NULL)                                                           \
   {                                                                                 \
     move_to_hue_req.hue = move_to_hue_req_ptr->hue;                                          \
     move_to_hue_req.direction = move_to_hue_req_ptr->direction;                              \
@@ -1241,7 +1224,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_to_hue_req_s
 }
 /******************************* MOVE_HUE ******************************/
 
-/*! @brief Structure representsation of Move Hue command payload
+/*! @brief Structure representation of Move Hue command payload
     @see ZCL spec, subclause 5.2.2.3.3 */
 typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_hue_req_s
 {
@@ -1293,8 +1276,8 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_hue_req_s
   (move_hue_req_ptr) = zb_buf_len(buffer) >=                                 \
     ZB_ZCL_COLOR_CONTROL_MOVE_HUE_REQ_PAYLOAD_LEN ?                          \
     (zb_zcl_color_control_move_hue_req_t*)zb_buf_begin(buffer) : NULL;       \
-  if (move_hue_req_ptr)                                                      \
-  {                                                                                 \
+  if (move_hue_req_ptr != NULL)                                              \
+  {                                                                          \
     move_hue_req.move_mode = move_hue_req_ptr->move_mode;                    \
     move_hue_req.rate = move_hue_req_ptr->rate;                              \
     (void)zb_buf_cut_left(buffer, ZB_ZCL_COLOR_CONTROL_MOVE_HUE_REQ_PAYLOAD_LEN);   \
@@ -1308,7 +1291,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_hue_req_s
 
 /******************************* STEP_HUE ******************************/
 
-/*! @brief Structure representsation of Step Hue command payload
+/*! @brief Structure representation of Step Hue command payload
     @see ZCL spec, subclause 5.2.2.3.4 */
 typedef ZB_PACKED_PRE struct zb_zcl_color_control_step_hue_req_s
 {
@@ -1323,7 +1306,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_step_hue_req_s
 /** @brief Step Hue payload length macro */
 #define ZB_ZCL_COLOR_CONTROL_STEP_HUE_REQ_PAYLOAD_LEN \
   sizeof(zb_zcl_color_control_step_hue_req_t)
-  
+
 /*! @brief Send Step Hue command
     @param buffer - to put packet to
     @param addr - address to send packet to
@@ -1359,28 +1342,28 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_step_hue_req_s
   * @param status - variable to put parse status to (see @ref zb_zcl_parse_status_t).
   */
 #define ZB_ZCL_COLOR_CONTROL_GET_STEP_HUE_REQ(buffer, step_hue_req, status)            \
-{                                                                                   \
+{                                                                                      \
   zb_zcl_color_control_step_hue_req_t *step_hue_req_ptr;                               \
   (step_hue_req_ptr) = zb_buf_len(buffer) >=                                           \
     ZB_ZCL_COLOR_CONTROL_STEP_HUE_REQ_PAYLOAD_LEN ?                                    \
-    (zb_zcl_color_control_step_hue_req_t*)zb_buf_begin(buffer) : NULL;                  \
-  if (step_hue_req_ptr)                                                                \
-  {                                                                                 \
+    (zb_zcl_color_control_step_hue_req_t*)zb_buf_begin(buffer) : NULL;                 \
+  if (step_hue_req_ptr != NULL)                                                        \
+  {                                                                                    \
     step_hue_req.step_mode = step_hue_req_ptr->step_mode;                              \
     step_hue_req.step_size = step_hue_req_ptr->step_size;                              \
-    ZB_HTOLE16(&(step_hue_req).transition_time, &(step_hue_req_ptr->transition_time)); \
+    step_hue_req.transition_time = step_hue_req_ptr->transition_time;                  \
     (void)zb_buf_cut_left(buffer, ZB_ZCL_COLOR_CONTROL_STEP_HUE_REQ_PAYLOAD_LEN);      \
     status = ZB_ZCL_PARSE_STATUS_SUCCESS;                                              \
-  }                                                                                 \
-  else                                                                              \
-  {                                                                                 \
+  }                                                                                    \
+  else                                                                                 \
+  {                                                                                    \
     status = ZB_ZCL_PARSE_STATUS_FAILURE;                                              \
-  }                                                                                 \
+  }                                                                                    \
 }
 
 /******************************* Move to Saturation ******************************/
 
-/*! @brief Structure representsation of Move To Saturation command payload
+/*! @brief Structure representation of Move To Saturation command payload
     @see ZCL spec, subclause 5.2.2.3.5 */
 typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_to_saturation_req_s
 {
@@ -1432,7 +1415,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_to_saturation_req_s
   (move_to_saturation_req_ptr) = zb_buf_len(buffer) >=                                                     \
     ZB_ZCL_COLOR_CONTROL_MOVE_TO_SATURATION_REQ_PAYLOAD_LEN ?                                              \
     (zb_zcl_color_control_move_to_saturation_req_t*)zb_buf_begin(buffer) : NULL;                           \
-  if (move_to_saturation_req_ptr)                                                                          \
+  if (move_to_saturation_req_ptr != NULL)                                            \
   {                                                                                  \
     move_to_saturation_req.saturation = move_to_saturation_req_ptr->saturation;                            \
     ZB_HTOLE16(&(move_to_saturation_req).transition_time, &(move_to_saturation_req_ptr->transition_time)); \
@@ -1446,7 +1429,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_to_saturation_req_s
 }
 /******************************* Move Saturation ******************************/
 
-/*! @brief Structure representsation of Move Saturation command payload
+/*! @brief Structure representation of Move Saturation command payload
     @see ZCL spec, subclause 5.2.2.3.6 */
 typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_saturation_req_s
 {
@@ -1459,7 +1442,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_saturation_req_s
 /** @brief Move Saturation payload length macro */
 #define ZB_ZCL_COLOR_CONTROL_MOVE_SATURATION_REQ_PAYLOAD_LEN \
   sizeof(zb_zcl_color_control_move_saturation_req_t)
-  
+
 /*! @brief Send Move Saturation command
     @param buffer - to put packet to
     @param addr - address to send packet to
@@ -1498,7 +1481,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_saturation_req_s
   (move_saturation_req_ptr) = zb_buf_len(buffer) >=                                       \
     ZB_ZCL_COLOR_CONTROL_MOVE_SATURATION_REQ_PAYLOAD_LEN ?                                \
     (zb_zcl_color_control_move_saturation_req_t*)zb_buf_begin(buffer) : NULL;             \
-  if (move_saturation_req_ptr)                                                            \
+  if (move_saturation_req_ptr != NULL)                                                    \
   {                                                                                 \
     move_saturation_req.move_mode = move_saturation_req_ptr->move_mode;                   \
     move_saturation_req.rate = move_saturation_req_ptr->rate;                             \
@@ -1513,7 +1496,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_saturation_req_s
 
 /******************************* STEP_SATURATION ******************************/
 
-/*! @brief Structure representsation of Step Saturation command payload
+/*! @brief Structure representation of Step Saturation command payload
     @see ZCL spec, subclause 5.2.2.3.7 */
 typedef ZB_PACKED_PRE struct zb_zcl_color_control_step_saturation_req_s
 {
@@ -1528,7 +1511,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_step_saturation_req_s
 /** @brief Move Saturation payload length macro */
 #define ZB_ZCL_COLOR_CONTROL_STEP_SATURATION_REQ_PAYLOAD_LEN \
   sizeof(zb_zcl_color_control_step_saturation_req_t)
-  
+
 /*! @brief Send Step Saturation command
     @param buffer - to put packet to
     @param addr - address to send packet to
@@ -1569,7 +1552,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_step_saturation_req_s
   (step_saturation_req_ptr) = zb_buf_len(buffer) >=                                       \
     ZB_ZCL_COLOR_CONTROL_STEP_SATURATION_REQ_PAYLOAD_LEN ?                                \
     (zb_zcl_color_control_step_saturation_req_t*)zb_buf_begin(buffer) : NULL;             \
-  if (step_saturation_req_ptr)                                                            \
+  if (step_saturation_req_ptr != NULL)                                                    \
   {                                                                                     \
     step_saturation_req.step_mode = step_saturation_req_ptr->step_mode;                   \
     step_saturation_req.step_size = step_saturation_req_ptr->step_size;                   \
@@ -1585,7 +1568,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_step_saturation_req_s
 
 /******************************* Move to Hue and Saturation ******************************/
 
-/*! @brief Structure representsation of Move To Hue and Saturation command payload
+/*! @brief Structure representation of Move To Hue and Saturation command payload
     @see ZCL spec, subclause 5.2.2.3.8 */
 typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_to_hue_saturation_req_s
 {
@@ -1641,7 +1624,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_to_hue_saturation_req_s
   (move_to_hue_saturation_req_ptr) = zb_buf_len(buffer) >=                                                         \
     ZB_ZCL_COLOR_CONTROL_MOVE_TO_HUE_SATURATION_REQ_PAYLOAD_LEN ?                                                  \
     (zb_zcl_color_control_move_to_hue_saturation_req_t*)zb_buf_begin(buffer) : NULL;                               \
-  if (move_to_hue_saturation_req_ptr)                                                                              \
+  if (move_to_hue_saturation_req_ptr != NULL)                                           \
   {                                                                                     \
     move_to_hue_saturation_req.hue = move_to_hue_saturation_req_ptr->hue;                                          \
     move_to_hue_saturation_req.saturation = move_to_hue_saturation_req_ptr->saturation;                            \
@@ -1657,7 +1640,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_to_hue_saturation_req_s
 
 /******************************* Move to Color ******************************/
 
-/*! @brief Structure representsation of Move To Color command payload
+/*! @brief Structure representation of Move To Color command payload
     @see ZCL spec, subclause 5.2.2.3.9 */
 typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_to_color_req_s
 {
@@ -1714,8 +1697,8 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_to_color_req_s
   (move_to_color_req_ptr) = zb_buf_len(buffer) >=                                                    \
     ZB_ZCL_COLOR_CONTROL_MOVE_TO_COLOR_REQ_PAYLOAD_LEN ?                                             \
     (zb_zcl_color_control_move_to_color_req_t*)zb_buf_begin(buffer) : NULL;                          \
-  if (move_to_color_req_ptr)                                                                         \
-  {                                                                                     \
+  if (move_to_color_req_ptr != NULL)                                                                 \
+  {                                                                                                  \
     ZB_HTOLE16(&(move_to_color_req).color_x, &(move_to_color_req_ptr->color_x));                     \
     ZB_HTOLE16(&(move_to_color_req).color_y, &(move_to_color_req_ptr->color_y));                     \
     ZB_HTOLE16(&(move_to_color_req).transition_time, &(move_to_color_req_ptr->transition_time));     \
@@ -1730,7 +1713,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_to_color_req_s
 
 /******************************* Move Color ******************************/
 
-/*! @brief Structure representsation of Move Color command payload
+/*! @brief Structure representation of Move Color command payload
     @see ZCL spec, subclause 5.2.2.3.10 */
 typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_color_req_s
 {
@@ -1782,8 +1765,8 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_color_req_s
   (move_color_req_ptr) = zb_buf_len(buffer) >=                                                       \
     ZB_ZCL_COLOR_CONTROL_MOVE_COLOR_REQ_PAYLOAD_LEN ?                                                \
     (zb_zcl_color_control_move_color_req_t*)zb_buf_begin(buffer) : NULL;                             \
-  if (move_color_req_ptr)                                                                            \
-  {                                                                             \
+  if (move_color_req_ptr != NULL)                                                                    \
+  {                                                                                                  \
     ZB_HTOLE16(&(move_color_req).rate_x, &(move_color_req_ptr->rate_x));                             \
     ZB_HTOLE16(&(move_color_req).rate_y, &(move_color_req_ptr->rate_y));                             \
     (void)zb_buf_cut_left(buffer, ZB_ZCL_COLOR_CONTROL_MOVE_COLOR_REQ_PAYLOAD_LEN);                  \
@@ -1797,7 +1780,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_color_req_s
 
 /******************************* Step Color ******************************/
 
-/*! @brief Structure representsation of Step Color command payload
+/*! @brief Structure representation of Step Color command payload
     @see ZCL spec, subclause 5.2.2.3.11 */
 typedef ZB_PACKED_PRE struct zb_zcl_color_control_step_color_req_s
 {
@@ -1852,8 +1835,8 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_step_color_req_s
   (step_color_req_ptr) = zb_buf_len(buffer) >=                                                       \
     ZB_ZCL_COLOR_CONTROL_STEP_COLOR_REQ_PAYLOAD_LEN ?                                                \
     (zb_zcl_color_control_step_color_req_t*)zb_buf_begin(buffer) : NULL;                             \
-  if (step_color_req_ptr)                                                                            \
-  {                                                                             \
+  if (step_color_req_ptr != NULL)                                                                    \
+  {                                                                                                  \
     ZB_HTOLE16(&(step_color_req).step_x, &(step_color_req_ptr->step_x));                             \
     ZB_HTOLE16(&(step_color_req).step_y, &(step_color_req_ptr->step_y));                             \
     ZB_HTOLE16(&(step_color_req).transition_time, &(step_color_req_ptr->transition_time));           \
@@ -1868,7 +1851,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_step_color_req_s
 
 /******************************* Move to Color Temperature ******************************/
 
-/*! @brief Structure representsation of Move To Color Temperature command payload
+/*! @brief Structure representation of Move To Color Temperature command payload
     @see ZCL spec, subclause 5.2.2.3.12 */
 typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_to_color_temperature_req_s
 {
@@ -1921,7 +1904,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_to_color_temperature_req_
   (move_to_color_temp_req_ptr) = zb_buf_len(buffer) >=                                                                \
     ZB_ZCL_COLOR_CONTROL_MOVE_TO_COLOR_TEMP_REQ_PAYLOAD_LEN ?                                                         \
     (zb_zcl_color_control_move_to_color_temperature_req_t*)zb_buf_begin(buffer) : NULL;                               \
-  if (move_to_color_temp_req_ptr)                                                                                     \
+  if (move_to_color_temp_req_ptr != NULL)                                                                             \
   {                                                                                                                   \
     ZB_HTOLE16(&(move_to_color_temperature_req).color_temperature, &(move_to_color_temp_req_ptr->color_temperature)); \
     ZB_HTOLE16(&(move_to_color_temperature_req).transition_time, &(move_to_color_temp_req_ptr->transition_time));     \
@@ -1936,7 +1919,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_to_color_temperature_req_
 
 /******************************* ENHANCED_MOVE_TO_HUE ******************************/
 
-/*! @brief Structure representsation of Enhanced Move To Hue command payload
+/*! @brief Structure representation of Enhanced Move To Hue command payload
     @see ZCL spec, subclause 5.2.2.3.14 */
 typedef ZB_PACKED_PRE struct zb_zcl_color_control_enhanced_move_to_hue_req_s
 {
@@ -1992,7 +1975,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_enhanced_move_to_hue_req_s
   (enhanced_move_to_hue_req_ptr) = zb_buf_len(buffer) >=                                                       \
     ZB_ZCL_COLOR_CONTROL_ENHANCED_MOVE_TO_HUE_REQ_PAYLOAD_LEN ?                                                \
     (zb_zcl_color_control_enhanced_move_to_hue_req_t*)zb_buf_begin(buffer) : NULL;                             \
-  if (enhanced_move_to_hue_req_ptr)                                                                            \
+  if (enhanced_move_to_hue_req_ptr != NULL)                                                                    \
   {                                                                                     \
     ZB_HTOLE16(&(enhanced_move_to_hue_req).enhanced_hue, &(enhanced_move_to_hue_req_ptr->enhanced_hue));       \
     enhanced_move_to_hue_req.direction = enhanced_move_to_hue_req_ptr->direction;                              \
@@ -2008,7 +1991,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_enhanced_move_to_hue_req_s
 
 /******************************* ENHANCED_MOVE_HUE ******************************/
 
-/*! @brief Structure representsation of Enhanced Move Hue command payload
+/*! @brief Structure representation of Enhanced Move Hue command payload
     @see ZCL spec, subclause 5.2.2.3.15 */
 typedef ZB_PACKED_PRE struct zb_zcl_color_control_enhanced_move_hue_req_s
 {
@@ -2060,7 +2043,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_enhanced_move_hue_req_s
   (enhanced_move_hue_req_ptr) = zb_buf_len(buffer) >=                                            \
     ZB_ZCL_COLOR_CONTROL_ENHANCED_MOVE_HUE_REQ_PAYLOAD_LEN ?                                     \
     (zb_zcl_color_control_enhanced_move_hue_req_t*)zb_buf_begin(buffer) : NULL;                  \
-  if (enhanced_move_hue_req_ptr)                                                                 \
+  if (enhanced_move_hue_req_ptr != NULL)                                                         \
   {                                                                                 \
     enhanced_move_hue_req.move_mode = enhanced_move_hue_req_ptr->move_mode;                      \
     ZB_HTOLE16(&(enhanced_move_hue_req).rate, &(enhanced_move_hue_req_ptr->rate));               \
@@ -2075,7 +2058,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_enhanced_move_hue_req_s
 
 /******************************* ENHANCED_STEP_HUE ******************************/
 
-/*! @brief Structure representsation of Enhanced Step Hue command payload
+/*! @brief Structure representation of Enhanced Step Hue command payload
     @see ZCL spec, subclause 5.2.2.3.16 */
 typedef ZB_PACKED_PRE struct zb_zcl_color_control_enhanced_step_hue_req_s
 {
@@ -2090,7 +2073,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_enhanced_step_hue_req_s
 /** @brief Enhanced Move to Hue payload length macro */
 #define ZB_ZCL_COLOR_CONTROL_ENHANCED_STEP_HUE_REQ_PAYLOAD_LEN \
   sizeof(zb_zcl_color_control_enhanced_step_hue_req_t)
-  
+
 /*! @brief Send Enhanced Step Hue command
     @param buffer - to put packet to
     @param addr - address to send packet to
@@ -2131,7 +2114,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_enhanced_step_hue_req_s
   (enhanced_step_hue_req_ptr) = zb_buf_len(buffer) >=                                                    \
     ZB_ZCL_COLOR_CONTROL_ENHANCED_STEP_HUE_REQ_PAYLOAD_LEN ?                                             \
     (zb_zcl_color_control_enhanced_step_hue_req_t*)zb_buf_begin(buffer) : NULL;                          \
-  if (enhanced_step_hue_req_ptr)                                                                         \
+  if (enhanced_step_hue_req_ptr != NULL)                                                                 \
   {                                                                                 \
     enhanced_step_hue_req.step_mode = enhanced_step_hue_req_ptr->step_mode;                              \
     ZB_HTOLE16(&(enhanced_step_hue_req).step_size, &(enhanced_step_hue_req_ptr->step_size));             \
@@ -2147,7 +2130,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_enhanced_step_hue_req_s
 
 /******************************* Enhanced Move to Hue and Saturation ******************************/
 
-/*! @brief Structure representsation of Move To Hue and Saturation command payload
+/*! @brief Structure representation of Move To Hue and Saturation command payload
     @see ZCL spec, subclause 5.2.2.3.17 */
 typedef ZB_PACKED_PRE struct zb_zcl_color_control_enhanced_move_to_hue_saturation_req_s
 {
@@ -2203,7 +2186,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_enhanced_move_to_hue_saturatio
   (enhanced_move_to_hue_saturation_req_ptr) = zb_buf_len(buffer) >=                                                                  \
     ZB_ZCL_COLOR_CONTROL_ENHANCED_MOVE_TO_HUE_SATURATION_REQ_PAYLOAD_LEN ?                                                           \
     (zb_zcl_color_control_enhanced_move_to_hue_saturation_req_t*)zb_buf_begin(buffer) : NULL;                                        \
-  if (enhanced_move_to_hue_saturation_req_ptr)                                                                                       \
+  if (enhanced_move_to_hue_saturation_req_ptr != NULL)                                                                               \
   {                                                                                                 \
     ZB_HTOLE16(&(enhanced_move_to_hue_saturation_req).enhanced_hue, &(enhanced_move_to_hue_saturation_req_ptr->enhanced_hue));       \
     enhanced_move_to_hue_saturation_req.saturation = enhanced_move_to_hue_saturation_req_ptr->saturation;                            \
@@ -2219,7 +2202,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_enhanced_move_to_hue_saturatio
 
 /******************************* Color Loop Set ******************************/
 
-/*! @brief Structure representsation of Color Loop Set command payload
+/*! @brief Structure representation of Color Loop Set command payload
     @see ZCL spec, subclause 5.2.2.3.18 */
 typedef ZB_PACKED_PRE struct zb_zcl_color_control_color_loop_set_req_s
 {
@@ -2238,7 +2221,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_color_loop_set_req_s
 /** @brief Enhanced Color Loop Set payload length macro */
 #define ZB_ZCL_COLOR_CONTROL_COLOR_LOOR_SET_REQ_PAYLOAD_LEN \
   sizeof(zb_zcl_color_control_color_loop_set_req_t)
-  
+
 /** @brief Update flag for Color Loop Set command
  *  See ZCL specs 5.2.2.3.18.1 */
 enum zb_zcl_color_control_color_loop_update_e
@@ -2339,8 +2322,8 @@ typedef struct zb_zcl_color_control_color_loop_set_s
   (color_loop_set_req_ptr) = zb_buf_len(buffer) >=                                       \
     ZB_ZCL_COLOR_CONTROL_COLOR_LOOR_SET_REQ_PAYLOAD_LEN ?                                \
     (zb_zcl_color_control_color_loop_set_req_t*)zb_buf_begin(buffer) : NULL;             \
-  if (color_loop_set_req_ptr)                                                            \
-  {                                                                                     \
+  if (color_loop_set_req_ptr != NULL)                                                    \
+  {                                                                                      \
     color_loop_set_req.update_flags = color_loop_set_req_ptr->update_flags;              \
     color_loop_set_req.action = color_loop_set_req_ptr->action;                          \
     color_loop_set_req.direction = color_loop_set_req_ptr->direction;                    \
@@ -2380,7 +2363,7 @@ typedef struct zb_zcl_color_control_color_loop_set_s
 
 /******************************* Move color temperature command ******************************/
 
-/*! @brief Structure representsation of Move color temperature command payload
+/*! @brief Structure representation of Move color temperature command payload
     @see ZCL spec, subclause 5.2.2.3.20 */
 typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_color_temp_req_s
 {
@@ -2397,7 +2380,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_color_temp_req_s
 /** @brief Enhanced Move Color Temperature payload length macro */
 #define ZB_ZCL_COLOR_CONTROL_MOVE_COLOR_TEMP_REQ_PAYLOAD_LEN \
   sizeof(zb_zcl_color_control_move_color_temp_req_t)
-  
+
 /*! @brief Send Move color temperature command
     @param buffer - to put packet to
     @param addr - address to send packet to
@@ -2440,7 +2423,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_color_temp_req_s
   (move_color_temp_req_ptr) = zb_buf_len(buffer) >=                                                \
     ZB_ZCL_COLOR_CONTROL_MOVE_COLOR_TEMP_REQ_PAYLOAD_LEN ?                                         \
     (zb_zcl_color_control_move_color_temp_req_t*)zb_buf_begin(buffer) : NULL;                      \
-  if (move_color_temp_req_ptr)                                                                     \
+  if (move_color_temp_req_ptr != NULL)                                                             \
   {                                                                                 \
     move_color_temp_req.move_mode = move_color_temp_req_ptr->move_mode;                            \
     ZB_HTOLE16(&(move_color_temp_req).rate, &(move_color_temp_req_ptr->rate));                     \
@@ -2457,7 +2440,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_move_color_temp_req_s
 
 /******************************* Step color temperature command ******************************/
 
-/*! @brief Structure representsation of Step color temperature command command payload
+/*! @brief Structure representation of Step color temperature command command payload
     @see ZCL spec, subclause 5.2.2.3.21 */
 typedef ZB_PACKED_PRE struct zb_zcl_color_control_step_color_temp_req_s
 {
@@ -2521,7 +2504,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_step_color_temp_req_s
   (move_color_temp_req_ptr) = zb_buf_len(buffer) >=                                                \
     ZB_ZCL_COLOR_CONTROL_MOVE_COLOR_TEMP_REQ_PAYLOAD_LEN ?                                         \
     (zb_zcl_color_control_move_color_temp_req_t*)zb_buf_begin(buffer) : NULL;                      \
-  if (move_color_temp_req_ptr)                                                                     \
+  if (move_color_temp_req_ptr != NULL)                                                             \
   {                                                                                 \
     move_color_temp_req.move_mode = move_color_temp_req_ptr->move_mode;                            \
     ZB_HTOLE16(&(move_color_temp_req).rate, &(move_color_temp_req_ptr->rate));                     \
@@ -2549,7 +2532,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_step_color_temp_req_s
   (step_color_temp_req_ptr) = zb_buf_len(buffer) >=                                                  \
     ZB_ZCL_COLOR_CONTROL_STEP_COLOR_TEMP_REQ_PAYLOAD_LEN ?                                           \
     (zb_zcl_color_control_step_color_temp_req_t*)zb_buf_begin(buffer) : NULL;                        \
-  if (step_color_temp_req_ptr)                                                                       \
+  if (step_color_temp_req_ptr != NULL)                                                               \
   {                                                                                                  \
     step_color_temp_req.step_mode = step_color_temp_req_ptr->step_mode;                              \
     ZB_HTOLE16(&(step_color_temp_req).step_size, &(step_color_temp_req_ptr->step_size));             \
@@ -2583,7 +2566,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_color_control_step_color_temp_req_s
     ZB_MILLISECONDS_TO_BEACON_INTERVAL(ZB_ZCL_COLOR_CONTROL_TIMER_INTERVAL)
 
 /**
- * @brief Struct for process one interation of move command for one attribute
+ * @brief Struct for process one iteration of move command for one attribute
  */
 typedef struct zb_zcl_color_control_loop_element_s
 {
@@ -2593,7 +2576,7 @@ typedef struct zb_zcl_color_control_loop_element_s
   zb_uint16_t attr_id;      /** Attribute ID */
   zb_int16_t value;         /** delta value */
   zb_bool_t is_continue;   /** If ZB_TRUE attribute when is already limit value, command
-                                continious from another limit. If ZB_FALSE attribute when
+                                contentious from another limit. If ZB_FALSE attribute when
                                 is already limit value, command stop */
   zb_uint16_t limit;        /** limit of attribute value */
 

@@ -1,42 +1,25 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- PURPOSE: Contexts for ZBOSS configurable memory
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/*  PURPOSE: Contexts for ZBOSS configurable memory
 */
 #ifndef ZB_MEM_CONFIG_CONTEXT_H
 #define ZB_MEM_CONFIG_CONTEXT_H 1
@@ -54,9 +37,9 @@
    recompiling ZBOSS libraries.
    If application does not configure storage parameters, default values will be used.
 
-   ZBOSS uses static memory allocation technic.
+   ZBOSS uses static memory allocation technique.
 
-   Initially (before introducing configurable memory) ZBOSS uses static arrays inside data structures and defines for arraps syzes.
+   Initially (before introducing configurable memory) ZBOSS used static arrays inside data structures and defines for array's sizes.
    Defines are fixed at ZBOSS compile time. @see zb_buf_pool_t.pool as an example.
 
    To be able to configure memory at compile time, ZBOSS changes static buffers to pointers (@see zb_buf_pool_t.pool again).
@@ -69,7 +52,7 @@
    When included form the kernel, ZB_CONFIG_DEFAULT_KERNEL_DEFINITION is defined, so all symbols are defined as weak.
    As a result, if application does not included any memory configuration includes,
    default buffers and its sizes (weak) are used.
-   If application includes one of zb_mem_config_xxx.h, it owerwrites weak symbols for buffers and its sizes.
+   If application includes one of zb_mem_config_xxx.h, it overwrites weak symbols for buffers and its sizes.
 
    Pointers assignment (like @ref zb_buf_pool_t.pool) and arrays syzes
    initialization are done at ZBOSS start time from @ref zb_init_configurable_mem().
@@ -88,14 +71,14 @@
   some data structures use 7 bits to address a buffer, so can have up to 127 buffers.
   Actually it is big enough because more than 48 are rarely used..
  */
-#if ZB_CONFIG_IOBUF_POOL_SIZE > 127
+#if ZB_CONFIG_IOBUF_POOL_SIZE > 127U
 #error ZB_CONFIG_IOBUF_POOL_SIZE must be <= 127
 #endif
 
 /**@brief Maximum buffer index.
  *        This macro is just an abbreviation for a corresponding macro in ZBOSS sources and its value must not be changed.
  */
-#define ZB_CONFIG_N_BUF_IDS (ZB_CONFIG_IOBUF_POOL_SIZE + 1)
+#define ZB_CONFIG_N_BUF_IDS (ZB_CONFIG_IOBUF_POOL_SIZE + 1U)
 
 /**
    @par
@@ -108,14 +91,14 @@
 */
 #define ZB_CONFIG_POST ZB_WEAK
 #define ZB_CONFIG_PRE ZB_WEAK_PRE ZB_ALIGNED_PRE
-#define ZB_CONFIG_USE_DEFAULTS 1
+#define ZB_CONFIG_USE_DEFAULTS 1U
 
 #else
 
 /* User's app. Just define global variables. */
 #define ZB_CONFIG_POST
 #define ZB_CONFIG_PRE ZB_ALIGNED_PRE
-#define ZB_CONFIG_USE_DEFAULTS 0
+#define ZB_CONFIG_USE_DEFAULTS 0U
 
 #endif
 
@@ -286,6 +269,11 @@ ZB_CONFIG_PRE zb_uint_t gc_addr_table_size ZB_CONFIG_POST = ZB_CONFIG_IEEE_ADDR_
 #ifdef ZB_ROUTER_ROLE
 ZB_CONFIG_PRE zb_uint8_t gc_passive_ack[ZB_NWK_BRR_TABLE_SIZE][((ZB_CONFIG_NEIGHBOR_TABLE_SIZE + 7) / 8)] ZB_CONFIG_POST = { 0 };
 #endif
+
+#ifdef ZB_ZCL_SUPPORT_CLUSTER_SUBGHZ
+ZB_CONFIG_PRE zb_address_ieee_ref_t gc_subghz_dev[ZB_CONFIG_NEIGHBOR_TABLE_SIZE] ZB_CONFIG_POST = { 0 };
+#endif
+
 ZB_CONFIG_PRE zb_neighbor_tbl_ent_t gc_neighbor[ZB_CONFIG_NEIGHBOR_TABLE_SIZE] ZB_CONFIG_POST = { 0 };
 ZB_CONFIG_PRE zb_uint_t gc_neighbor_table_size ZB_CONFIG_POST = ZB_CONFIG_NEIGHBOR_TABLE_SIZE;
 
@@ -304,6 +292,10 @@ ZB_CONFIG_PRE zb_uint8_t gc_nwk_max_source_routes ZB_CONFIG_POST = ZB_CONFIG_NWK
 /* ZB_APS_DUPS_TABLE_SIZE */
 ZB_CONFIG_PRE zb_aps_dup_tbl_ent_t gc_dups_table[ZB_CONFIG_APS_DUPS_TABLE_SIZE] ZB_CONFIG_POST = { 0 };
 ZB_CONFIG_PRE zb_uint_t gc_aps_dups_table_size ZB_CONFIG_POST = ZB_CONFIG_APS_DUPS_TABLE_SIZE;
+
+#if defined NCP_MODE && !defined NCP_MODE_HOST
+ZB_CONFIG_PRE zb_ncp_pending_calls_t gc_ncp_pending_calls[ZB_CONFIG_N_BUF_IDS] ZB_CONFIG_POST = { 0 };
+#endif
 
 #endif  /* ZB_CONFIGURABLE_MEM */
 

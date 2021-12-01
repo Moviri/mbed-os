@@ -1,46 +1,29 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: Power Configuration cluster defintions
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: Power Configuration cluster definitions
 */
 
-#if ! defined ZB_ZCL_POWER_CONFIG_H
-#define ZB_ZCL_POWER_CONFIG_H
+#ifndef ZB_ZCL_POWER_CONFIG_H
+#define ZB_ZCL_POWER_CONFIG_H 1
 
 #include "zcl/zb_zcl_common.h"
 #include "zcl/zb_zcl_commands.h"
@@ -57,7 +40,7 @@ PURPOSE: Power Configuration cluster defintions
  * @param attr_id - ID of attribute being written
  * @param new_value - pointer to new value of attribute
  */
-zb_void_t zb_zcl_power_config_write_attr_hook(zb_uint8_t endpoint, zb_uint16_t attr_id, zb_uint8_t *new_value);
+void zb_zcl_power_config_write_attr_hook(zb_uint8_t endpoint, zb_uint16_t attr_id, zb_uint8_t *new_value);
 
 /* Cluster ZB_ZCL_CLUSTER_ID_POWER_CONFIG */
 
@@ -147,7 +130,7 @@ enum zb_zcl_power_config_attr_e
   ZB_ZCL_ATTR_POWER_CONFIG_BATTERY2_PERCENTAGE_THRESHOLD3_ID     = 0x005d,
 
   ZB_ZCL_ATTR_POWER_CONFIG_BATTERY2_ALARM_STATE_ID               = 0x005e,
-  
+
   /*! @brief Battery Information 3 attribute set, ZCL spec 3.3.2.2.7 */
   ZB_ZCL_ATTR_POWER_CONFIG_BATTERY3_VOLTAGE_ID = 0x0060,
   ZB_ZCL_ATTR_POWER_CONFIG_BATTERY3_PERCENTAGE_REMAINING_ID  = 0x0061,
@@ -417,7 +400,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_MAINS_VOLTAGE_ID,                    \
   ZB_ZCL_ATTR_TYPE_U16,                                         \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                 \
-  (zb_voidp_t) data_ptr                                         \
+  (void*) data_ptr                                         \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_MAINS_FREQUENCY_ID(data_ptr) \
@@ -425,7 +408,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_MAINS_FREQUENCY_ID,                  \
   ZB_ZCL_ATTR_TYPE_U8,                                          \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                 \
-  (zb_voidp_t) data_ptr                                         \
+  (void*) data_ptr                                         \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_MAINS_ALARM_MASK_ID(data_ptr) \
@@ -433,7 +416,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_MAINS_ALARM_MASK_ID,         \
   ZB_ZCL_ATTR_TYPE_8BITMAP,                             \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                        \
-  (zb_voidp_t) data_ptr                                 \
+  (void*) data_ptr                                 \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_MAINS_VOLTAGE_MIN_THRESHOLD(data_ptr) \
@@ -441,7 +424,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_MAINS_VOLTAGE_MIN_THRESHOLD, \
   ZB_ZCL_ATTR_TYPE_U16,                                 \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                        \
-  (zb_voidp_t) data_ptr                                 \
+  (void*) data_ptr                                 \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_MAINS_VOLTAGE_MAX_THRESHOLD(data_ptr) \
@@ -449,7 +432,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_MAINS_VOLTAGE_MAX_THRESHOLD, \
   ZB_ZCL_ATTR_TYPE_U16,                                 \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                        \
-  (zb_voidp_t) data_ptr                                 \
+  (void*) data_ptr                                 \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_MAINS_DWELL_TRIP_POINT(data_ptr) \
@@ -457,7 +440,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_MAINS_DWELL_TRIP_POINT,      \
   ZB_ZCL_ATTR_TYPE_U16,                                 \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                        \
-  (zb_voidp_t) data_ptr                                 \
+  (void*) data_ptr                                 \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_VOLTAGE_ID(data_ptr, bat_num) \
@@ -465,7 +448,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_BATTERY##bat_num##_VOLTAGE_ID,       \
   ZB_ZCL_ATTR_TYPE_U8,                                          \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                 \
-  (zb_voidp_t) data_ptr                                         \
+  (void*) data_ptr                                         \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_SIZE_ID(data_ptr, bat_num) \
@@ -473,7 +456,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_BATTERY##bat_num##_SIZE_ID,  \
   ZB_ZCL_ATTR_TYPE_8BIT_ENUM,                           \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                        \
-  (zb_voidp_t) data_ptr                                 \
+  (void*) data_ptr                                 \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_QUANTITY_ID(data_ptr, bat_num) \
@@ -481,7 +464,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_BATTERY##bat_num##_QUANTITY_ID,  \
   ZB_ZCL_ATTR_TYPE_U8,                                  \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                        \
-  (zb_voidp_t) data_ptr                                 \
+  (void*) data_ptr                                 \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_RATED_VOLTAGE_ID(data_ptr, bat_num) \
@@ -489,7 +472,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_BATTERY##bat_num##_RATED_VOLTAGE_ID, \
   ZB_ZCL_ATTR_TYPE_U8,                                  \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                        \
-  (zb_voidp_t) data_ptr                                 \
+  (void*) data_ptr                                 \
 }
 
 /* DA: HA12 change */
@@ -498,7 +481,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_BATTERY##bat_num##_ALARM_MASK_ID,  \
   ZB_ZCL_ATTR_TYPE_8BITMAP,                             \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                        \
-  (zb_voidp_t) data_ptr                                 \
+  (void*) data_ptr                                 \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_VOLTAGE_MIN_THRESHOLD_ID(data_ptr, bat_num) \
@@ -506,7 +489,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_BATTERY##bat_num##_VOLTAGE_MIN_THRESHOLD_ID, \
   ZB_ZCL_ATTR_TYPE_U8,                                  \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                        \
-  (zb_voidp_t) data_ptr                                 \
+  (void*) data_ptr                                 \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_PERCENTAGE_REMAINING_ID(data_ptr, bat_num) \
@@ -514,7 +497,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_BATTERY##bat_num##_PERCENTAGE_REMAINING_ID,     \
   ZB_ZCL_ATTR_TYPE_U8,                                                     \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_REPORTING,             \
-  (zb_voidp_t) data_ptr                                                    \
+  (void*) data_ptr                                                    \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_VOLTAGE_THRESHOLD1_ID(data_ptr, bat_num) \
@@ -522,7 +505,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_BATTERY##bat_num##_VOLTAGE_THRESHOLD1_ID,  \
   ZB_ZCL_ATTR_TYPE_U8,                                          \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                                \
-  (zb_voidp_t) data_ptr                                         \
+  (void*) data_ptr                                         \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_VOLTAGE_THRESHOLD2_ID(data_ptr, bat_num) \
@@ -530,7 +513,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_BATTERY##bat_num##_VOLTAGE_THRESHOLD2_ID,  \
   ZB_ZCL_ATTR_TYPE_U8,                                          \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                                \
-  (zb_voidp_t) data_ptr                                         \
+  (void*) data_ptr                                         \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_VOLTAGE_THRESHOLD3_ID(data_ptr, bat_num) \
@@ -538,7 +521,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_BATTERY##bat_num##_VOLTAGE_THRESHOLD3_ID,  \
   ZB_ZCL_ATTR_TYPE_U8,                                          \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                                \
-  (zb_voidp_t) data_ptr                                         \
+  (void*) data_ptr                                         \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_PERCENTAGE_MIN_THRESHOLD_ID(data_ptr, bat_num) \
@@ -546,7 +529,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_BATTERY##bat_num##_PERCENTAGE_MIN_THRESHOLD_ID, \
   ZB_ZCL_ATTR_TYPE_U8,                                          \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                                \
-  (zb_voidp_t) data_ptr                                         \
+  (void*) data_ptr                                         \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_PERCENTAGE_THRESHOLD1_ID(data_ptr, bat_num) \
@@ -554,7 +537,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_BATTERY##bat_num##_PERCENTAGE_THRESHOLD1_ID, \
   ZB_ZCL_ATTR_TYPE_U8,                                          \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                                \
-  (zb_voidp_t) data_ptr                                         \
+  (void*) data_ptr                                         \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_PERCENTAGE_THRESHOLD2_ID(data_ptr, bat_num) \
@@ -562,7 +545,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_BATTERY##bat_num##_PERCENTAGE_THRESHOLD2_ID, \
   ZB_ZCL_ATTR_TYPE_U8,                                          \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                                \
-  (zb_voidp_t) data_ptr                                         \
+  (void*) data_ptr                                         \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_PERCENTAGE_THRESHOLD3_ID(data_ptr, bat_num) \
@@ -570,7 +553,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_BATTERY##bat_num##_PERCENTAGE_THRESHOLD3_ID, \
   ZB_ZCL_ATTR_TYPE_U8,                                          \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                                \
-  (zb_voidp_t) data_ptr                                         \
+  (void*) data_ptr                                         \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_ALARM_STATE_ID(data_ptr, bat_num) \
@@ -578,7 +561,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_ZCL_ATTR_POWER_CONFIG_BATTERY##bat_num##_ALARM_STATE_ID,       \
   ZB_ZCL_ATTR_TYPE_32BITMAP,                                    \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_REPORTING,  \
-  (zb_voidp_t) data_ptr                                         \
+  (void*) data_ptr                                         \
 }
 
 /*! @internal Number of attributes mandatory for reporting in Power
@@ -591,7 +574,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
                                                             * Alarm State 2 */
 /*! @internal Number of attributes mandatory for reporting in Power
  *  Configuration cluster for 3 Battery packs included */
-#define ZB_ZCL_POWER_CONFIG_BAT_PACK_3_REPORT_ATTR_COUNT 6 /* Voltage + Voltage 2 + Voltage 3 + 
+#define ZB_ZCL_POWER_CONFIG_BAT_PACK_3_REPORT_ATTR_COUNT 6 /* Voltage + Voltage 2 + Voltage 3 +
                                                             * Alarm State + Alarm State 2 + Alarm State 3*/
 
 /*! @internal Alarm Code for Power Configuration cluster */
@@ -611,15 +594,16 @@ enum zb_zcl_power_config_battery_alarm_state_e
     @param alarm_mask - pointer to variable to store BatteryAlarmMask attribute
     @param voltage_min_threshold - pointer to variable to store BatteryVoltageMinThreshold attribute
 */
-#define ZB_ZCL_DECLARE_POWER_CONFIG_ATTRIB_LIST(attr_list,                                  \
-    voltage, size, quantity, rated_voltage, alarm_mask, voltage_min_threshold)              \
-  ZB_ZCL_START_DECLARE_ATTRIB_LIST(attr_list)                                               \
-  ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_VOLTAGE_ID, (voltage))              \
-  ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_SIZE_ID, (size))                    \
-  ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_QUANTITY_ID, (quantity))            \
-  ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_RATED_VOLTAGE_ID, (rated_voltage))  \
-  ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_ALARM_MASK_ID, (alarm_mask ))       \
-  ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_VOLTAGE_MIN_THRESHOLD_ID, (voltage_min_threshold))  \
+#define ZB_ZCL_DECLARE_POWER_CONFIG_ATTRIB_LIST(attr_list,                                   \
+                                                voltage, size, quantity, rated_voltage,      \
+                                                alarm_mask, voltage_min_threshold)           \
+  ZB_ZCL_START_DECLARE_ATTRIB_LIST(attr_list)                                                \
+  ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_VOLTAGE_ID(voltage, ),             \
+  ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_SIZE_ID(size, ),                   \
+  ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_QUANTITY_ID(quantity, ),           \
+  ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_RATED_VOLTAGE_ID(rated_voltage, ), \
+  ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_ALARM_MASK_ID(alarm_mask, ),       \
+  ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_VOLTAGE_MIN_THRESHOLD_ID(voltage_min_threshold, ), \
   ZB_ZCL_FINISH_DECLARE_ATTRIB_LIST
 
 /** @cond internals_doc */
@@ -675,7 +659,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
   ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_PERCENTAGE_THRESHOLD1_ID(percent_threshold1, bat_num), \
   ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_PERCENTAGE_THRESHOLD2_ID(percent_threshold2, bat_num), \
   ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_PERCENTAGE_THRESHOLD3_ID(percent_threshold3, bat_num), \
-  ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_ALARM_STATE_ID(alarm_state, bat_num), \
+  ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_POWER_CONFIG_BATTERY_ALARM_STATE_ID(alarm_state, bat_num),
 /*! @}
  *  @endcond */ /* internals_doc */
 
@@ -704,7 +688,7 @@ enum zb_zcl_power_config_battery_alarm_state_e
     remaining, threshold1, threshold2, threshold3, min_threshold, percent_threshold1,       \
     percent_threshold2, percent_threshold3, alarm_state)                                    \
   ZB_ZCL_START_DECLARE_ATTRIB_LIST(attr_list)                                               \
-  ZB_ZCL_POWER_CONFIG_BATTERY_ATTRIB_LIST_EXT(,                                             \
+  ZB_ZCL_POWER_CONFIG_BATTERY_ATTRIB_LIST_EXT(bat_num,                                      \
     voltage, size, quantity, rated_voltage, alarm_mask, voltage_min_threshold,              \
     remaining, threshold1, threshold2, threshold3, min_threshold, percent_threshold1,       \
     percent_threshold2, percent_threshold3, alarm_state)                                    \
@@ -722,9 +706,9 @@ enum zb_zcl_power_config_battery_alarm_state_e
 
 /** @endcond */ /* DOXYGEN_ZCL_SECTION */
 
-zb_void_t zb_zcl_power_config_init_server(void);
-zb_void_t zb_zcl_power_config_init_client(void);
+void zb_zcl_power_config_init_server(void);
+void zb_zcl_power_config_init_client(void);
 #define ZB_ZCL_CLUSTER_ID_POWER_CONFIG_SERVER_ROLE_INIT zb_zcl_power_config_init_server
 #define ZB_ZCL_CLUSTER_ID_POWER_CONFIG_CLIENT_ROLE_INIT zb_zcl_power_config_init_client
 
-#endif /* ! defined ZB_ZCL_POWER_CONFIG_H */
+#endif /* ZB_ZCL_POWER_CONFIG_H */

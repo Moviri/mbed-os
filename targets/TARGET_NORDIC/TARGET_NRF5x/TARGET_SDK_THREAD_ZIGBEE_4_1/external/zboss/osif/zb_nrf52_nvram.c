@@ -1,42 +1,25 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
  * http://www.dsr-zboss.com
  * http://www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: Platform specific for NRF52 SoC.
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: Platform specific for NRF52 SoC.
 */
 
 #define ZB_TRACE_FILE_ID 64615
@@ -80,8 +63,9 @@ PURPOSE: Platform specific for NRF52 SoC.
 #error Define NVRAM_FLASH_START_OFFSET for the platform!
 #endif
 #define ZB_NVRAM_PAGE_SIZE                0x4000
-#define ZB_NVRAM_CONFIG_PAGE_SIZE         ZB_NVRAM_FLASH_PAGE_SIZE
+//#define ZB_NVRAM_CONFIG_PAGE_SIZE         ZB_NVRAM_FLASH_PAGE_SIZE
 #define ZB_NVRAM_PAGE_COUNT               2
+#define ZB_NVRAM_CONFIG_PAGE_SIZE         0x4000
 #define ZB_NVRAM_CONFIG_PAGE_COUNT        1
 #define ZB_NVRAM_FULL_SIZE                (ZB_NVRAM_PAGE_SIZE * ZB_NVRAM_PAGE_COUNT + ZB_NVRAM_CONFIG_PAGE_SIZE * ZB_NVRAM_CONFIG_PAGE_COUNT)
 #define ZB_NVRAM_PAGE_BASE_ADDRESS(num)   (ZB_NVRAM_FLASH_START_OFFSET + (ZB_NVRAM_PAGE_SIZE * (num)))
@@ -92,10 +76,10 @@ PURPOSE: Platform specific for NRF52 SoC.
 
 #else /* ZB_NVRAM_FLASH_AUTO_ADDRESS */
 
-#define ZB_NVRAM_PAGE_SIZE                (ZIGBEE_NVRAM_PAGE_SIZE)
-#define ZB_NVRAM_CONFIG_PAGE_SIZE         (ZIGBEE_NVRAM_CONFIG_PAGE_SIZE)
-#define ZB_NVRAM_PAGE_COUNT               (ZIGBEE_NVRAM_PAGE_COUNT)
-#define ZB_NVRAM_CONFIG_PAGE_COUNT        (ZIGBEE_NVRAM_CONFIG_PAGE_COUNT)
+#define ZB_NVRAM_PAGE_SIZE                ZIGBEE_NVRAM_PAGE_SIZE
+#define ZB_NVRAM_PAGE_COUNT               ZIGBEE_NVRAM_PAGE_COUNT
+#define ZB_NVRAM_CONFIG_PAGE_SIZE         ZIGBEE_NVRAM_CONFIG_PAGE_SIZE
+#define ZB_NVRAM_CONFIG_PAGE_COUNT        ZIGBEE_NVRAM_CONFIG_PAGE_COUNT
 #define ZB_NVRAM_FULL_SIZE                (ZB_NVRAM_PAGE_SIZE * ZB_NVRAM_PAGE_COUNT + ZB_NVRAM_CONFIG_PAGE_SIZE * ZB_NVRAM_CONFIG_PAGE_COUNT)
 #define ZB_NVRAM_PAGE_BASE_ADDRESS(num)   (flash_start_addr() + (ZB_NVRAM_PAGE_SIZE * (num)))
 
@@ -223,7 +207,7 @@ zb_ret_t zb_osif_nvram_read(zb_uint8_t page, zb_uint32_t pos, zb_uint8_t* buf, z
     return RET_PAGE_NOT_FOUND;
   }
 
-  if (pos + len >= ZB_NVRAM_PAGE_SIZE)
+  if (pos + len > ZB_NVRAM_PAGE_SIZE)
   {
     return RET_INVALID_PARAMETER;
   }
@@ -309,7 +293,7 @@ zb_ret_t zb_osif_nvram_do_write(zb_uint8_t page, zb_uint32_t pos, void* buf, zb_
     return RET_PAGE_NOT_FOUND;
   }
 
-  if (pos + len >= ZB_NVRAM_PAGE_SIZE)
+  if (pos + len > ZB_NVRAM_PAGE_SIZE)
   {
     return RET_INVALID_PARAMETER;
   }
@@ -389,19 +373,12 @@ zb_ret_t zb_osif_nvram_write(zb_uint8_t page, zb_uint32_t pos, void* buf, zb_uin
   return RET_OK;
 }
 
-
-zb_ret_t zb_osif_nvram_erase_async(zb_uint8_t page)
+zb_ret_t zb_osif_nvram_do_erase(zb_uint8_t page)
 {
   zb_uint32_t flash_addr = 0, i;
   zb_int_t ret = 0;
 
-  ZVUNUSED(ret);
-
-  if (page >= ZB_NVRAM_PAGE_COUNT)
-  {
-    return RET_PAGE_NOT_FOUND;
-  }
-  TRACE_MSG(TRACE_COMMON3, "zb_osif_nvram_erase_async page %hd", (FMT__H, page));
+  ZB_ASSERT(page < ZB_NVRAM_PAGE_COUNT);
 
   flash_addr = ZB_NVRAM_PAGE_BASE_ADDRESS(page);
 
@@ -432,8 +409,26 @@ zb_ret_t zb_osif_nvram_erase_async(zb_uint8_t page)
 
     flash_addr += ZB_NVRAM_FLASH_PAGE_SIZE;
   }
-  zb_osif_flash_erase_finished(page);
   return RET_OK;
+}
+
+zb_ret_t zb_osif_nvram_erase_async(zb_uint8_t page)
+{
+  zb_ret_t ret = RET_ERROR;
+
+  if (page >= ZB_NVRAM_PAGE_COUNT)
+  {
+    return RET_PAGE_NOT_FOUND;
+  }
+  TRACE_MSG(TRACE_COMMON3, "zb_osif_nvram_erase_async page %hd", (FMT__H, page));
+
+  ret = zb_osif_nvram_do_erase(page);
+
+  if (ret == RET_OK)
+  {
+    zb_osif_flash_erase_finished(page);
+  }
+  return ret;
 }
 
 void zb_osif_nvram_wait_for_last_op()
@@ -450,9 +445,6 @@ void zb_osif_nvram_flush()
   }
 }
 
-/**
-   Return ZB_TRUE if that write is a continuation of previous one.
- */
 static zb_bool_t zb_nvram_buffer_can_continue(zb_uint8_t page, zb_uint32_t pos)
 {
   return (zb_bool_t)(s_nvram_buf.offset == 0
@@ -494,7 +486,7 @@ static zb_uint_t zb_nvram_buffer_put(zb_uint8_t page, zb_uint32_t pos, void* buf
 #define ZB_OSIF_PRODUCTION_CONFIG_MAGIC             {0xE7, 0x37, 0xDD, 0xF6}
 #define ZB_OSIF_PRODUCTION_CONFIG_MAGIC_SIZE        4
 
-zb_bool_t zb_osif_production_configuration_check_presence(void)
+zb_bool_t zb_osif_prod_cfg_check_presence(void)
 {
   zb_ret_t   zb_err_code;
   zb_uint8_t hdr[] = ZB_OSIF_PRODUCTION_CONFIG_MAGIC;
@@ -512,7 +504,7 @@ zb_bool_t zb_osif_production_configuration_check_presence(void)
 }
 
 zb_ret_t
-zb_osif_production_configuration_read_header(zb_uint8_t *prod_cfg_hdr, zb_uint16_t hdr_len)
+zb_osif_prod_cfg_read_header(zb_uint8_t *prod_cfg_hdr, zb_uint16_t hdr_len)
 {
   zb_ret_t ret;
   ZVUNUSED(hdr_len);
@@ -525,7 +517,7 @@ zb_osif_production_configuration_read_header(zb_uint8_t *prod_cfg_hdr, zb_uint16
 }
 
 
-zb_ret_t zb_osif_production_configuration_read(zb_uint8_t *buffer, zb_uint16_t len, zb_uint16_t offset)
+zb_ret_t zb_osif_prod_cfg_read(zb_uint8_t *buffer, zb_uint16_t len, zb_uint16_t offset)
 {
   zb_ret_t zb_err_code;
   zb_err_code = zb_osif_addr_read(ZB_OSIF_PRODUCTION_CONFIG_BLOCK_ADDRESS + ZB_OSIF_PRODUCTION_CONFIG_MAGIC_SIZE + offset, len, buffer);

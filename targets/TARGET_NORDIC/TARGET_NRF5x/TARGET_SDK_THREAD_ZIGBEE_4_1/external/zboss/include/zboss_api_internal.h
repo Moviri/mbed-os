@@ -1,42 +1,25 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- PURPOSE: ZBOSS internal data structures required for configurable memory.
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/*  PURPOSE: ZBOSS internal data structures required for configurable memory.
 */
 
 #ifndef ZB_ZBOSS_API_INTERNAL_H
@@ -50,6 +33,9 @@
 #include "zb_debug.h"
 #include "zb_trace.h"
 #include "zb_pooled_list.h"
+
+#ifndef ZB_MINIMAL_CONTEXT
+
 #include "zb_address.h"
 
 /* Data structures moved from subsystem internal headers for configurable memory implementation. */
@@ -57,12 +43,12 @@
 /**
    Parameters for storing data in a pending queue
 
-   Moved there from MAC to be able to implement MAC indirect quete size configuration.
+   Moved there from MAC to be able to implement MAC indirect quote size configuration.
 */
 typedef struct zb_mac_pending_data_s
 {
   zb_addr_u dst_addr;         /**< Destination address */
-  zb_uint8_t      dst_addr_mode;    /**< Destination address mode @ref zb_addr_mode_t */
+  zb_uint8_t      dst_addr_mode;    /**< Destination address mode @ref address_modes */
   zb_uint8_t      pending_param;                 /**< Pointer to pending data */
 }
 zb_mac_pending_data_t;
@@ -82,29 +68,56 @@ typedef ZB_PACKED_PRE struct zb_aps_retrans_ent_s
 
   zb_bitfield_t aps_retries:4;  /*!< Number of attempts */
   zb_bitfield_t nwk_insecure:1; /*!< Flag 'Is NWK secure' */
-  zb_bitfield_t state:3;        /*!< \see zb_aps_retrans_ent_state_e */
+  zb_bitfield_t state:3;        /*!< @see @ref aps_retrans_ent_state */
 } ZB_PACKED_STRUCT zb_aps_retrans_ent_t;
 
+#endif /* !ZB_MINIMAL_CONTEXT */
 
 typedef ZB_PACKED_PRE struct zb_cb_q_ent_s
 {
-  zb_callback_t func_ptr;        /*!< function to call  */
+  union {
+    zb_callback_t func_ptr;
+    zb_callback2_t func2_ptr;
+  } u;                           /*!< function to call  */
   zb_uint16_t user_param;        /*!< user parameter */
   zb_uint8_t param;              /*!< parameter to pass to 'func'  */
 }
 ZB_PACKED_STRUCT
 zb_cb_q_ent_t;
 
+/**
+   Returns 'zb_cb_q_ent_t' members 'func_ptr' or 'func2_ptr' depending on whether the callback
+   takes one or two parameters.
+
+   @param ent - variable of type 'zb_cb_q_ent_t'
+   @param is2param - boolean value, ZB_TRUE if the callback takes two parameters, ZB_FALSE otherwise
+
+   @return 'func_ptr' or 'func2_ptr'
+ */
+#define ZB_CB_QENT_FPTR(ent, is2param) ((!(is2param)) ? (void*)((ent)->u.func_ptr) : (void*)((ent)->u.func2_ptr))
 
 typedef ZB_PACKED_PRE struct zb_delayed_buf_q_ent_s
 {
-  zb_callback_t func_ptr;        /*!< function to call  */
+  union {
+    zb_callback_t func_ptr;
+    zb_callback2_t func2_ptr;
+  } u;                           /*!< function to call  */
   zb_uint16_t   user_param;      /*!< user parameter */
   zb_bitfield_t buf_cnt:7;       /*!< number of buffers to allocate */
-  zb_bitfield_t is_2param:1;     /*!< whether this is a 2param calback */
+  zb_bitfield_t is_2param:1;     /*!< whether this is a 2param callback */
 }
 ZB_PACKED_STRUCT
 zb_delayed_buf_q_ent_t;
+
+/**
+   Returns 'zb_delayed_buf_q_ent_t' members 'func_ptr' or 'func2_ptr' depending on whether the callback
+   takes one or two parameters.
+
+   @param ent - variable of type 'zb_delayed_buf_q_ent_t'
+
+   @return 'func_ptr' or 'func2_ptr'
+ */
+#define ZB_DELAYED_BUF_QENT_FPTR(ent) (((ent)->is_2param == 0U) ? (void*)((ent)->u.func_ptr) : (void*)((ent)->u.func2_ptr))
 
 /**
    Delayed (scheduled to run after timeout) callbacks queue entry.
@@ -119,6 +132,7 @@ typedef ZB_PACKED_PRE struct zb_tm_q_ent_s
 ZB_PACKED_STRUCT
 zb_tm_q_ent_t;
 
+#ifndef ZB_MINIMAL_CONTEXT
 /**
    Installcode hash for TC
 
@@ -157,7 +171,7 @@ typedef ZB_PACKED_PRE struct zb_aps_device_key_pair_array_s
 typedef ZB_PACKED_PRE struct zb_nwk_routing_s /* do not pack for IAR */
 {
   zb_bitfield_t used:1; /*!< 1 if entry is used, 0 - otherwise */
-  zb_bitfield_t status:2; /*!< The status of the route, @see zb_nwk_route_state_t */
+  zb_bitfield_t status:2; /*!< The status of the route, see @ref nwk_route_state */
 #ifndef ZB_LITE_NO_SOURCE_ROUTING
   zb_bitfield_t no_route_cache:1;        /*!< Dest does not store source routes. */
   zb_bitfield_t many_to_one:1;           /*!< Dest is the concentrator and many-to-one
@@ -169,13 +183,13 @@ typedef ZB_PACKED_PRE struct zb_nwk_routing_s /* do not pack for IAR */
 #ifndef ZB_NO_NWK_MULTICAST
   zb_bitfield_t group_id_flag:1; /*!< Indicates that dest_addr is a Group ID */
 #endif
-#if ZB_NWK_ROUTING_TABLE_EXPIRY < 64
+#if ZB_NWK_ROUTING_TABLE_EXPIRY < 64U
   zb_bitfield_t expiry:6;  /*!< expiration time. max value -
                             * ZB_NWK_ROUTING_TABLE_EXPIRY (60) */
 #else
   zb_uint8_t expiry;
 #endif
-#if !defined ZB_CONFIGURABLE_MEM && ZB_IEEE_ADDR_TABLE_SIZE <= 127
+#if !defined ZB_CONFIGURABLE_MEM && ZB_IEEE_ADDR_TABLE_SIZE <= 127U
   zb_bitfield_t next_hop_addr_ref:7;
 #else
   zb_uint8_t next_hop_addr_ref; /*!< ref to network address of the next
@@ -204,7 +218,7 @@ typedef ZB_PACKED_PRE struct zb_aps_dup_tbl_ent_s
 {
   zb_uint8_t addr_ref;          /*!< Reference to addr_map */
   zb_uint8_t counter;                      /*!< APS frame counter */
-  zb_bitfield_t clock:7;                   /*!< Expiry clock counter */
+  zb_bitfield_t clock:7;                   /*!< Expiry clock counter. Be sure it can hold 2*ZB_APS_DUP_INITIAL_CLOCK */
   zb_bitfield_t is_unicast:1;              /*!< Is delivery mode unicast */
 } ZB_PACKED_STRUCT zb_aps_dup_tbl_ent_t;
 
@@ -229,10 +243,10 @@ typedef ZB_PACKED_PRE struct zb_aps_bind_long_dst_addr_s
 } ZB_PACKED_STRUCT zb_aps_bind_long_dst_addr_t;
 
 #ifndef ZB_CONFIGURABLE_MEM
-#define ZB_APS_BIND_TRANS_TABLE_SIZE ((ZB_IOBUF_POOL_SIZE + 15)/16 *4)
+#define ZB_APS_BIND_TRANS_TABLE_SIZE ((ZB_IOBUF_POOL_SIZE + 15U)/16U *4U)
 
 /* it should be 4-byte aligned if it is stored in NVRAM */
-#define ZB_SINGLE_TRANS_INDEX_SIZE (((ZB_APS_BIND_TRANS_TABLE_SIZE + 31) / 32) * 4)
+#define ZB_SINGLE_TRANS_INDEX_SIZE (((ZB_APS_BIND_TRANS_TABLE_SIZE + 31U) / 32U) * 4U)
 #endif
 
 /**
@@ -254,12 +268,17 @@ typedef ZB_PACKED_PRE struct zb_aps_bind_dst_table_s
 #ifndef ZB_CONFIGURABLE_MEM
   zb_uint8_t            trans_index[ZB_SINGLE_TRANS_INDEX_SIZE];
 #endif /* defined ZB_CONFIGURABLE_MEM */
-  zb_uint8_t            align;
 
-  zb_bitfield_t         dst_addr_mode:3;   /*!< destination address mode flag, 0
-                                            * - group address, otherwise long
-                                            * address plus dest endpoint */
-  zb_bitfield_t         src_table_index:5; /*!< index from zb_asp_src_table_t */
+  zb_uint8_t            dst_addr_mode;   /*!< destination address mode flag, 0
+                                          * - group address, otherwise long
+                                          * address plus dest endpoint */
+  zb_uint8_t            src_table_index; /*!< index from zb_asp_src_table_t */
+#ifdef SNCP_MODE
+  zb_uint8_t            id;              /* original index position when inserted, to identify
+                                          *  entry even if moved with the array (on removal of
+                                          *  other elements) */
+  zb_uint8_t            align;
+#endif
 } ZB_PACKED_STRUCT zb_aps_bind_dst_table_t;
 
 /**
@@ -272,8 +291,7 @@ typedef ZB_PACKED_PRE struct zb_neighbor_tbl_ent_s /* not need to pack it at IAR
   zb_bitfield_t             ext_neighbor:1;   /*!< if 1, this is ext neighbor
                                                * record, else base neighbor  */
 
-  zb_bitfield_t             device_type:2; /*!< Neighbor device type - \see
-                                            * zb_nwk_device_type_t */
+  zb_bitfield_t             device_type:2; /*!< Neighbor device type - @see @ref nwk_device_type */
 
   zb_bitfield_t             depth:4; /*!< The network depth of this
                                        device. A value of 0x00
@@ -308,14 +326,19 @@ typedef ZB_PACKED_PRE struct zb_neighbor_tbl_ent_s /* not need to pack it at IAR
                                               0x05=unauthenticated child
                                               This field shall be present in every
                                               neighbor table entry.
-                                              \see zb_nwk_relationship_e
+                                              see @ref nwk_relationship
                                             */
 
   zb_bitfield_t             need_rejoin:1; 	/*!< Need send rejoin response without receive request */
 
-  zb_bitfield_t             dummy: 1; /*!< not used bit */
+  zb_bitfield_t             send_via_routing: 1;  /*!< Due to bad link to that device send packets
+                                                   *   via NWK routing.
+                                                   */
 
-  zb_bitfield_t             keepalive_received:1; /*!< This value indicates at least one keepalive has been received from the end device since the router has rebooted.*/
+  zb_bitfield_t             keepalive_received:1; /*!< This value indicates at least one keepalive
+                                                   *   has been received from the end device since
+                                                   *   the router has rebooted.
+                                                   */
 
   zb_bitfield_t             mac_iface_idx:5;  /*!< An index into the MAC Interface Table
                                                * indicating what interface the neighbor or
@@ -327,10 +350,8 @@ typedef ZB_PACKED_PRE struct zb_neighbor_tbl_ent_s /* not need to pack it at IAR
   /* 3 */
   zb_uint8_t                lqi;  /*!< Link quality. Also used to calculate
                                    * incoming cost */
-#if (defined ZB_BEACON_SURVEY && defined ZB_ZCL_ENABLE_WWAH_SERVER) || !(defined ZB_LITE_DONT_STORE_RSSI)
   /* 4 */
   zb_int8_t                 rssi;  /*!< Received signal strength indicator */
-#endif
   /* 5 */
   ZB_PACKED_PRE union {
     ZB_PACKED_PRE struct zb_ext_neighbor_s
@@ -366,16 +387,13 @@ typedef ZB_PACKED_PRE struct zb_neighbor_tbl_ent_s /* not need to pack it at IAR
       /* 10 */
       zb_uint8_t                channel_page; /*!< The current channel page occupied by the network.  */
       /* 11 */
-      zb_bitfield_t             logical_channel:5; /*!< The current logical channel
+      zb_bitfield_t             logical_channel:6; /*!< The current logical channel
                                                      occupied by the network.  */
 
       zb_bitfield_t             stack_profile:2; /*!< A ZBOSS profile identifier.   */
 
-      zb_bitfield_t             reserved:1;
-#ifdef ZB_PARENT_CLASSIFICATION
       /* 12 */
       zb_uint8_t                classification_mask;
-#endif
       /* 13 */
     } ZB_PACKED_STRUCT ext;
     ZB_PACKED_PRE struct zb_base_neighbor_s
@@ -384,7 +402,7 @@ typedef ZB_PACKED_PRE struct zb_neighbor_tbl_ent_s /* not need to pack it at IAR
                                                  * incoming_frame_counter is valid  */
 #ifndef ZB_ROUTER_ROLE           /* no routing at ZED - simplify*/
       zb_address_ieee_ref_t     addr_ref;         /*!< address translation entry */
-      zb_uint8_t                nwk_ed_timeout; /*End device timeout - @see nwk_requested_timeout_t */
+      zb_uint8_t                nwk_ed_timeout; /*End device timeout - @see @ref nwk_requested_timeout */
 #else                                           /* ZR,ZC */
 #if !defined ZB_CONFIGURABLE_MEM && ZB_IEEE_ADDR_TABLE_SIZE < 128
       /* Won 1 byte here, so base is 11 bytes (== ext) */
@@ -394,7 +412,7 @@ typedef ZB_PACKED_PRE struct zb_neighbor_tbl_ent_s /* not need to pack it at IAR
       zb_address_ieee_ref_t     addr_ref;
 #endif                                            /* if 7 bits are enough */
 
-      zb_bitfield_t             nwk_ed_timeout:4; /*End device timeout - @see nwk_requested_timeout_t */
+      zb_bitfield_t             nwk_ed_timeout:4; /*End device timeout - @see @ref nwk_requested_timeout */
 
       /* Following fields present only if nwkSymLink = TRUE - this is PRO, not 2007 */
       zb_bitfield_t             outgoing_cost:3;  /*!< The cost of an outgoing
@@ -419,34 +437,203 @@ typedef ZB_PACKED_PRE struct zb_neighbor_tbl_ent_s /* not need to pack it at IAR
   } ZB_PACKED_STRUCT u;
   /* TODO: move it to base ?? */
 #if !defined ZB_ED_ROLE && defined ZB_MAC_DUTY_CYCLE_MONITORING
-  zb_lbitfield_t is_subghz:1;        /*!< if 1, this is Sub-GHz device */
-  zb_lbitfield_t suspended:1;        /*!< if 1, SuspendZCLMessages was sent to the device */
+  zb_bitbool_t   is_subghz:1;        /*!< if 1, this is Sub-GHz device */
+  zb_bitbool_t   suspended:1;        /*!< if 1, SuspendZCLMessages was sent to the device */
   zb_lbitfield_t pkt_count:22;       /*!< count of packets received from this device */
-#define MAX_NBT_PKT_COUNT ((1u<<22)-1)
+#define MAX_NBT_PKT_COUNT ((1u<<22U)-1U)
   zb_lbitfield_t subghz_ep:8;        /*!< endpoint with Sub-GHz cluster on remote device */
 #endif
 } ZB_PACKED_STRUCT
 zb_neighbor_tbl_ent_t;
 
 /**
-   King of negotiation before TX
+   Kind of negotiation before TX
 */
-typedef enum zb_mac_tx_wait_e
-{
-  ZB_MAC_TX_WAIT_ACK,
-  ZB_MAC_TX_WAIT_CSMACA,
-  ZB_MAC_TX_WAIT_CSMACA_RETRY,
-  ZB_MAC_TX_WAIT_ZGP,
-  ZB_MAC_TX_WAIT_NONE,
-} zb_mac_tx_wait_t;
 
-enum zb_mac_tx_status_e
+/**
+ * @name MAC TX wait
+ * @anchor mac_tx_wait
+ */
+/** @{ */
+#define ZB_MAC_TX_WAIT_ACK               0U
+#define ZB_MAC_TX_WAIT_CSMACA            1U
+#define ZB_MAC_TX_WAIT_ZGP               2U
+#define ZB_MAC_TX_WAIT_NONE              3U
+/** @} */
+
+/**
+ * @name MAC TX status
+ * @anchor mac_tx_status
+ */
+/** @{ */
+#define ZB_TRANS_TX_OK                   0U
+#define ZB_TRANS_CHANNEL_BUSY_ERROR      1U
+#define ZB_TRANS_TX_RETRY_COUNT_EXCEEDED 2U
+#define ZB_TRANS_TX_LBT_TO               3U
+#define ZB_TRANS_NO_ACK                  4U
+/** @} */
+
+zb_uint32_t zb_get_channel_mask(void);
+
+/* MAC diagnostics info */
+typedef ZB_PACKED_PRE struct zb_mac_diagnostic_info_s
 {
-  ZB_TRANS_TX_OK = 0,
-  ZB_TRANS_CHANNEL_BUSY_ERROR,
-  ZB_TRANS_TX_RETRY_COUNT_EXCEEDED,
-  ZB_TRANS_TX_LBT_TO,
-  ZB_TRANS_NO_ACK
-};
+  zb_uint32_t mac_rx_bcast;       /* A counter that is incremented each time
+                                   * the MAC layer receives a broadcast. */
+  zb_uint32_t mac_tx_bcast;       /* A counter that is incremented each time
+                                   * the MAC layer transmits a broadcast. */
+  zb_uint32_t mac_rx_ucast;       /* A counter that is incremented each time the
+                                   * MAC layer receives a unicast. */
+
+  /* These 3 counters are required not to break
+   * ZDO channel management logic that
+   * uses normalized counters values.
+   */
+  zb_uint32_t mac_tx_ucast_total_zcl;    /* The same as mac_tx_ucast_total, but non-normalized */
+  zb_uint16_t mac_tx_ucast_failures_zcl; /* The same as mac_tx_ucast_failures, but non-normalized */
+  zb_uint16_t mac_tx_ucast_retries_zcl;  /* The same as mac_tx_ucast_retries, but non-normalized*/
+
+  zb_uint16_t mac_tx_ucast_total; /* Total number of Mac Tx Transactions to
+                                   * attempt to send a message (but not
+                                   * counting retries) */
+  zb_uint16_t mac_tx_ucast_failures; /* Total number of failed Tx
+                                      * Transactions. So if the Mac send a
+                                      * single packet, it will be retried 4
+                                      * times without ack, that counts as 1 failure */
+  zb_uint16_t mac_tx_ucast_retries; /* Total number of Mac Retries regardles of
+                                     * whether the transaction resulted in
+                                     * success or failure. */
+
+  zb_uint16_t phy_to_mac_que_lim_reached;  /* A counter that is incremented each time when MAC RX queue if full. */
+
+  zb_uint16_t mac_validate_drop_cnt; /* How many times the packet was dropped at the packet
+                                      * validation stage for length or bad formatting. */
+
+  zb_uint16_t phy_cca_fail_count;   /* Number of the PHY layer was unable
+                                     * to transmit due to a failed CCA */
+
+  zb_uint8_t period_of_time;    /* Time period over which MACTx results are measured */
+  zb_uint8_t last_msg_lqi;      /* LQI value of the last received packet */
+  zb_int8_t last_msg_rssi;      /* RSSI value of the last received packet */
+} ZB_PACKED_STRUCT
+zb_mac_diagnostic_info_t;
+
+/* MAC diagnostics info extended struct */
+typedef ZB_PACKED_PRE struct zb_mac_diagnostic_ex_info_s
+{
+  zb_mac_diagnostic_info_t mac_diag_info;
+  /* Internal variables/counters that should be transferred
+   * from MAC to ZDO and should not go to the NHLE */
+  zb_uint32_t mac_tx_for_aps_messages; /* Internal counter used to calculate 
+                                          average_mac_retry_per_aps_message_sent in ZDO */
+} ZB_PACKED_STRUCT
+zb_mac_diagnostic_ex_info_t;
+
+/*! @brief Structure saved diagnostic counters except MAC
+ * See the ZCL Diagnostics Cluster -> ZCLr7 spec, chapter 3.15 */
+typedef ZB_PACKED_PRE struct zdo_diagnostics_info_s
+{
+  /*! @brief An attribute that is incremented
+   *         each time the device resets. */
+  zb_uint16_t number_of_resets;
+
+  /*! @brief A counter that is incremented each time
+   *         the APS layer receives a broadcast. */
+  zb_uint16_t aps_tx_bcast;
+
+  /*! @brief A counter that is incremented each time
+   *         the APS layer successfully transmits a unicast. */
+  zb_uint16_t aps_tx_ucast_success;
+
+  /*! @brief A counter that is incremented each time the
+   *  APS layer retries the sending of a unicast. */
+  zb_uint16_t aps_tx_ucast_retry;
+
+  /*! @brief A counter that is incremented each time
+   *         the APS layer fails to send a unicast. */
+  zb_uint16_t aps_tx_ucast_fail;
+
+  /*! @brief A counter that is incremented each time the network
+   *  layer submits a route discovery message to the MAC. */
+  zb_uint16_t route_disc_initiated;
+
+  /*! @brief A counter that is incremented each time
+   *  an entry is added to the neighbor table. */
+  zb_uint16_t nwk_neighbor_added;
+
+  /*! @brief A counter that is incremented each time
+   *  an entry is removed from the neighbor table. */
+  zb_uint16_t nwk_neighbor_removed;
+
+  /*! @brief A counter that is incremented each time a neighbor table entry
+   *  becomes stale because the neighbor has not been heard from. */
+  zb_uint16_t nwk_neighbor_stale;
+
+  /*! @brief A counter that is incremented each time
+   *         a node joins or rejoins the network via this node. */
+  zb_uint16_t join_indication;
+
+  /*! @brief A counter that is incremented each time an entry
+   *  is removed from the child table. */
+  zb_uint16_t childs_removed;
+
+  /*! @brief A counter that is incremented each time a message is
+   *         dropped at the network layer because the APS frame counter
+   *         was not higher than the last message seen from that source. */
+  zb_uint16_t nwk_fc_failure;
+
+  /*! @brief A counter that is incremented each time a message is
+   *         dropped at the APS layer because the APS frame counter was
+   *         not higher than the last message seen from that source. */
+  zb_uint16_t aps_fc_failure;
+
+  /*! @brief A counter that is incremented each time a message is dropped
+   *  at the APS layer because it had APS encryption but the key associated
+   *  with the sender has not been authenticated, and thus the key is not
+   *  authorized for use in APS data messages. */
+  zb_uint16_t aps_unauthorized_key;
+
+  /*! @brief A counter that is incremented each time a NWK encrypted message
+   *         was received but dropped because decryption failed. */
+  zb_uint16_t nwk_decrypt_failure;
+
+  /*! @brief A counter that is incremented each time an APS encrypted message was
+   *  received but dropped because decryption failed. */
+  zb_uint16_t aps_decrypt_failure;
+
+  /*! @brief A counter that is incremented each time
+   *         the stack failed to allocate a packet buffers. */
+  zb_uint16_t packet_buffer_allocate_failures;
+
+  /*! @brief A counter that is equal to the average number
+   *         of MAC retries needed to send an APS message. */
+  zb_uint16_t average_mac_retry_per_aps_message_sent;
+
+  /*! @brief A counter that is incremented on the NWK layer
+   *         each time tries number of a packet resending are gone.
+   *
+   * @note It's a non-stanrad counter that depends on ZB_ENABLE_NWK_RETRANSMIT and
+   *       will be zero always when the macro isn't set. */
+  zb_uint16_t nwk_retry_overflow;
+
+  /** A non-standard counter of the number of times the NWK broadcast was
+   *  dropped because the broadcast table was full.
+   *  01/15/2021 In ZBOSS fired if any of the broadcast_transaction or
+   *  broadcast_retransmition tables are full */
+  zb_uint16_t nwk_bcast_table_full;
+
+} ZB_PACKED_STRUCT zdo_diagnostics_info_t;
+
+#if defined NCP_MODE && !defined NCP_MODE_HOST
+typedef ZB_PACKED_PRE struct zb_ncp_pending_calls_s
+{
+  zb_uint8_t tsn;
+  zb_uint16_t call_id;
+} ZB_PACKED_STRUCT
+zb_ncp_pending_calls_t;
+
+#endif /* NCP_MODE && !NCP_MODE_HOST */
+
+#endif /* !ZB_MINIMAL_CONTEXT */
 
 #endif /* ZB_ZBOSS_API_INTERNAL_H */

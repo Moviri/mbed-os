@@ -1,46 +1,29 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: Level control cluster definitions
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: Level control cluster definitions
 */
 
-#if !defined ZB_ZCL_LEVEL_CONTROL_H
-#define ZB_ZCL_LEVEL_CONTROL_H
+#ifndef ZB_ZCL_LEVEL_CONTROL_H
+#define ZB_ZCL_LEVEL_CONTROL_H 1
 
 #include "zcl/zb_zcl_common.h"
 #include "zcl/zb_zcl_commands.h"
@@ -199,7 +182,7 @@ enum zb_zcl_level_control_options_e
                        (&(move_status_data_ctx## _attr_list)))                              \
   ZB_ZCL_FINISH_DECLARE_ATTRIB_LIST
 
-    
+
 /*!
   @brief Declare attribute list for Level Control cluster
   @param attr_list - attribute list name
@@ -219,7 +202,7 @@ enum zb_zcl_level_control_options_e
   ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_LEVEL_CONTROL_MOVE_STATUS_ID,                                      \
                        (&(move_status_data_ctx## _attr_list)))                                        \
   ZB_ZCL_FINISH_DECLARE_ATTRIB_LIST
-    
+
 /*! @} */ /* Level Control cluster attributes */
 
 /** @cond internals_doc */
@@ -234,7 +217,7 @@ enum zb_zcl_level_control_options_e
   ZB_ZCL_ATTR_LEVEL_CONTROL_CURRENT_LEVEL_ID,                                             \
   ZB_ZCL_ATTR_TYPE_U8,                                                                    \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_REPORTING | ZB_ZCL_ATTR_ACCESS_SCENE, \
-  (zb_voidp_t) data_ptr                                                                   \
+  (void*) data_ptr                                                                   \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_LEVEL_CONTROL_REMAINING_TIME_ID(data_ptr)\
@@ -242,7 +225,7 @@ enum zb_zcl_level_control_options_e
   ZB_ZCL_ATTR_LEVEL_CONTROL_REMAINING_TIME_ID,                                      \
   ZB_ZCL_ATTR_TYPE_U16,                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                     \
-  (zb_voidp_t) data_ptr                                                             \
+  (void*) data_ptr                                                             \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_LEVEL_CONTROL_OPTIONS_ID(data_ptr)      \
@@ -250,7 +233,7 @@ enum zb_zcl_level_control_options_e
   ZB_ZCL_ATTR_LEVEL_CONTROL_OPTIONS_ID,                                            \
   ZB_ZCL_ATTR_TYPE_8BITMAP,                                                        \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                                                   \
-  (zb_voidp_t) data_ptr                                                            \
+  (void*) data_ptr                                                            \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_LEVEL_CONTROL_MOVE_STATUS_ID(data_ptr) \
@@ -258,7 +241,7 @@ enum zb_zcl_level_control_options_e
   ZB_ZCL_ATTR_LEVEL_CONTROL_MOVE_STATUS_ID,                                       \
   ZB_ZCL_ATTR_TYPE_NULL,                                                          \
   ZB_ZCL_ATTR_ACCESS_INTERNAL,                                                    \
-  (zb_voidp_t) data_ptr                                                           \
+  (void*) data_ptr                                                           \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_LEVEL_CONTROL_START_UP_CURRENT_LEVEL_ID(data_ptr) \
@@ -266,7 +249,7 @@ enum zb_zcl_level_control_options_e
   ZB_ZCL_ATTR_LEVEL_CONTROL_START_UP_CURRENT_LEVEL_ID,                                       \
   ZB_ZCL_ATTR_TYPE_U8,                                                                       \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                                                             \
-  (zb_voidp_t) data_ptr                                                                      \
+  (void*) data_ptr                                                                      \
 }
 /** @internal Structure of addr variables for Move commands
  */
@@ -303,7 +286,7 @@ typedef struct zb_zcl_level_control_move_status_s
 {
   zb_zcl_level_control_move_variables_t move_var;
   zb_uint8_t buf_id;
-} ZB_PACKED_STRUCT zb_zcl_level_control_move_status_t;
+} zb_zcl_level_control_move_status_t;
 
 /*! Number of attributes mandatory for reporting in Level Control cluster */
 #define ZB_ZCL_LEVEL_CONTROL_REPORT_ATTR_COUNT 1
@@ -321,10 +304,6 @@ typedef struct zb_zcl_level_control_move_status_s
 */
 enum zb_zcl_level_control_cmd_e
 {
-  /* Oct 16, 2012 CR:MEDIUM While enumeration literals have readable names, it would be better to
-   * copy their names (and, possibly, some specific information on them) from corresponding spec
-   * clauses.
-   CR:FIXED*/
   /** Move To Level command */
   ZB_ZCL_CMD_LEVEL_CONTROL_MOVE_TO_LEVEL             = 0x00,
   /** Move command */
@@ -371,7 +350,7 @@ enum zb_zcl_level_control_cmd_e
 
 /* command request structure */
 
-/*! @brief Structured representsation of Level Control command payload (optional part)
+/*! @brief Structured representation of Level Control command payload (optional part)
     @see ZCL spec, subclause 3.10.2.3.1.1*/
 typedef ZB_PACKED_PRE struct zb_zcl_level_control_req_options_s
 {
@@ -392,7 +371,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_level_control_req_options_s
   (req_options_ptr) = zb_buf_len(data_buf) >=                           \
     ZB_ZCL_LEVEL_CONTROL_REQ_OPTIONS_PAYLOAD_LEN ?                      \
     (zb_zcl_level_control_req_options_t*)zb_buf_begin(data_buf) : NULL; \
-  if (req_options_ptr)                                                  \
+  if (req_options_ptr != NULL)                                                  \
   {                                                                     \
     req_options.options_mask = req_options_ptr->options_mask;           \
     req_options.options_override = req_options_ptr->options_override;   \
@@ -405,7 +384,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_level_control_req_options_s
   }                                                                     \
 }
 
-/*! @brief Structured representsation of MOVE_TO_LEVEL command payload
+/*! @brief Structured representation of MOVE_TO_LEVEL command payload
     @see ZCL spec, subclause 3.10.2.3.1.1*/
 typedef ZB_PACKED_PRE struct zb_zcl_level_control_move_to_level_req_s
 {
@@ -440,7 +419,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_level_control_move_to_level_req_s
   (move_to_level_req_ptr) = zb_buf_len(data_buf) >=                                              \
     ZB_ZCL_LEVEL_CONTROL_MOVE_TO_LEVEL_REQ_PAYLOAD_LEN ?                                         \
     (zb_zcl_level_control_move_to_level_req_t*)zb_buf_begin(data_buf) : NULL;                    \
-  if (move_to_level_req_ptr)                                                                     \
+  if (move_to_level_req_ptr != NULL)                                                             \
   {                                                                                              \
     ZB_HTOLE16(&(move_to_level_req).transition_time, &(move_to_level_req_ptr->transition_time)); \
     move_to_level_req.level = move_to_level_req_ptr->level;                                      \
@@ -486,7 +465,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_level_control_move_to_level_req_s
   @brief Parses Get Move to Level command and fills data request structure.
   @param data_buf - pointer to zb_buf_t buffer containing command request data
   @param move_to_level_req - variable to save command request
-  @param status - succsess or not read parameters - ZB_TRUE or ZB_FALSE
+  @param status - success or not read parameters - ZB_TRUE or ZB_FALSE
   @note data_buf buffer should contain command request payload without ZCL header.
 */
 
@@ -529,7 +508,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_level_control_move_to_level_req_s
   structure.
   @param data_buf - pointer to zb_buf_t buffer containing command request data
   @param move_to_level_req - variable to save command request.
-  @param status - succsess or not read parameters - ZB_TRUE or ZB_FALSE
+  @param status - success or not read parameters - ZB_TRUE or ZB_FALSE
   @note data_buf buffer should contain command request payload without ZCL header.
 */
 
@@ -546,7 +525,7 @@ enum zb_zcl_level_control_move_mode_e
   ZB_ZCL_LEVEL_CONTROL_MOVE_MODE_DOWN = 0x01
 };
 
-/*! @brief Structured representsation of MOVE command payload */
+/*! @brief Structured representation of MOVE command payload */
 typedef ZB_PACKED_PRE struct zb_zcl_level_control_move_req_s
 {
   /** Move Mode field */
@@ -579,7 +558,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_level_control_move_req_s
   zb_zcl_level_control_move_req_t *move_req_ptr;                                       \
   (move_req_ptr) = zb_buf_len(data_buf) >= ZB_ZCL_LEVEL_CONTROL_MOVE_REQ_PAYLOAD_LEN ? \
     (zb_zcl_level_control_move_req_t*)zb_buf_begin(data_buf) : NULL;                   \
-  if (move_req_ptr)                                                                    \
+  if (move_req_ptr != NULL)                                                            \
   {                                                                                    \
     ZB_MEMCPY(&(move_req), move_req_ptr, sizeof(zb_zcl_level_control_move_req_t));     \
     (void)zb_buf_cut_left(data_buf, sizeof(zb_zcl_level_control_move_req_t));          \
@@ -624,7 +603,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_level_control_move_req_s
   structure.
   @param data_buf - pointer to zb_buf_t buffer containing command request data
   @param move_req - variable to save command request
-  @param status - succsess or not read parameters - ZB_TRUE or ZB_FALSE
+  @param status - success or not read parameters - ZB_TRUE or ZB_FALSE
   @note data_buf buffer should contain command request payload without ZCL header.
 */
 
@@ -667,7 +646,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_level_control_move_req_s
   structure.
   @param data_buf - pointer to zb_buf_t buffer containing command request data
   @param move_req - variable to save command request
-  @param status - succsess or not read parameters - ZB_TRUE or ZB_FALSE
+  @param status - success or not read parameters - ZB_TRUE or ZB_FALSE
   @note data_buf buffer should contain command request payload without ZCL header.
 */
 
@@ -682,7 +661,7 @@ enum zb_zcl_level_control_step_mode_e
   ZB_ZCL_LEVEL_CONTROL_STEP_MODE_DOWN = 0x01
 };
 
-/*! @brief Structured representsation of STEP command payload */
+/*! @brief Structured representation of STEP command payload */
 typedef ZB_PACKED_PRE struct zb_zcl_level_control_step_req_s
 {
   /** Step Mode field */
@@ -736,7 +715,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_level_control_step_req_s
   zb_zcl_level_control_step_req_t *step_req_ptr;                                       \
   (step_req_ptr) = zb_buf_len(data_buf) >= ZB_ZCL_LEVEL_CONTROL_STEP_REQ_PAYLOAD_LEN ? \
     (zb_zcl_level_control_step_req_t*)zb_buf_begin(data_buf) : NULL;                   \
-  if (step_req_ptr)                                                                    \
+  if (step_req_ptr != NULL)                                                            \
   {                                                                                    \
     step_req.step_mode = step_req_ptr->step_mode;                                      \
     step_req.step_size = step_req_ptr->step_size;                                      \
@@ -795,7 +774,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_level_control_step_req_s
   structure.
   @param data_buf - pointer to zb_buf_t buffer containing command request data
   @param step_req - variable to save command request
-  @param status - succsess or not read parameters - ZB_TRUE or ZB_FALSE
+  @param status - success or not read parameters - ZB_TRUE or ZB_FALSE
   @note data_buf buffer should contain command request payload without ZCL header.
 */
 
@@ -849,7 +828,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_level_control_step_req_s
   structure.
   @param data_buf - pointer to zb_buf_t buffer containing command request data
   @param step_req - variable to save command request
-  @param status - succsess or not read parameters - ZB_TRUE or ZB_FALSE
+  @param status - success or not read parameters - ZB_TRUE or ZB_FALSE
   @note data_buf buffer should contain command request payload without ZCL header.
 */
 

@@ -1,26 +1,30 @@
-/***************************************************************************
-*               ZBOSS Zigbee Pro 2012/Zigbee 2007 stack                    *
-*                                                                          *
-*  This is unpublished proprietary source code of DSR Corporation          *
-*  The copyright notice does not evidence any actual or intended           *
-*  publication of such source code.                                        *
-*                                                                          *
-*          Copyright (c) 2012-2017 DSR Corporation, Denver CO, USA.        *
-*                       http://www.dsr-zboss.com                           *
-*                       http://www.dsr-company.com                         *
-*                                                                          *
-*                            All rights reserved.                          *
-*                                                                          *
-*                                                                          *
-* ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR   *
-* Corporation                                                              *
-*                                                                          *
-****************************************************************************
- PURPOSE: Channel page header file. All channel-related stuff.
+/* ZBOSS Zigbee software protocol stack
+ *
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
+ * All rights reserved.
+ *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
+ *
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
+ *
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/*  PURPOSE: Channel page header file. All channel-related stuff.
 */
 #ifndef ZB_CHANNEL_PAGE_H
 #define ZB_CHANNEL_PAGE_H 1
 
+#include "zb_config.h"
 #include "zb_types.h"
 #include "zb_errors.h"
 
@@ -42,29 +46,49 @@ typedef zb_uint32_t zb_channel_page_t;
 typedef zb_channel_page_t zb_channel_list_t[ZB_CHANNEL_PAGES_NUM];
 
 /* Private API */
-#define ZB_CHANNEL_LIST_PAGE0_IDX  0
-#define ZB_CHANNEL_LIST_PAGE28_IDX 1
-#define ZB_CHANNEL_LIST_PAGE29_IDX 2
-#define ZB_CHANNEL_LIST_PAGE30_IDX 3
-#define ZB_CHANNEL_LIST_PAGE31_IDX 4
+#define ZB_CHANNEL_LIST_PAGE0_IDX  0U
+#define ZB_CHANNEL_LIST_PAGE23_IDX 1U
+#define ZB_CHANNEL_LIST_PAGE24_IDX 2U
+#define ZB_CHANNEL_LIST_PAGE25_IDX 3U
+#define ZB_CHANNEL_LIST_PAGE26_IDX 4U
+#define ZB_CHANNEL_LIST_PAGE27_IDX 5U
+#define ZB_CHANNEL_LIST_PAGE28_IDX 6U
+#define ZB_CHANNEL_LIST_PAGE29_IDX 7U
+#define ZB_CHANNEL_LIST_PAGE30_IDX 8U
+#define ZB_CHANNEL_LIST_PAGE31_IDX 9U
 
-#define ZB_PAGE0_2_4_GHZ_CHANNEL_FROM   11
-#define ZB_PAGE0_2_4_GHZ_CHANNEL_TO     26
+#define ZB_PAGE0_2_4_GHZ_CHANNEL_FROM   11U
+#define ZB_PAGE0_2_4_GHZ_CHANNEL_TO     26U
 
-#define ZB_PAGE28_SUB_GHZ_CHANNEL_FROM  0
-#define ZB_PAGE28_SUB_GHZ_CHANNEL_TO    26
+#define ZB_PAGE23_SUB_GHZ_CHANNEL_FROM  0U
+#define ZB_PAGE23_SUB_GHZ_CHANNEL_TO    24U
 
-#define ZB_PAGE29_SUB_GHZ_CHANNEL_FROM  27
-#define ZB_PAGE29_SUB_GHZ_CHANNEL_TO    34
+#define ZB_PAGE24_SUB_GHZ_CHANNEL_FROM  56U
+#define ZB_PAGE24_SUB_GHZ_CHANNEL_TO    76U
 
-#define ZB_PAGE30_SUB_GHZ_CHANNEL_FROM  35
-#define ZB_PAGE30_SUB_GHZ_CHANNEL_TO    61
+#define ZB_PAGE25_SUB_GHZ_CHANNEL_FROM  0U
+#define ZB_PAGE25_SUB_GHZ_CHANNEL_TO    26U
 
-#define ZB_PAGE31_SUB_GHZ_CHANNEL_FROM  0
-#define ZB_PAGE31_SUB_GHZ_CHANNEL_TO    26
+#define ZB_PAGE26_SUB_GHZ_CHANNEL_FROM  27U
+#define ZB_PAGE26_SUB_GHZ_CHANNEL_TO    34U
 
-#define ZB_CHANNEL_PAGE_TO_IDX(channel_page) ((channel_page > 0) ? (channel_page - 27) : 0)
-#define ZB_CHANNEL_PAGE_FROM_IDX(channel_page_idx) ((channel_page_idx > 0) ? (channel_page_idx + 27) : 0)
+#define ZB_PAGE27_SUB_GHZ_CHANNEL_FROM  35U
+#define ZB_PAGE27_SUB_GHZ_CHANNEL_TO    55U
+
+#define ZB_PAGE28_SUB_GHZ_CHANNEL_FROM  0U
+#define ZB_PAGE28_SUB_GHZ_CHANNEL_TO    26U
+
+#define ZB_PAGE29_SUB_GHZ_CHANNEL_FROM  27U
+#define ZB_PAGE29_SUB_GHZ_CHANNEL_TO    34U
+
+#define ZB_PAGE30_SUB_GHZ_CHANNEL_FROM  35U
+#define ZB_PAGE30_SUB_GHZ_CHANNEL_TO    61U
+
+#define ZB_PAGE31_SUB_GHZ_CHANNEL_FROM  0U
+#define ZB_PAGE31_SUB_GHZ_CHANNEL_TO    26U
+
+#define ZB_CHANNEL_PAGE_TO_IDX(channel_page) (((channel_page) > 0U) ? ((channel_page) - 22U) : 0U)
+#define ZB_CHANNEL_PAGE_FROM_IDX(channel_page_idx) (((channel_page_idx) > 0U) ? ((channel_page_idx) + 22U) : 0U)
 
 #ifdef ZB_PAGES_REMAP_TO_2_4GHZ
 /**
@@ -90,9 +114,9 @@ typedef zb_channel_page_t zb_channel_list_t[ZB_CHANNEL_PAGES_NUM];
    * remap_channel_number = (channel_number % 3) + page_shift
  */
 
-#define ZB_PAGES_REMAP_PAGE_CHANNELS_NUM 3
+#define ZB_PAGES_REMAP_PAGE_CHANNELS_NUM 3U
 
-#define ZB_PAGES_REMAP_PAGE0_SHIFT  0
+#define ZB_PAGES_REMAP_PAGE0_SHIFT  0U
 #define ZB_PAGES_REMAP_PAGE28_SHIFT (ZB_PAGES_REMAP_PAGE0_SHIFT + ZB_PAGES_REMAP_PAGE_CHANNELS_NUM)
 #define ZB_PAGES_REMAP_PAGE29_SHIFT (ZB_PAGES_REMAP_PAGE28_SHIFT + ZB_PAGES_REMAP_PAGE_CHANNELS_NUM)
 #define ZB_PAGES_REMAP_PAGE30_SHIFT (ZB_PAGES_REMAP_PAGE29_SHIFT + ZB_PAGES_REMAP_PAGE_CHANNELS_NUM)
@@ -132,7 +156,7 @@ zb_uint8_t zb_pages_remap_logical_channel(zb_uint8_t channel_page,
  *
  * @param channel_page - binary encoded channel page and channels mask
  */
-#define ZB_CHANNEL_PAGE_GET_PAGE(channel_page) (((channel_page) & ZB_CHANNEL_PAGE_PAGE_BITMASK) >> 27)
+#define ZB_CHANNEL_PAGE_GET_PAGE(channel_page) (((channel_page) & ZB_CHANNEL_PAGE_PAGE_BITMASK) >> 27U)
 
 /**
  * Gets channels mask field from Channel page structure
@@ -147,7 +171,7 @@ zb_uint8_t zb_pages_remap_logical_channel(zb_uint8_t channel_page,
  * @param channel_page - binary encoded channel page and channels mask
  * @param page         - channel page to set
  */
-#define ZB_CHANNEL_PAGE_SET_PAGE(channel_page, page) (channel_page) = ((channel_page) & ZB_CHANNEL_PAGE_MASK_BITMASK) | (((zb_uint32_t)(page)) << 27)
+#define ZB_CHANNEL_PAGE_SET_PAGE(channel_page, page) (channel_page) = ((channel_page) & ZB_CHANNEL_PAGE_MASK_BITMASK) | (((zb_uint32_t)(page)) << 27U)
 
 /**
  * Sets channels mask field for Channel page structure
@@ -157,31 +181,54 @@ zb_uint8_t zb_pages_remap_logical_channel(zb_uint8_t channel_page,
  */
 #define ZB_CHANNEL_PAGE_SET_MASK(channel_page, mask) (channel_page) = ((channel_page) & ZB_CHANNEL_PAGE_PAGE_BITMASK) | ((mask) & ZB_CHANNEL_PAGE_MASK_BITMASK)
 
-/* Numbers [28, 29, 30, 31] have common first three bits
+/* Numbers [23 - 31] have common first bit
  *
+ * 23 = 0b10111
+ * 24 = 0b11000
+ * 25 = 0b11001
+ * 26 = 0b11010
+ * 27 = 0b11011
  * 28 = 0b11100
  * 29 = 0b11101
  * 30 = 0b11110
  * 31 = 0b11111
  *
- * So, can only compare with 0b11100 mask = 0x1C = 28 (dec)
+ * So, it is enough to compare it with 0b10111 mask = 0x17 = 23 (dec).
  */
-#define ZB_LOGICAL_PAGE_SUB_GHZ_PAGE_MASK ZB_CHANNEL_PAGE28_SUB_GHZ
+#define ZB_LOGICAL_PAGE_SUB_GHZ_PAGE_MASK ZB_CHANNEL_PAGE23_SUB_GHZ
+
+#define ZB_LOGICAL_PAGE_IS_SUB_GHZ(logical_page) \
+  (ZB_U2B((logical_page) & ZB_LOGICAL_PAGE_SUB_GHZ_PAGE_MASK))
+
+#define ZB_LOGICAL_PAGE_IS_SUB_GHZ_NA_FSK(logical_page) \
+  ((logical_page) == ZB_CHANNEL_PAGE23_SUB_GHZ)
 
 #define ZB_LOGICAL_PAGE_IS_SUB_GHZ_EU_FSK(logical_page) \
-  ((logical_page) & ZB_LOGICAL_PAGE_SUB_GHZ_PAGE_MASK)
+  ((logical_page) >= ZB_CHANNEL_PAGE24_SUB_GHZ && (logical_page) <= ZB_CHANNEL_PAGE27_SUB_GHZ)
+
+#define ZB_LOGICAL_PAGE_IS_SUB_GHZ_GB_FSK(logical_page) \
+  ((logical_page) >= ZB_CHANNEL_PAGE28_SUB_GHZ && (logical_page) <= ZB_CHANNEL_PAGE31_SUB_GHZ)
 
 #define ZB_LOGICAL_PAGE_IS_2_4GHZ(logical_page) \
   ((logical_page) == ZB_CHANNEL_PAGE0_2_4_GHZ)
 
+#define ZB_CHANNEL_PAGE_IS_SUB_GHZ(channel_page) \
+  (ZB_LOGICAL_PAGE_IS_SUB_GHZ(ZB_CHANNEL_PAGE_GET_PAGE(channel_page)))
+
+#define ZB_CHANNEL_PAGE_IS_SUB_GHZ_NA_FSK(channel_page) \
+  (ZB_LOGICAL_PAGE_IS_SUB_GHZ_NA_FSK(ZB_CHANNEL_PAGE_GET_PAGE(channel_page)))
+
 #define ZB_CHANNEL_PAGE_IS_SUB_GHZ_EU_FSK(channel_page) \
   (ZB_LOGICAL_PAGE_IS_SUB_GHZ_EU_FSK(ZB_CHANNEL_PAGE_GET_PAGE(channel_page)))
+
+#define ZB_CHANNEL_PAGE_IS_SUB_GHZ_GB_FSK(channel_page) \
+  (ZB_LOGICAL_PAGE_IS_SUB_GHZ_GB_FSK(ZB_CHANNEL_PAGE_GET_PAGE(channel_page)))
 
 #define ZB_CHANNEL_PAGE_IS_2_4GHZ(channel_page) \
   (ZB_LOGICAL_PAGE_IS_2_4GHZ(ZB_CHANNEL_PAGE_GET_PAGE(channel_page)))
 
 #define ZB_CHANNEL_PAGE_IS_MASK_EMPTY(channel_page) \
-  (ZB_CHANNEL_PAGE_GET_MASK(channel_page) == 0)
+  (ZB_CHANNEL_PAGE_GET_MASK(channel_page) == 0U)
 
 /**
  * @brief Copies source channel page list to the destination. Destination list
@@ -262,6 +309,15 @@ zb_ret_t zb_channel_page_list_get_page_idx(zb_uint8_t page, zb_uint8_t *idx);
 zb_ret_t zb_channel_page_get_page_by_idx(zb_uint8_t idx, zb_uint8_t *page);
 
 /**
+ * @brief Gets all channels mask by a page number
+ *
+ * @param page - channel page
+ *
+ * @return the all channels mask for a certain page
+ */
+zb_uint32_t zb_channel_page_get_all_channels_mask_by_page(zb_uint8_t page);
+
+/**
  * @brief Sets channels mask for the list element of channel page list that
  * corresponds to 2.4GHz.
  *
@@ -281,6 +337,15 @@ void zb_channel_page_list_set_2_4GHz_mask(zb_channel_list_t list,
  */
 zb_uint32_t zb_channel_page_list_get_2_4GHz_mask(zb_channel_list_t list);
 
+/*
+ * @brief Gets the first filled page index of channel page list.
+ *
+ * @param list - channel page list
+ *
+ * @return Page index of the first used page or number of pages if all list is empty.
+ */
+zb_uint8_t zb_channel_page_list_get_first_filled_page(zb_channel_list_t list);
+
 /**
  * @brief Sets channels mask for specified element of the AIB channel page list.
  *
@@ -288,7 +353,7 @@ zb_uint32_t zb_channel_page_list_get_2_4GHz_mask(zb_channel_list_t list);
  * @param mask - channels mask to set
  */
 void zb_aib_channel_page_list_set_mask(zb_uint8_t  idx,
-                                            zb_uint32_t mask);
+                                       zb_uint32_t mask);
 
 /**
  * @brief Gets channels mask of specified element of the AIB channel page list.
@@ -306,7 +371,7 @@ zb_uint32_t zb_aib_channel_page_list_get_mask(zb_uint8_t idx);
  * @param page - channel page to set
  */
 void zb_aib_channel_page_list_set_page(zb_uint8_t idx,
-                                            zb_uint8_t page);
+                                       zb_uint8_t page);
 
 /**
  * @brief Gets channels page of specified element of the AIB channel page list.
@@ -332,6 +397,13 @@ void zb_aib_channel_page_list_set_2_4GHz_mask(zb_uint32_t mask);
  * @return 2.4GHz channels mask.
  */
 zb_uint32_t zb_aib_channel_page_list_get_2_4GHz_mask(void);
+
+/*
+ * @brief Gets the first filled page index of the AIB channel page list.
+ *
+ * @return Page index of the first used AIB channel page or number of pages if all list is empty.
+ */
+zb_uint8_t zb_aib_channel_page_list_get_first_filled_page(void);
 
 /**
  * @brief Gets the first channel number for specified channel page.

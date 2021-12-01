@@ -1,46 +1,29 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: WWAH cluster definitions
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: WWAH cluster definitions
 */
 
-#if ! defined ZB_ZCL_WWAH_H
-#define ZB_ZCL_WWAH_H
+#ifndef ZB_ZCL_WWAH_H
+#define ZB_ZCL_WWAH_H 1
 
 #include "zcl/zb_zcl_common.h"
 #include "zcl/zb_zcl_commands.h"
@@ -62,7 +45,7 @@ PURPOSE: WWAH cluster definitions
  *     and rejoins. Only a device factory reset can reset this cluster and put it back to default
  *     settings.
  *
- *     For more information see Zigbee WWAH Cluster definiton (dnocument number in Zigbee Alliance
+ *     For more information see Zigbee WWAH Cluster definition (document number in Zigbee Alliance
  *     17-01067-022).
  *
  */
@@ -378,15 +361,15 @@ enum zb_zcl_wwah_cmd_resp_e
 
 /** @brief Size of APS ACK Exempt Table */
 #define ZB_ZCL_WWAH_APS_ACK_EXEMPT_TABLE_SIZE 10
-ZB_ASSERT_VALUE_ALIGNED_TO_4(ZB_ZCL_WWAH_APS_ACK_EXEMPT_TABLE_SIZE * sizeof(zb_uint16_t))
+ZB_ASSERT_VALUE_ALIGNED_TO_4(ZB_ZCL_WWAH_APS_ACK_EXEMPT_TABLE_SIZE * sizeof(zb_uint16_t));
 
 /** @brief Size of APS Link Key Authorization Table */
 #define ZB_ZCL_WWAH_APS_LINK_KEY_AUTHORIZATION_TABLE_SIZE 10
-ZB_ASSERT_VALUE_ALIGNED_TO_4(ZB_ZCL_WWAH_APS_LINK_KEY_AUTHORIZATION_TABLE_SIZE * sizeof(zb_uint16_t))
+ZB_ASSERT_VALUE_ALIGNED_TO_4(ZB_ZCL_WWAH_APS_LINK_KEY_AUTHORIZATION_TABLE_SIZE * sizeof(zb_uint16_t));
 
 /** @brief Size of Use Trust Center for Cluster Table */
 #define ZB_ZCL_WWAH_USE_TRUST_CENTER_FOR_CLUSTER_TABLE_SIZE 4
-ZB_ASSERT_VALUE_ALIGNED_TO_4(ZB_ZCL_WWAH_USE_TRUST_CENTER_FOR_CLUSTER_TABLE_SIZE * sizeof(zb_uint16_t))
+ZB_ASSERT_VALUE_ALIGNED_TO_4(ZB_ZCL_WWAH_USE_TRUST_CENTER_FOR_CLUSTER_TABLE_SIZE * sizeof(zb_uint16_t));
 
 /** @brief WWAH Cluster arrays "record is free" flag */
 #define ZB_ZCL_WWAH_CLUSTER_ID_FREE_RECORD 0xFFFF
@@ -426,7 +409,7 @@ zb_zcl_wwah_classification_mask_t;
 
 typedef ZB_PACKED_PRE struct zb_zcl_wwah_periodic_checkins_data_s
 {
-  zb_uint8_t poll_method; 
+  zb_uint8_t poll_method;
   zb_uint8_t tsn;
   zb_uint8_t endpoint;
   zb_uint8_t failure_cnt;
@@ -479,7 +462,7 @@ typedef enum zb_zcl_wwah_behavior_e
   ZB_ZCL_ATTR_WWAH_DISABLE_OTA_DOWNGRADES_ID,                                                        \
   ZB_ZCL_ATTR_TYPE_BOOL,                                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                      \
-  (zb_voidp_t) data_ptr                                                                              \
+  (void*) data_ptr                                                                              \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_WWAH_MGMT_LEAVE_WITHOUT_REJOIN_ENABLED_ID(data_ptr)       \
@@ -487,7 +470,7 @@ typedef enum zb_zcl_wwah_behavior_e
   ZB_ZCL_ATTR_WWAH_MGMT_LEAVE_WITHOUT_REJOIN_ENABLED_ID,                                             \
   ZB_ZCL_ATTR_TYPE_BOOL,                                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                      \
-  (zb_voidp_t) data_ptr                                                                              \
+  (void*) data_ptr                                                                              \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_WWAH_NWK_RETRY_COUNT_ID(data_ptr)                         \
@@ -495,7 +478,7 @@ typedef enum zb_zcl_wwah_behavior_e
   ZB_ZCL_ATTR_WWAH_NWK_RETRY_COUNT_ID,                                                               \
   ZB_ZCL_ATTR_TYPE_U8,                                                                               \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                      \
-  (zb_voidp_t) data_ptr                                                                              \
+  (void*) data_ptr                                                                              \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_WWAH_MAC_RETRY_COUNT_ID(data_ptr)                         \
@@ -503,7 +486,7 @@ typedef enum zb_zcl_wwah_behavior_e
   ZB_ZCL_ATTR_WWAH_MAC_RETRY_COUNT_ID,                                                               \
   ZB_ZCL_ATTR_TYPE_U8,                                                                               \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                      \
-  (zb_voidp_t) data_ptr                                                                              \
+  (void*) data_ptr                                                                              \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_WWAH_ROUTER_CHECK_IN_ENABLED_ID(data_ptr)                 \
@@ -511,7 +494,7 @@ typedef enum zb_zcl_wwah_behavior_e
   ZB_ZCL_ATTR_WWAH_ROUTER_CHECK_IN_ENABLED_ID,                                                       \
   ZB_ZCL_ATTR_TYPE_BOOL,                                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                      \
-  (zb_voidp_t) data_ptr                                                                              \
+  (void*) data_ptr                                                                              \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_WWAH_TOUCHLINK_INTERPAN_ENABLED_ID(data_ptr)              \
@@ -519,7 +502,7 @@ typedef enum zb_zcl_wwah_behavior_e
   ZB_ZCL_ATTR_WWAH_TOUCHLINK_INTERPAN_ENABLED_ID,                                                    \
   ZB_ZCL_ATTR_TYPE_BOOL,                                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                      \
-  (zb_voidp_t) data_ptr                                                                              \
+  (void*) data_ptr                                                                              \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_WWAH_WWAH_PARENT_CLASSIFICATION_ENABLED_ID(data_ptr)      \
@@ -527,7 +510,7 @@ typedef enum zb_zcl_wwah_behavior_e
   ZB_ZCL_ATTR_WWAH_WWAH_PARENT_CLASSIFICATION_ENABLED_ID,                                            \
   ZB_ZCL_ATTR_TYPE_BOOL,                                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                      \
-  (zb_voidp_t) data_ptr                                                                              \
+  (void*) data_ptr                                                                              \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_WWAH_WWAH_APP_EVENT_RETRY_ENABLED_ID(data_ptr)            \
@@ -535,7 +518,7 @@ typedef enum zb_zcl_wwah_behavior_e
   ZB_ZCL_ATTR_WWAH_WWAH_APP_EVENT_RETRY_ENABLED_ID,                                                  \
   ZB_ZCL_ATTR_TYPE_BOOL,                                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                      \
-  (zb_voidp_t) data_ptr                                                                              \
+  (void*) data_ptr                                                                              \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_WWAH_WWAH_APP_EVENT_RETRY_QUEUE_SIZE_ID(data_ptr)         \
@@ -543,7 +526,7 @@ typedef enum zb_zcl_wwah_behavior_e
   ZB_ZCL_ATTR_WWAH_WWAH_APP_EVENT_RETRY_QUEUE_SIZE_ID,                                               \
   ZB_ZCL_ATTR_TYPE_U8,                                                                               \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                      \
-  (zb_voidp_t) data_ptr                                                                              \
+  (void*) data_ptr                                                                              \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_WWAH_WWAH_REJOIN_ENABLED_ID(data_ptr)                     \
@@ -551,7 +534,7 @@ typedef enum zb_zcl_wwah_behavior_e
   ZB_ZCL_ATTR_WWAH_WWAH_REJOIN_ENABLED_ID,                                                           \
   ZB_ZCL_ATTR_TYPE_BOOL,                                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                      \
-  (zb_voidp_t) data_ptr                                                                              \
+  (void*) data_ptr                                                                              \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_WWAH_MAC_POLL_FAILURE_WAIT_TIME_ID(data_ptr)              \
@@ -559,7 +542,7 @@ typedef enum zb_zcl_wwah_behavior_e
   ZB_ZCL_ATTR_WWAH_MAC_POLL_FAILURE_WAIT_TIME_ID,                                                    \
   ZB_ZCL_ATTR_TYPE_U8,                                                                               \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                      \
-  (zb_voidp_t) data_ptr                                                                              \
+  (void*) data_ptr                                                                              \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_WWAH_CONFIGURATION_MODE_ENABLED_ID(data_ptr)              \
@@ -567,7 +550,7 @@ typedef enum zb_zcl_wwah_behavior_e
   ZB_ZCL_ATTR_WWAH_CONFIGURATION_MODE_ENABLED_ID,                                                    \
   ZB_ZCL_ATTR_TYPE_BOOL,                                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                      \
-  (zb_voidp_t) data_ptr                                                                              \
+  (void*) data_ptr                                                                              \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_WWAH_CURRENT_DEBUG_REPORT_ID_ID(data_ptr)                 \
@@ -575,7 +558,7 @@ typedef enum zb_zcl_wwah_behavior_e
   ZB_ZCL_ATTR_WWAH_CURRENT_DEBUG_REPORT_ID_ID,                                                       \
   ZB_ZCL_ATTR_TYPE_U8,                                                                               \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                      \
-  (zb_voidp_t) data_ptr                                                                              \
+  (void*) data_ptr                                                                              \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_WWAH_TC_SECURITY_ON_NWK_KEY_ROTATION_ENABLED_ID(data_ptr)\
@@ -583,7 +566,7 @@ typedef enum zb_zcl_wwah_behavior_e
   ZB_ZCL_ATTR_WWAH_TC_SECURITY_ON_NWK_KEY_ROTATION_ENABLED_ID,                                       \
   ZB_ZCL_ATTR_TYPE_BOOL,                                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                      \
-  (zb_voidp_t) data_ptr                                                                              \
+  (void*) data_ptr                                                                              \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_WWAH_WWAH_BAD_PARENT_RECOVERY_ENABLED_ID(data_ptr)        \
@@ -591,7 +574,7 @@ typedef enum zb_zcl_wwah_behavior_e
   ZB_ZCL_ATTR_WWAH_WWAH_BAD_PARENT_RECOVERY_ENABLED_ID,                                              \
   ZB_ZCL_ATTR_TYPE_BOOL,                                                                             \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                      \
-  (zb_voidp_t) data_ptr                                                                              \
+  (void*) data_ptr                                                                              \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_WWAH_PENDING_NETWORK_UPDATE_CHANNEL_ID(data_ptr)          \
@@ -599,7 +582,7 @@ typedef enum zb_zcl_wwah_behavior_e
   ZB_ZCL_ATTR_WWAH_PENDING_NETWORK_UPDATE_CHANNEL_ID,                                                \
   ZB_ZCL_ATTR_TYPE_U8,                                                                               \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                      \
-  (zb_voidp_t) data_ptr                                                                              \
+  (void*) data_ptr                                                                              \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_WWAH_PENDING_NETWORK_UPDATE_PANID_ID(data_ptr)            \
@@ -607,7 +590,7 @@ typedef enum zb_zcl_wwah_behavior_e
   ZB_ZCL_ATTR_WWAH_PENDING_NETWORK_UPDATE_PANID_ID,                                                  \
   ZB_ZCL_ATTR_TYPE_U16,                                                                              \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                      \
-  (zb_voidp_t) data_ptr                                                                              \
+  (void*) data_ptr                                                                              \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_WWAH_OTA_MAX_OFFLINE_DURATION_ID(data_ptr)                \
@@ -615,7 +598,7 @@ typedef enum zb_zcl_wwah_behavior_e
   ZB_ZCL_ATTR_WWAH_OTA_MAX_OFFLINE_DURATION_ID,                                                      \
   ZB_ZCL_ATTR_TYPE_U16,                                                                              \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                                      \
-  (zb_voidp_t) data_ptr                                                                              \
+  (void*) data_ptr                                                                              \
 }
 
 typedef ZB_PACKED_PRE struct zb_zcl_wwah_cluster_list_s
@@ -1167,7 +1150,7 @@ extern zb_zcl_wwah_attr_t wwah_attr;
     ZB_ZCL_ATTR_GLOBAL_CLUSTER_REVISION_ID,         \
     ZB_ZCL_ATTR_TYPE_U16,                           \
     ZB_ZCL_ATTR_ACCESS_READ_ONLY,                   \
-    (zb_voidp_t) &(wwah_attr.cluster_revision)      \
+    (void*) &(wwah_attr.cluster_revision)      \
   },                                                \
   ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_WWAH_DISABLE_OTA_DOWNGRADES_ID, &(wwah_attr.disable_ota_downgrades)) \
   ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_WWAH_MGMT_LEAVE_WITHOUT_REJOIN_ENABLED_ID, &(wwah_attr.mgmt_leave_without_rejoin_enabled)) \
@@ -1981,7 +1964,7 @@ enum zb_zcl_wwah_enrollment_mode_e
     buffer, addr, dst_addr_mode, dst_ep, ep, prfl_id, ZB_ZCL_CLUSTER_ID_WWAH, cb);    \
 }
 
-/*! @brief Send Enable TC Security On Ntwk Key Rotation command
+/*! @brief Send Enable TC Security On NWK Key Rotation command
     @param buffer - to put packet to
     @param addr - address to send packet to
     @param dst_addr_mode - addressing mode
@@ -2343,7 +2326,7 @@ enum zb_zcl_wwah_enrollment_mode_e
     @param ep - sending endpoint
     @param prfl_id - profile identifier
     @param cb - callback for getting command send status
-    @param node_power_desc - Node Power Decriptor value */
+    @param node_power_desc - Node Power Descriptor value */
 #define ZB_ZCL_WWAH_SEND_POWER_DESCRIPTOR_CHANGE(                                     \
   buffer, addr, dst_addr_mode, dst_ep, ep, prfl_id, cb, node_power_desc)              \
 {                                                                                     \
@@ -2504,12 +2487,12 @@ enum zb_zcl_wwah_enrollment_mode_e
     buffer, addr, dst_addr_mode, dst_ep, ep, prfl_id, ZB_ZCL_CLUSTER_ID_WWAH, NULL);  \
 }
 zb_bool_t zb_is_wwah_server(void);
+void wwah_post_commissioning_actions(void);
 zb_bool_t zb_zcl_wwah_check_new_channel(zb_uint32_t new_channel_mask);
 zb_bool_t zb_zcl_wwah_check_new_panid(zb_uint16_t new_panid);
 zb_uint8_t zb_zcl_wwah_mac_poll_cca_retry_count(void);
 zb_time_t zb_zcl_wwah_mac_poll_failure_wait_time(void);
 zb_bool_t zb_zcl_wwah_check_if_forced_to_use_tc(zb_uint16_t cluster_id);
-zb_bool_t zb_zcl_wwah_check_nwk_key_commands_broadcast_allowed(void);
 zb_bool_t zb_zcl_wwah_check_zdo_command(zb_apsde_data_indication_t *di);
 zb_bool_t zb_zcl_wwah_check_if_aps_ack_needed(zb_uint16_t cluster_id);
 zb_bool_t zb_zcl_wwah_check_if_aps_link_key_authorization_needed(zb_uint16_t cluster_id);
@@ -2529,7 +2512,7 @@ void zb_zcl_wwah_stop_periodic_checkin(void);
 void zb_zcl_wwah_start_periodic_checkin(void);
 zb_bool_t zb_zcl_wwah_check_src_addr_for_cluster(zb_uint16_t short_addr, zb_uint16_t cluster_id);
 
-zb_void_t zb_zcl_wwah_set_wwah_behavior(zb_uint8_t behavior);
+void zb_zcl_wwah_set_wwah_behavior(zb_uint8_t behavior);
 void zb_zcl_wwah_stop_bad_parent_recovery(void);
 void zb_zcl_wwah_start_bad_parent_recovery(void);
 
@@ -2568,18 +2551,11 @@ typedef ZB_PACKED_PRE struct zb_zcl_wwah_context_s
   zb_uint8_t use_trust_center_for_cluster_table_cnt;
   /* This is a list of clusters that should be forced to use the Trust Center. */
   zb_uint16_t use_trust_center_for_cluster_table[ZB_ZCL_WWAH_USE_TRUST_CENTER_FOR_CLUSTER_TABLE_SIZE];
-  /* ======= Survey Beacon related context ======= */
-  /**
-   *  @brief Reference to a buffer with Survey Beacons Response command
-   *
-   *  Also it's used as status flag: ref == 0 when Survey Beacons procedure
-   *  is not started.
-   */
-  zb_uint8_t survey_beacons_resp_ref;
 
-  /* FIXME: Remove? We use ZB_NIB().nwk_hub_connectivity and
-   * ZB_NIB().ZB_NIB().nwk_hub_connectivity instead. */
-  zb_zcl_wwah_classification_mask_t classification_mask;
+  /* ======= Survey Beacon related context ======= */
+  zb_uint8_t survey_beacons_seq_number;
+  zb_uint8_t survey_beacons_in_progress;
+
   zb_zcl_wwah_periodic_checkins_data_t periodic_checkins;
 
   zb_zcl_wwah_enable_wwah_rejoin_algorithm_t rejoin_alg;
@@ -2593,10 +2569,10 @@ typedef ZB_PACKED_PRE struct zb_zcl_wwah_context_s
 
 #define ZB_ZCL_WWAH_REJOIN_SLEEPY_ED_TIMEOUT (ZB_TIME_ONE_SECOND * 60 * 15)
 #define ZB_ZCL_WWAH_REJOIN_NON_SLEEPY_ED_ROUTER_TIMEOUT (ZB_TIME_ONE_SECOND * 60 * 60 * 24)
-/* For dubug purpose: #define ZB_ZCL_WWAH_REJOIN_NON_SLEEPY_ED_ROUTER_TIMEOUT (ZB_TIME_ONE_SECOND * 60)*/
+/* For debug purpose: #define ZB_ZCL_WWAH_REJOIN_NON_SLEEPY_ED_ROUTER_TIMEOUT (ZB_TIME_ONE_SECOND * 60)*/
 
 #define ZB_ZCL_WWAH_BAD_PARENT_RECOVERY_TIMEOUT (ZB_TIME_ONE_SECOND * 60 * 60 * 24)
-/* For dubug purpose: #define ZB_ZCL_WWAH_BAD_PARENT_RECOVERY_TIMEOUT (ZB_TIME_ONE_SECOND * 30)*/
+/* For debug purpose: #define ZB_ZCL_WWAH_BAD_PARENT_RECOVERY_TIMEOUT (ZB_TIME_ONE_SECOND * 30)*/
 #define ZB_ZCL_WWAH_BAD_PARENT_RECOVERY_POLL_CONTROL_CHECK_IN_FAILED_CNT 3
 /* FIXME: Is it defined somewhere in WWAH spec? */
 #define ZB_ZCL_WWAH_BAD_PARENT_RECOVERY_RSSI_IS_GOOD(rssi) (rssi >= -100)
@@ -2616,4 +2592,4 @@ zb_ret_t zb_zcl_wwah_update_time(zb_uint8_t param);
 #define ZB_ZCL_CLUSTER_ID_WWAH_SERVER_ROLE_INIT zb_zcl_wwah_init_server
 #define ZB_ZCL_CLUSTER_ID_WWAH_CLIENT_ROLE_INIT zb_zcl_wwah_init_client
 
-#endif /* ! defined ZB_ZCL_WWAH_H */
+#endif /* ZB_ZCL_WWAH_H */

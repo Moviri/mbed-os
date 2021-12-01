@@ -1,42 +1,25 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- PURPOSE: Public buffer pool API (new version)
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/*  PURPOSE: Public buffer pool API (new version)
 */
 #ifndef ZBOSS_API_BUF_H
 #define ZBOSS_API_BUF_H 1
@@ -44,22 +27,24 @@
 /*! \addtogroup buf */
 /*! @{ */
 
+#include "zboss_api_core.h"
+
 /*
   Moved here buffer structure to implement configurable mem without enabling legacy buffers
  */
 
-#define ZB_RESERVED_BUF_TO_ALIGN_HDR_SIZE    3u
+#define ZB_RESERVED_BUF_TO_ALIGN_HDR_SIZE    1u
 
 /**
    Packet buffer header.
  */
 typedef ZB_PACKED_PRE struct zb_buf_hdr_s
 {
-/* 07/12/2019 EE CR:MAJOR really can pack that 3 fields into 4 bytes. Into 3 bytes if cut bits from handle (can be done later) */
+  zb_ret_t status;            /*!< some status to be passed with packet  */
   zb_uint16_t len;              /*!< current layer buffer length  */
   zb_uint16_t data_offset;      /*!< data offset in buffer buf*/
   zb_uint8_t  multiplicity;     /*!< if greater that 1, then the following (multiplicity - 1) buffers
-                                 * are occupied with payload data and should not be treated as 
+                                 * are occupied with payload data and should not be treated as
                                  * having valid headers, etc.
                                  */
   zb_uint8_t handle;           /*!< The handle associated with the NSDU to be
@@ -69,17 +54,17 @@ typedef ZB_PACKED_PRE struct zb_buf_hdr_s
   zb_bitfield_t encrypt_type:3; /*!< payload must be encrypted before send, if
                                  * !0. \see zb_secur_buf_encr_type_e.
                                  */
-  zb_bitfield_t use_same_key:1;    /*!< if 1, use same nwk key# packet was
+  zb_bitfield_t use_same_key:1;    /*!< if 1, use same nwk key packet was
                                     * encrypted by */
   zb_bitfield_t zdo_cmd_no_resp:1; /*!< if 1, this is ZDO command with no
                                     * response - call callback at confirm  */
-  zb_bitfield_t is_rx_buf:1;    /*!< if 1, this is buffer with received packet and
-                                 * nwk_mac_addrs_t is at buffer tail */
-  zb_bitfield_t reserved:1;
-  zb_int16_t status;            /*!< some status to be passed with packet  */
-  zb_uint8_t reserved_to_align[ZB_RESERVED_BUF_TO_ALIGN_HDR_SIZE]; /*!< this field serves to keep
-                                                         following buf[ZB_IO_BUF_SIZE] 
-                                                         aligned to a word*/
+  zb_bitfield_t is_rx_buf:1;        /*!< if 1, this is buffer with received packet and
+                                     * nwk_mac_addrs_t is at buffer tail */
+  zb_bitfield_t has_aps_payload:1;  /*!< if 1, than packet comes from APS, the flag is needed
+                                     * to increase APS packets counter in diagnostic data on packet sending
+                                     */
+  zb_bitfield_t has_aps_user_payload:1;   /*!< if 1, than packet comes with APS user's payload */
+  zb_uint8_t reserved:7;
 } ZB_PACKED_STRUCT zb_buf_hdr_t;
 
 /* if there is a platform with failed assertion, ZB_RESERVED_BUF_TO_ALIGN_HDR_SIZE
@@ -87,7 +72,7 @@ typedef ZB_PACKED_PRE struct zb_buf_hdr_s
 ZB_ASSERT_COMPILE_DECL((sizeof(zb_buf_hdr_t) % sizeof(zb_uint32_t)) == 0);
 
 #ifdef ZB_DEBUG_BUFFERS_EXT
-#define ZB_LINE_IS_UNDEF 0xFFFF
+#define ZB_LINE_IS_UNDEF 0xFFFFU
 
 /**
    Extended buffer debug: tracking buffer access
@@ -164,13 +149,21 @@ typedef zb_mult_buf_t zb_buf_ent_t;
 #endif
 
 /**
-   Buffer type (direction).
+ * @name Buffer type (direction)
+ * @anchor buffer_types
  */
-enum zb_buffer_types_e
-{
-  ZB_OUT_BUFFER = 0,   /*!< Out buffer */
-  ZB_IN_BUFFER = 1     /*!< In buffer */
-};
+/** @{ */
+#define ZB_OUT_BUFFER 0U /*!< Out buffer */
+#define ZB_IN_BUFFER  1U /*!< In buffer */
+/** @} */
+
+/**
+ * @brief Type for Buffer type (direction).
+ *
+ * Holds one of @ref buffer_types. Kept for backward compatibility as
+ * @ref buffer_types were declared previously as enum.
+ */
+typedef zb_uint8_t zb_buffer_types_t;
 
 /**
    @typedef zb_uint8_t zb_bufid_t
@@ -178,8 +171,8 @@ enum zb_buffer_types_e
  */
 typedef zb_uint8_t zb_bufid_t;
 
-#define ZB_BUF_INVALID 0
-#define ZB_UNDEFINED_BUFFER 0
+#define ZB_BUF_INVALID 0U
+#define ZB_UNDEFINED_BUFFER 0U
 
 #ifdef ZB_DEBUG_BUFFERS
 #define TRACE_PROTO_VOID zb_uint16_t from_file, zb_uint16_t from_line
@@ -213,9 +206,6 @@ zb_ret_t zb_buf_get_in_delayed_ext_func(TRACE_PROTO zb_callback2_t callback, zb_
 void zb_buf_free_func(TRACE_PROTO zb_bufid_t buf);
 void* zb_buf_begin_func(TRACE_PROTO zb_bufid_t buf);
 void* zb_buf_end_func(TRACE_PROTO zb_bufid_t buf);
-void* zb_buf_ptr_func(TRACE_PROTO zb_bufid_t buf);
-zb_bufid_t zb_buf_from_ptr_func(TRACE_PROTO void *ptr);
-void zb_buf_set_data_offset_func(TRACE_PROTO zb_bufid_t buf, zb_uint_t off);
 zb_uint_t zb_buf_len_func(TRACE_PROTO zb_bufid_t buf);
 void zb_buf_copy_func(TRACE_PROTO zb_bufid_t dst_buf, zb_bufid_t src_buf);
 void *zb_buf_initial_alloc_func(TRACE_PROTO zb_bufid_t buf, zb_uint_t size);
@@ -238,7 +228,7 @@ void *zb_buf_alloc_left_func(TRACE_PROTO zb_bufid_t buf, zb_uint_t size);
    @param max_size required maximum buffer payload size (in bytes). It can be bigger or smaller than
    the default buffer size. Depending on the specific value, the buffer pool may decide to use
    a fraction of buffer or long buffers. Special value 0 means "single default buffer".
-   @return buffer id or ZB_BUF_INVALID if no buffers available
+   @return buffer ID or ZB_BUF_INVALID if no buffers available
  */
 #define zb_buf_get(is_in,max_size) zb_buf_get_func(TRACE_CALL (is_in), (max_size))
 
@@ -274,7 +264,9 @@ void *zb_buf_alloc_left_func(TRACE_PROTO zb_bufid_t buf, zb_uint_t size);
  * @param callback - callback to call.
  * @return RET_OK or error code.
  */
+#ifndef zb_buf_get_out_delayed
 #define zb_buf_get_out_delayed(callback) zb_buf_get_out_delayed_func(TRACE_CALL (callback))
+#endif /* zb_buf_get_out_delayed */
 
 /**
  * @brief Allocate IN buffer, call a callback when the buffer is available.
@@ -286,7 +278,9 @@ void *zb_buf_alloc_left_func(TRACE_PROTO zb_bufid_t buf, zb_uint_t size);
  * @param callback - callback to call.
  * @return RET_OK or error code.
  */
+#ifndef zb_buf_get_in_delayed
 #define zb_buf_get_in_delayed(callback) zb_buf_get_in_delayed_func(TRACE_CALL (callback))
+#endif /* zb_buf_get_in_delayed */
 
 /**
  * @brief Allocate OUT buffer, call a callback when the buffer is available.
@@ -296,12 +290,17 @@ void *zb_buf_alloc_left_func(TRACE_PROTO zb_bufid_t buf, zb_uint_t size);
  *
  * @param callback - callback to call.
  * @param arg - second argument for a callback
-   @param max_size required maximum buffer payload size (in bytes). It can be bigger or smaller than
-   the default buffer size. Depending on the specific value, the buffer pool may decide to use 
-   a fraction of buffer or long buffers. Special value 0 means "single default buffer".
+ * @param max_size - required maximum buffer payload size (in bytes). The buffer payload size
+ * is the sum of both data and parameters, so the max_size parameter should
+ * reflect this. It can be bigger or smaller than the default buffer size.
+ * Depending on the specific value, the buffer pool may decide to use a fraction
+ * of buffer or long buffers. If the value is set to 0, the payload size will be equal
+ * to the size of a single default buffer.
  * @return RET_OK or error code.
  */
+#ifndef zb_buf_get_out_delayed_ext
 #define zb_buf_get_out_delayed_ext(callback,arg,max_size) zb_buf_get_out_delayed_ext_func(TRACE_CALL (callback),(arg),(max_size))
+#endif /* zb_buf_get_out_delayed_ext */
 
 /**
  * @brief Allocate IN buffer, call a callback when the buffer is available.
@@ -311,16 +310,20 @@ void *zb_buf_alloc_left_func(TRACE_PROTO zb_bufid_t buf, zb_uint_t size);
  *
  * @param callback - callback to call.
  * @param arg - second argument for a callback
- * @param max_size required maximum buffer payload size (in bytes). It can be bigger or smaller than
- * the default buffer size. Depending on the specific value, the buffer pool may decide to use 
- * a fraction of buffer or long buffers. Special value 0 means "single default buffer".
+ * @param max_size required maximum buffer payload size (in bytes). The buffer payload size
+ * is the sum of both data and parameters, so the max_size parameter should
+ * reflect this. It can be bigger or smaller than the default buffer size.
+ * Depending on the specific value, the buffer pool may decide to use a fraction
+ * of buffer or long buffers. If the value is set to 0, the payload size will be equal
+ * to the size of a single default buffer.
  * @return RET_OK or error code.
  */
+#ifndef zb_buf_get_in_delayed_ext
 #define zb_buf_get_in_delayed_ext(callback,arg,max_size) zb_buf_get_in_delayed_ext_func(TRACE_CALL (callback),(arg),(max_size))
-
+#endif /* zb_buf_get_in_delayed_ext */
 
 /**
- * @brief Free packet buffer and put it into freelist.
+ * @brief Free packet buffer and put it into free list.
  *
  * Can be called from the main loop.
  *
@@ -348,35 +351,6 @@ void *zb_buf_alloc_left_func(TRACE_PROTO zb_bufid_t buf, zb_uint_t size);
   @return pointer to the first byte after data in the buffer
 */
 #define zb_buf_end(buf) zb_buf_end_func(TRACE_CALL (buf))
-
-/**
-  Return pointer to the memory of the buffer
-
-  @param buf - buffer ID
-
-  @return pointer to the first byte of the buffer memory
-*/
-#define zb_buf_ptr(buf) zb_buf_ptr_func(TRACE_CALL (buf))
-
-
-/**
-  Return buffer id
-
-  @param ptr - pointer to the first byte of the buffer memory
-
-  @return buffer ID
-*/
-#define zb_buf_from_ptr(ptr) zb_buf_from_ptr_func(TRACE_CALL (ptr))
-
-
-/**
- * Set buffer data offset
- *
- * @param buf - buffer ID
- * @param off - data offset
- */
-#define zb_buf_set_data_offset(buf, off) zb_buf_set_data_offset_func(TRACE_CALL (buf), (off))
-
 
 /**
  * Return current buffer length
@@ -475,6 +449,10 @@ void *zb_buf_alloc_left_func(TRACE_PROTO zb_bufid_t buf, zb_uint_t size);
      zb_zdo_nwk_addr_req(ZB_REF_FROM_BUF_func(buf), NULL);
    @endcode
  */
+/* Note: MISRA C-STAT analysis gives false positive for rule 20.7 violation on ZB_BUF_GET_PARAM()
+ * due to missing parenthesis around "type" on pointer type cast. This is a misinterpertation
+ * of the rule by C-STAT tool, since this rule refers only to expressions, and not data type casts
+ * like it is used here. */
 #define ZB_BUF_GET_PARAM(buf, type) ((type *)zb_buf_get_tail_func(TRACE_CALL (buf), sizeof(type)))
 
 /**
@@ -514,25 +492,30 @@ void *zb_buf_alloc_left_func(TRACE_PROTO zb_bufid_t buf, zb_uint_t size);
 
 
 /**
-   Buffer's internals flags bitmask
+ * @name Buffer's internals flags bitmask
+ * @anchor buf_flags_bm
  */
-typedef enum zb_buf_flags_bm_e
-{
-  ZB_BUF_IS_IN          = (1<<0),
+/** @{ */
+#define ZB_BUF_SECUR_NO_ENCR    0U        /*!< No encryption  */
+#define ZB_BUF_IS_IN            (1U << 0)
+/* Encrypt flags. That enum is actually bitmask. */
+#define ZB_BUF_SECUR_NWK_ENCR   (1U << 1) /*!< NWK frame encryption  */
+#define ZB_BUF_SECUR_APS_ENCR   (1U << 2) /*!< APS encryption. Analyze APS header to define which key to use  */
+#define ZB_BUF_SECUR_MAC_ENCR   (1U << 3) /*!< MAC encryption - for 802.15.4 certification only */
+#define ZB_BUF_SECUR_ALL_ENCR   (ZB_BUF_SECUR_NWK_ENCR | ZB_BUF_SECUR_APS_ENCR | ZB_BUF_SECUR_MAC_ENCR)
+#define ZB_BUF_USE_SAME_KEY     (1U << 4)
+#define ZB_BUF_ZDO_CMD_NO_RESP  (1U << 5)
+#define ZB_BUF_HAS_APS_PAYLOAD  (1U << 6) /*!< Flag to indicate whether the buffer contains any APS payload */
+#define ZB_BUF_HAS_APS_USER_PAYLOAD  (1U << 7) /*!< Flag to indicate whether the buffer contains APS user payload */
+/** @} */
+
 /**
-    Encrypt flags. That enum is actually bitmask.
+ * @brief Type for buffer's internals flags bitmask.
+ *
+ * @deprecated holds one of @ref buf_flags_bm. Kept only for backward compatibility as
+ * @ref buf_flags_bm were declared previously as enum. Can be removed in future releases.
  */
-  ZB_BUF_SECUR_NWK_ENCR = (1<<1),            /*!< NWK frame encryption  */
-  ZB_BUF_SECUR_APS_ENCR = (1<<2),            /*!< APS encryption. Analyze APS header to
-                                 * define which key to use  */
-  ZB_BUF_SECUR_MAC_ENCR = (1<<3),            /*!< MAC encryption - for 802.15.4 certification
-                                         * only */
-#define ZB_BUF_SECUR_ALL_ENCR (ZB_BUF_SECUR_NWK_ENCR | ZB_BUF_SECUR_APS_ENCR | ZB_BUF_SECUR_MAC_ENCR)
-#define ZB_BUF_SECUR_NO_ENCR 0            /*!< No encryption  */
-  ZB_BUF_USE_SAME_KEY   = (1<<4),
-  ZB_BUF_ZDO_CMD_NO_RESP = (1<<5),
-  ZB_BUF_HAS_APS_PAYLOAD = (1<<6)
-} zb_buf_flags_bm_t;
+typedef zb_uint8_t zb_buf_flags_bm_t;
 
 /** @cond internals_doc */
 void zb_buf_flags_or_func(TRACE_PROTO zb_bufid_t buf, zb_uint_t val);
@@ -553,13 +536,13 @@ zb_uint_t zb_buf_flags_get_func(TRACE_PROTO zb_bufid_t buf);
    Clear buffer' flags by mask by doing flags = flags & ~mask
 
    @param buf - buffer ID
-   @param mask - value to be cleared from the flags - @see zb_buf_flags_bm_t
+   @param mask - value to be cleared from the flags - @see @ref buf_flags_bm
  */
 #define zb_buf_flags_clr(buf,mask) zb_buf_flags_clr_func(TRACE_CALL (buf),(mask))
 
 
 /**
-   Clear buffer's flags related ro encryption
+   Clear buffer's flags related to encryption
 
    That function calls zb_buf_flags_clr(buf, ZB_BUF_SECUR_ALL_ENCR)
    @param buf - buffer ID
@@ -570,7 +553,7 @@ zb_uint_t zb_buf_flags_get_func(TRACE_PROTO zb_bufid_t buf);
    Get buffer's flags byte
 
    @param buf - buffer ID
-   @return flags value - @see zb_buf_flags_bm_t
+   @return flags value - @see @ref buf_flags_bm
  */
 #define zb_buf_flags_get(buf) zb_buf_flags_get_func(TRACE_CALL (buf))
 
@@ -581,17 +564,21 @@ zb_uint_t zb_buf_flags_get_func(TRACE_PROTO zb_bufid_t buf);
  */
 zb_bool_t zb_buf_is_oom_state(void);
 
+#ifdef ZB_TRACE_LEVEL
 /**
    Trace buffer statistics into ZBOSS trace
  */
 void zb_buf_oom_trace(void);
+#endif /* ZB_TRACE_LEVEL */
 
+#ifdef ZB_REDUCE_NWK_LOAD_ON_LOW_MEMORY
 /**
    Check if buffer pool is close to Out Of Memory (OOM) state
 
    @return ZB_TRUE if ZBOSS is nearly in OOM state
  */
 zb_bool_t zb_buf_memory_close_to_low(void);
+#endif /* ZB_REDUCE_NWK_LOAD_ON_LOW_MEMORY */
 
 /**
    Check if buffer pool is close to Out Of Memory (OOM) state
@@ -601,8 +588,8 @@ zb_bool_t zb_buf_memory_close_to_low(void);
 zb_bool_t zb_buf_memory_low(void);
 
 /** @cond internals_doc */
-zb_int16_t zb_buf_get_status_func(TRACE_PROTO zb_bufid_t buf);
-void zb_buf_set_status_func(TRACE_PROTO zb_bufid_t buf, zb_int16_t status);
+zb_ret_t zb_buf_get_status_func(TRACE_PROTO zb_bufid_t buf);
+void zb_buf_set_status_func(TRACE_PROTO zb_bufid_t buf, zb_ret_t status);
 zb_uint8_t zb_buf_get_handle_func(TRACE_PROTO zb_bufid_t buf);
 void zb_buf_set_handle_func(TRACE_PROTO zb_bufid_t buf, zb_uint8_t handle);
 /** @endcond */
@@ -621,7 +608,7 @@ void zb_buf_set_handle_func(TRACE_PROTO zb_bufid_t buf, zb_uint8_t handle);
    @param buf - buffer ID
    @param status - new status field value
  */
-#define zb_buf_set_status(buf,status) zb_buf_set_status_func(TRACE_CALL (buf), (status))
+#define zb_buf_set_status(buf,status) zb_buf_set_status_func(TRACE_CALL (buf), (zb_ret_t)(status))
 
 /**
    Get 'handle' field of the buffer's header
@@ -658,6 +645,19 @@ void zb_buf_set_mac_rx_need(zb_bool_t needs);
 zb_bool_t zb_buf_get_mac_rx_need(void);
 
 zb_bool_t zb_buf_have_rx_bufs(void);
+
+#define ZB_BUF_COPY_FLAG_APS_PAYLOAD(dst, src)                          \
+  do {                                                                  \
+    if ((zb_buf_flags_get((src)) & ZB_BUF_HAS_APS_PAYLOAD) != 0U)       \
+    {                                                                   \
+      zb_buf_flags_or((dst), ZB_BUF_HAS_APS_PAYLOAD);                   \
+                                                                        \
+      if ((zb_buf_flags_get((src)) & ZB_BUF_HAS_APS_USER_PAYLOAD) != 0U)\
+      {                                                                 \
+        zb_buf_flags_or((dst), ZB_BUF_HAS_APS_USER_PAYLOAD);            \
+      }                                                                 \
+    }                                                                   \
+  } while(0)
 
 /*! @} */
 

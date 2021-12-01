@@ -1,42 +1,25 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
  * http://www.dsr-zboss.com
  * http://www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: Platform specific for Nordic nrf52 SoC
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: Platform specific for Nordic nrf52 SoC
 */
 
 #ifndef __ZB_OSIF_NRF52_H
@@ -56,7 +39,6 @@ PURPOSE: Platform specific for Nordic nrf52 SoC
 #endif
 
 #define ZB_VOLATILE
-#define ZB_SDCC_XDATA
 #define ZB_CALLBACK
 #define ZB_SDCC_BANKED
 #define ZB_KEIL_REENTRANT
@@ -86,6 +68,7 @@ void zb_nrf52_init(void);
 void zb_nrf52_general_init(void);
 void zb_nrf52_rf_init(void);
 void zb_nrf52_abort(void);
+void zb_nrf52_trace_cpu_state(void);
 void zb_osif_go_idle(void);
 
 #define ZB_PLATFORM_INIT() zb_nrf52_init()
@@ -97,6 +80,14 @@ void zb_nrf52_timer_start(void);
 zb_bool_t zb_nrf52_timer_is_on(void);
 zb_uint32_t zb_nrf52_timer_get(void);
 
+#ifdef ZB_MACSPLIT_DEVICE
+#if defined (NRFX_WDT_ENABLED) && (NRFX_WDT_ENABLED == 1)
+#define ZB_KICK_HW_WATCHDOG()    zb_nrf52_wdt_feed()
+#else
+#define ZB_KICK_HW_WATCHDOG()
+#endif
+#endif
+
 #ifdef ZB_USE_SLEEP
 void zb_nrf52_sleep_init(void);
 zb_uint32_t zb_nrf52_sleep(zb_uint32_t sleep_tmo);
@@ -107,7 +98,7 @@ void zb_nrf52_rf_setChannel(zb_uint8_t channel);
 void zb_nrf52_enable_all_inter(void);
 void zb_nrf52_disable_all_inter(void);
 zb_uint16_t zb_nrf52_getRssi(void);
-zb_void_t zb_nrf_802154_mac_osif_init(void);
+void zb_nrf_802154_mac_osif_init(void);
 
 #if defined ZB_TRACE_OVER_USART && defined ZB_TRACE_LEVEL
 #define ZB_SERIAL_FOR_TRACE
@@ -144,6 +135,8 @@ zb_void_t zb_nrf_802154_mac_osif_init(void);
 
 #define ZB_ABORT zb_nrf52_abort
 
+#define ZB_TRACE_CPU_STATE zb_nrf52_trace_cpu_state
+
 #define ZB_GO_IDLE() zb_osif_go_idle()
 
 #if defined ZB_HAVE_SERIAL
@@ -170,7 +163,12 @@ typedef struct zb_serial_ctx_s
   zb_ushort_t      tx_buf_cap;
   zb_uint8_t       tx_in_progress;
   zb_osif_uart_byte_received_cb_t byte_received_cb;
+#endif /* !defined ZB_NRF_TRACE || defined ZB_MACSPLIT_TRANSPORT_USERIAL */
+#ifdef ZB_MACSPLIT_TRANSPORT_SERIAL
+  uart_transport_rx_rb_t rx_data_rb;
 #endif
+#if defined ZB_MACSPLIT_TRANSPORT_USERIAL
+#endif /* defined ZB_MACSPLIT_TRANSPORT_USERIAL */
 }
 zb_serial_ctx_t;
 
@@ -212,6 +210,19 @@ void zb_osif_set_userial_byte_received_cb(zb_osif_uart_byte_received_cb_t cb);
 zb_bool_t zb_osif_userial_is_open(void);
 
 #endif  /* ZB_HAVE_SERIAL */
+
+#ifdef ZB_USE_OSIF_OTA_ROUTINES
+#define OTA_HEADER_SIZE 56      /* sizeof(zb_zcl_ota_upgrade_file_header_t), no optional fields */
+#define OTA_IMAGE_BLOCK_DATA_SIZE_MAX 60 /* from zb_zcl_ota_upgrade.h */
+
+typedef struct zb_osif_flash_device_s {
+  zb_uint32_t base_address;
+  zb_uint32_t img_srv_address;
+  /* TODO: these fields are used only for OTA server, may put it under some define... */
+  zb_uint8_t ota_file_header[OTA_HEADER_SIZE];
+  zb_uint8_t transmit_buffer[OTA_IMAGE_BLOCK_DATA_SIZE_MAX];
+} zb_osif_flash_device_t;
+#endif
 
 /** @addtogroup special_nordic_functions
  * @{

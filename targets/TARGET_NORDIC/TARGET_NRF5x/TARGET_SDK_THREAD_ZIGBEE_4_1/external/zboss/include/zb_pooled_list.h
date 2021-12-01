@@ -1,42 +1,25 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: simple lists operations (macroses). Use 1- or 2-bytes insed
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: simple lists operations (macroses). Use 1- or 2-bytes insed
 instead of pointer.
 */
 #ifndef POOLED_LIST_H
@@ -55,10 +38,10 @@ instead of pointer.
 #define ZP_POOLED_LIST_NULL -1
 
 #define ZP_TYPE8( x ) ( ( zb_uint8_t ) ( x ) )
-#define ZP_RIND8( x ) ( ( x ) - ZP_TYPE8( 1 ) )
+#define ZP_RIND8( x ) ( ( x ) - ZP_TYPE8( 1U ) )
 
 #define ZP_TYPE16( x ) ( ( zb_uint16_t ) ( x ) )
-#define ZP_RIND16( x ) ( ( x ) - ZP_TYPE16( 1 ) )
+#define ZP_RIND16( x ) ( ( x ) - ZP_TYPE16( 1U ) )
 
 #define ZP_NULL8  ( ZP_TYPE8  ( ZP_POOLED_LIST_NULL ) )
 #define ZP_NULL16 ( ZP_TYPE16 ( ZP_POOLED_LIST_NULL ) )
@@ -83,8 +66,8 @@ instead of pointer.
 #define ZB_POOLED_LIST16_IS_EMPTY( list ) ( ( list ) == ZP_NULL16 )
 #define ZB_POOLED_LIST16_IS_NOT_EMPTY( list ) ( ( list ) != ZP_NULL16 )
 
-#define ZB_POOLED_LIST8_NEXT( base, index, link_field ) ( (  ZP_NULL8 == index ) ? ZP_NULL8 :  base[ index ].link_field##_next)
-#define ZB_POOLED_LIST8_PREV( base, index, link_field ) ( (  ZP_NULL8 == index ) ? ZP_NULL8 :  base[ index ].link_field##_prev)
+#define ZB_POOLED_LIST8_NEXT( base, index, link_field ) ( (  ZP_NULL8 == ( index ) ) ? ZP_NULL8 :  ( base )[ ( index ) ].link_field##_next)
+#define ZB_POOLED_LIST8_PREV( base, index, link_field ) ( (  ZP_NULL8 == ( index ) ) ? ZP_NULL8 :  ( base )[ ( index ) ].link_field##_prev)
 
 #define ZB_POOLED_LIST8_GET_HEAD( base, list, link_field ) ( list )
 #define ZB_POOLED_LIST8_GET_TAIL( base, list, link_field ) ( ( ZP_NULL8 != list ) ? base[ list ].link_field##_prev : ZP_NULL8 )
@@ -104,13 +87,13 @@ instead of pointer.
   removed_elem_index = list;                                            \
   if( ( list ) != ZP_NULL8 )                                            \
   {                                                                     \
-    if( base[ list ].link_field##_next != ZP_NULL8 )                    \
+    if( ( base )[ list ].link_field##_next != ZP_NULL8 )                \
     {                                                                   \
-      base[ base[ list ].link_field##_next ].link_field##_prev =        \
-         base[ list ].link_field##_prev;                                \
+      ( base )[ ( base )[ list ].link_field##_next ].link_field##_prev = \
+         ( base )[ list ].link_field##_prev;                            \
     }                                                                   \
-    base[ list ].link_field##_prev = ZP_NULL8;                          \
-   ( list ) = base[ list ].link_field##_next ;                          \
+    ( base )[ list ].link_field##_prev = ZP_NULL8;                      \
+    ( list )  = ( base )[ list ].link_field##_next ;                    \
   }                                                                     \
 } while (0)                                                             \
 
@@ -122,15 +105,15 @@ instead of pointer.
 #define ZB_POOLED_LIST8_INSERT_HEAD( base, list, link_field, elem_index ) do \
 {                                                                       \
   ZB_ASSERT( ( elem_index ) != ZP_NULL8 );                              \
-  base[ elem_index ].link_field##_next = ( list );                      \
+  ( base )[ elem_index ].link_field##_next = ( list );                  \
   if( ( list ) != ZP_NULL8 )                                            \
  {                                                                      \
-   base[ elem_index ].link_field##_prev = base[ list ].link_field##_prev; \
-   base[ list ].link_field##_prev = elem_index ;                        \
+   ( base )[ ( elem_index ) ].link_field##_prev = ( base )[ list ].link_field##_prev; \
+   ( base )[ ( list ) ].link_field##_prev = ( elem_index ) ;            \
  }                                                                      \
  else                                                                   \
  {                                                                      \
-   base[ elem_index ].link_field##_prev = elem_index;                   \
+   ( base )[ elem_index ].link_field##_prev = ( elem_index );           \
  }                                                                      \
  ( list ) = ( elem_index );                                             \
 } while( 0 )
@@ -143,16 +126,16 @@ instead of pointer.
 #define ZB_POOLED_LIST8_INSERT_TAIL( base, list, link_field, elem_index ) do \
 {                                                                       \
   ZB_ASSERT( ( elem_index ) != ZP_NULL8 );                              \
-  base[ elem_index ].link_field##_next = ZP_NULL8;                      \
+  ( base )[ ( elem_index ) ].link_field##_next = ZP_NULL8;              \
   if( ( list ) != ZP_NULL8 )                                            \
   {                                                                     \
-    base[ elem_index ].link_field##_prev = base[ list ].link_field##_prev; \
-    base[ base[ list ].link_field##_prev ].link_field##_next = elem_index; \
-    base[ list ].link_field##_prev = elem_index;                        \
+    ( base )[ ( elem_index ) ].link_field##_prev = ( base )[ ( list ) ].link_field##_prev; \
+    ( base )[ ( base )[ ( list ) ].link_field##_prev ].link_field##_next = ( elem_index ); \
+    ( base )[ ( list ) ].link_field##_prev = ( elem_index );            \
   }                                                                     \
   else                                                                  \
   {                                                                     \
-    base[ elem_index ].link_field##_prev = elem_index;                  \
+    ( base )[ ( elem_index ) ].link_field##_prev = ( elem_index );      \
     ( list ) = ( elem_index );                                          \
   }                                                                     \
 } while (0)
@@ -164,19 +147,19 @@ instead of pointer.
 
 #define ZB_POOLED_LIST8_INSERT_AFTER( base, list, link_field, elem_index, new_elem_index ) do \
 {                                                                       \
-  ZB_ASSERT( new_elem_index != ZP_NULL8 );                              \
-  if( elem_index != ZP_NULL8  )                                         \
+  ZB_ASSERT( ( new_elem_index ) != ZP_NULL8 );                          \
+  if( ( elem_index ) != ZP_NULL8  )                                         \
   {                                                                     \
-    if( elem_index == ZB_POOLED_LIST8_GET_TAIL( base, list, link_field ) ) \
+    if( ( ( elem_index ) ) == ZB_POOLED_LIST8_GET_TAIL( ( base ), ( list ), link_field ) ) \
     {                                                                   \
-      ZB_POOLED_LIST8_INSERT_TAIL( base, list, link_field, new_elem_index ); \
+      ZB_POOLED_LIST8_INSERT_TAIL( ( base ), ( list ), link_field, ( new_elem_index ) ); \
     }                                                                   \
     else                                                                \
     {                                                                   \
-      base[ new_elem_index ].link_field##_next = base[ elem_index ].link_field##_next ; \
-      base[ new_elem_index ].link_field##_prev = elem_index;            \
-      base[ base[ elem_index ].link_field##_next ].link_field##_prev = new_elem_index; \
-      base[ elem_index ].link_field##_next = ( new_elem_index );        \
+      ( base )[ new_elem_index ].link_field##_next = ( base )[ ( elem_index ) ].link_field##_next ; \
+      ( base )[ new_elem_index ].link_field##_prev = ( elem_index );    \
+      ( base )[ ( base )[ ( elem_index ) ].link_field##_next ].link_field##_prev = ( new_elem_index ); \
+      ( base )[ ( elem_index ) ].link_field##_next = ( new_elem_index ); \
     }                                                                   \
   }                                                                     \
 } while(0)
@@ -250,26 +233,26 @@ instead of pointer.
 #define ZB_POOLED_LIST8_REMOVE( base, list, link_field, elem_index )    \
 do                                                                      \
 {                                                                       \
-  ZB_ASSERT( elem_index != ZP_NULL8 );                                  \
-  if( base[ elem_index ].link_field##_prev != ZP_NULL8 )                \
+  ZB_ASSERT( ( elem_index ) != ZP_NULL8 );                              \
+  if( base[ ( elem_index ) ].link_field##_prev != ZP_NULL8 )            \
   {                                                                     \
-    if( base[ elem_index ].link_field##_next != ZP_NULL8 )    /* this is not a tail */ \
+    if( ( base )[ ( elem_index ) ].link_field##_next != ZP_NULL8 )    /* this is not a tail */ \
     {                                                                   \
-      base[ base[ elem_index ].link_field##_next ].link_field##_prev = base[ elem_index ].link_field##_prev; \
+      ( base )[ ( base )[ ( elem_index ) ].link_field##_next ].link_field##_prev = ( base )[ ( elem_index ) ].link_field##_prev; \
     }                                                                   \
     else                          /* this is a tail */                  \
     {                                                                   \
-      base[ list ].link_field##_prev = base[ elem_index ].link_field##_prev; \
+      ( base )[ ( list ) ].link_field##_prev = ( base )[ ( elem_index ) ].link_field##_prev; \
     }                                                                   \
     if( ( elem_index ) == ( list ) )          /* this is a head */      \
     {                                                                   \
-      ( list ) = base[ elem_index ].link_field##_next;                  \
+      ( list ) = ( base )[ ( elem_index ) ].link_field##_next;          \
     }                                                                   \
     else                          /* this is not a head */              \
     {                                                                   \
-      base[ base[ elem_index ].link_field##_prev ].link_field##_next = base[ elem_index ].link_field##_next; \
+      ( base )[ ( base )[ ( elem_index ) ].link_field##_prev ].link_field##_next = ( base )[ ( elem_index ) ].link_field##_next; \
     }                                                                   \
-    base[ elem_index ].link_field##_prev = ZP_NULL8;                    \
+    ( base )[ ( elem_index ) ].link_field##_prev = ZP_NULL8;            \
   }                                                                     \
 }                                                                       \
 while( 0 )                                                              \
@@ -456,7 +439,7 @@ while( 0 )
 
 
 /* Single liked lists */
-#define ZP_POOLED_SL_LIST8_NULL 255
+#define ZP_POOLED_SL_LIST8_NULL 255U
 
 
 #define ZB_POOLED_SL_LIST8_DEFINE(type, list) type list ## _head; type list ## _tail

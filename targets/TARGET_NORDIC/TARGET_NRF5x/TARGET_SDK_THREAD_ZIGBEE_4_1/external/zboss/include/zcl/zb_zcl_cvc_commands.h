@@ -1,46 +1,31 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: ZCL Continuous Value Change feature commands declarations
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: ZCL Continuous Value Change feature commands declarations
 */
 
 #ifndef ZCL_CVC_COMMANDS_H
 #define ZCL_CVC_COMMANDS_H 1
+
+#if defined ZB_CVC_FEATURE_SUPPORT
 
 /** @cond DOXYGEN_ZCL_SECTION */
 
@@ -109,7 +94,7 @@ typedef struct zb_zcl_cvc_variables_s
 {
 /** @brief Input variables */
   zb_zcl_cvc_input_variables_t input_var;
-/** @brief Time to next sheduled operation (delta time) */
+/** @brief Time to next scheduled operation (delta time) */
   zb_uint16_t delta_time;
 /** @brief Delta value for one step */
   zb_int16_t delta_value16;
@@ -121,7 +106,7 @@ typedef struct zb_zcl_cvc_variables_s
   zb_uint16_t extra_inc_time_step;
 /** @brief End time of transition */
   zb_time_t end_time;
-/** @brief Availible time error */
+/** @brief Available time error */
   zb_uint16_t time_err;
 } zb_zcl_cvc_variables_t;
 
@@ -141,7 +126,6 @@ typedef struct zb_zcl_cvc_alarm_variables_s
   zb_bool_t is_used;
 } ZB_PACKED_STRUCT
 zb_zcl_cvc_alarm_variables_t;
-
 
 /*!
   @brief Calculate transition values and put it into buffer.
@@ -187,7 +171,7 @@ zb_uint8_t zb_zcl_cvc_check_transition_running(
 
 
 /*! @brief Initialize alarm list (stored in device context). */
-zb_void_t zb_zcl_init_cvc_alarm_info(void);
+void zb_zcl_init_cvc_alarm_info(void);
 
 
 /*!
@@ -198,5 +182,7 @@ zb_void_t zb_zcl_init_cvc_alarm_info(void);
 zb_uint16_t zb_zcl_cvc_get_remaining_time(zb_uint8_t alarm_id);
 
 /** @endcond */ /* DOXYGEN_ZCL_SECTION */
+
+#endif /* ZB_CVC_FEATURE_SUPPORT */
 
 #endif /* ZCL_LEVEL_CVC_COMMANDS_H */

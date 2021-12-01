@@ -1,46 +1,29 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: DOOR_LOCK cluster defintions
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: DOOR_LOCK cluster definitions
 */
 
 #ifndef ZB_ZCL_DOOR_LOCK_H
-#define ZB_ZCL_DOOR_LOCK_H
+#define ZB_ZCL_DOOR_LOCK_H 1
 
 #include "zcl/zb_zcl_common.h"
 #include "zcl/zb_zcl_commands.h"
@@ -63,28 +46,15 @@ PURPOSE: DOOR_LOCK cluster defintions
  *    @par Examples:
  *
  *    Send Door Lock command:
- *    @snippet doxygen_snippets.dox Send Door Lock request_snippet_door_lock_th_538_c
- *
- *    Send Door Lock response:
- *    @snippet doxygen_snippets.dox Send Door Lock response_snippet_ha_door_lock_sample_c
- *
- *    Parse Door Lock response:
- *    @snippet doxygen_snippets.dox Parse Door Lock response_snippet_ha_door_lock_controller_sample_c
+ *    @snippet HA_samples/door_lock/sample_zed.c send_door_lock_req
  *
  *    Send Door Unlock command:
- *    @snippet doxygen_snippets.dox Send Door Unlock request_snippet_door_lock_th_538_c
+ *    @snippet HA_samples/door_lock/sample_zed.c send_door_lock_unlock_req
  *
- *    Send Door Unlock response:
- *    @snippet doxygen_snippets.dox Send Door Unlock response_snippet_ha_door_lock_sample_c
- *
- *    Parse Door Unlock response:
- *    @snippet doxygen_snippets.dox Parse Unlock Door response_snippet_ha_door_lock_controller_sample_c
- *    @par
- *
- *    For more information see devices_closures, 538_door_lock samples
+ *    For more information see HA_samples/door_lock and HA_samples/door_lock_controller samples
  */
 
-/*! @name DoorLock cluster attributes
+/*! @name Door Lock cluster attributes
     @{
 */
 
@@ -249,7 +219,7 @@ enum zb_zcl_door_lock_actuator_enabled_e
   ZB_ZCL_ATTR_DOOR_LOCK_ACTUATOR_ENABLED_ENABLED
 
 /** @brief Values for DoorState attribute
-  * @see ZCL specx, subclause 7.3.2.2.4
+  * @see ZCL spec, subclause 7.3.2.2.4
   */
 enum zb_zcl_door_lock_door_state_e
 {
@@ -265,7 +235,7 @@ enum zb_zcl_door_lock_door_state_e
   ZB_ZCL_ATTR_DOOR_LOCK_DOOR_STATE_ERROR_UNSPECIFIED = 0x04
 };
 
-/** @brief Declare attribute list for DoorLock cluster
+/** @brief Declare attribute list for Door Lock cluster
     @param attr_list - attribute list name
     @param lock_state
     @param lock_type
@@ -281,13 +251,13 @@ enum zb_zcl_door_lock_door_state_e
   ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_DOOR_LOCK_ACTUATOR_ENABLED_ID, (actuator_enabled)) \
   ZB_ZCL_FINISH_DECLARE_ATTRIB_LIST
 
-/*! @} */ /* DoorLock cluster attributes */
+/*! @} */ /* Door Lock cluster attributes */
 
-/*! @name DoorLock cluster commands
+/*! @name Door Lock cluster commands
     @{
 */
 
-/*! @brief DoorLock cluster commands
+/*! @brief Door Lock cluster commands
     @see ZCL spec, subclause 7.3.2.3 Commands Received
 */
 enum zb_zcl_door_lock_cmd_e
@@ -347,7 +317,7 @@ enum zb_zcl_door_lock_cmd_e
   ZB_ZCL_CMD_DOOR_LOCK_CLEAR_ALL_RFID_CODES             = 0x19,
 };
 
-/*! @brief DoorLock cluster commands response
+/*! @brief Door Lock cluster commands response
     @see ZCL spec, subclause 7.3.2.4 Commands Generated
 */
 enum zb_zcl_door_lock_cmd_resp_e
@@ -749,11 +719,11 @@ typedef ZB_PACKED_PRE struct zb_zcl_door_lock_read_unlock_door_res_payload_s
    ?  NULL                                                                              \
    : (zb_zcl_door_lock_read_unlock_door_res_payload_t*)zb_buf_begin((buffer)))
 
-/*! @} */ /* DoorLock cluster commands */
+/*! @} */ /* Door Lock cluster commands */
 
 /*! @cond internals_doc
-    @internal @name DoorLock cluster internals
-    Internal structures for DoorLock cluster
+    @internal @name Door Lock cluster internals
+    Internal structures for Door Lock cluster
     @{
 */
 
@@ -762,7 +732,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_door_lock_read_unlock_door_res_payload_s
     ZB_ZCL_ATTR_DOOR_LOCK_LOCK_STATE_ID,                                                     \
     ZB_ZCL_ATTR_TYPE_8BIT_ENUM,                                                              \
     ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_REPORTING | ZB_ZCL_ATTR_ACCESS_SCENE,  \
-    (zb_voidp_t) data_ptr                                                                    \
+    (void*) data_ptr                                                                    \
   }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_DOOR_LOCK_LOCK_TYPE_ID(data_ptr) \
@@ -770,7 +740,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_door_lock_read_unlock_door_res_payload_s
     ZB_ZCL_ATTR_DOOR_LOCK_LOCK_TYPE_ID,                           \
     ZB_ZCL_ATTR_TYPE_8BIT_ENUM,                                   \
     ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                 \
-    (zb_voidp_t) data_ptr                                         \
+    (void*) data_ptr                                         \
   }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_DOOR_LOCK_ACTUATOR_ENABLED_ID(data_ptr) \
@@ -778,7 +748,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_door_lock_read_unlock_door_res_payload_s
     ZB_ZCL_ATTR_DOOR_LOCK_ACTUATOR_ENABLED_ID,                    \
     ZB_ZCL_ATTR_TYPE_BOOL,                                        \
     ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                 \
-    (zb_voidp_t) data_ptr                                         \
+    (void*) data_ptr                                         \
   }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_DOOR_LOCK_RF_OPERATION_EVENT_MASK_ID(data_ptr) \
@@ -786,16 +756,16 @@ typedef ZB_PACKED_PRE struct zb_zcl_door_lock_read_unlock_door_res_payload_s
     ZB_ZCL_ATTR_DOOR_LOCK_RF_OPERATION_EVENT_MASK_ID,             \
     ZB_ZCL_ATTR_TYPE_16BITMAP,                                    \
     ZB_ZCL_ATTR_ACCESS_READ_WRITE | ZB_ZCL_ATTR_ACCESS_REPORTING, \
-    (zb_voidp_t) data_ptr                                         \
+    (void*) data_ptr                                         \
   }
 
 /*! @internal @brief Number of attributes mandatory for reporting in Door Lock cluster */
 #define ZB_ZCL_DOOR_LOCK_REPORT_ATTR_COUNT  1
 
 /*! @}
-    @endcond */ /* DoorLock cluster internals */
+    @endcond */ /* Door Lock cluster internals */
 
-/*! @} */ /* ZCL DoorLock cluster definitions */
+/*! @} */ /* ZCL Door Lock cluster definitions */
 
 /** @endcond */ /* DOXYGEN_ZCL_SECTION */
 

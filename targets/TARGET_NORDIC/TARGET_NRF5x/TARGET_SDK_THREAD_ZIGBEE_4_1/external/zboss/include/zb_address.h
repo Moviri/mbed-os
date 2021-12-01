@@ -1,42 +1,25 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: Zigbee address management
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: Zigbee address management
 */
 
 #ifndef ZB_ADDRESS_H
@@ -48,7 +31,7 @@ PURPOSE: Zigbee address management
 
 /*! @cond internals_doc */
 
-#define ZB_UNKNOWN_SHORT_ADDR (zb_uint16_t)(-1)
+#define ZB_UNKNOWN_SHORT_ADDR 0xFFFFU
 
 /**
    Compressed IEEE address. One byte  device manufacturer - reference to
@@ -57,7 +40,7 @@ PURPOSE: Zigbee address management
 typedef ZB_PACKED_PRE struct zb_ieee_addr_compressed_s
 {
   zb_uint8_t dev_manufacturer; /*!< Index from dev manufacturer array */
-  zb_uint8_t device_id[5]; /*!< Device id */
+  zb_uint8_t device_id[5]; /*!< Device ID */
 }
 ZB_PACKED_STRUCT
 zb_ieee_addr_compressed_t;
@@ -91,40 +74,41 @@ typedef ZB_PACKED_PRE struct zb_address_map_s
   zb_uint16_t                addr; /*!< 16-bit device address */
   zb_address_ieee_ref_t      redirect_ref; /*!< Reference to redirected or regular record */
 
+  zb_bitfield_t              lock_cnt:8; /*!< lock counter. not locked if 0  */
   zb_bitfield_t              used:1; /*!< if 0, this entry is free (never used)  */
   zb_bitfield_t              has_address_conflict:1; /*!< Set to 1 if device discovers address conflict
                                                       *   Cleared when conflict is resolved:
                                                       *   - Device that discovers conflict sending  Network Status
                                                       *   - or another Network Status with identical payload was received  */
-  zb_bitfield_t              padding:3; /*!< Explicit padding bits  */
+  zb_bitfield_t              padding:2; /*!< Explicit padding bits  */
   zb_bitfield_t              clock:1;    /*!< clock value for the clock usage algorithm  */
-  zb_bitfield_t              redirect_type:2; /*!< redirect type @ref zb_addr_redirect_type_e */
-  zb_bitfield_t              lock_cnt:7; /*!< lock counter. not locked if 0  */
-  zb_bitfield_t              pending_for_delete:1;    /*!< record is pending for deletetion  */
+  zb_bitfield_t              redirect_type:2; /*!< redirect type @ref addr_redirect_type */
+  zb_bitfield_t              pending_for_delete:1;    /*!< record is pending for deletion  */
+
 } ZB_PACKED_STRUCT zb_address_map_t;
 
 
 /**
-   \par work with compresed addresses
+   \par work with compressed addresses
  */
 
 /*
   * AS: Fixed wrong division 64-bit extended address into
   * manufacturer specific and device unique parts.
 */
-#define ZB_ADDRESS_DECOMPRESS(address, copressed_address)               \
+#define ZB_ADDRESS_DECOMPRESS(address, compressed_address)               \
 do                                                                      \
 {                                                                       \
-  if (ZB_ADDRESS_COMPRESED_IS_UNKNOWN(copressed_address))               \
+  if (ZB_ADDRESS_COMPRESSED_IS_UNKNOWN(compressed_address))               \
   {                                                                     \
     ZB_64BIT_ADDR_UNKNOWN(address);                                     \
   }                                                                     \
   else                                                                  \
   {                                                                     \
     ZB_MEMCPY(&((address)[5]),                                          \
-              &(ZG->addr.dev_manufacturer[(copressed_address).dev_manufacturer].device_manufacturer[0]), \
-              (sizeof((address)[0]) * 3));                              \
-    ZB_MEMCPY(&((address)[0]), &((copressed_address).device_id[0]), (sizeof((address)[0]) * 5)); \
+              &(ZG->addr.dev_manufacturer[(compressed_address).dev_manufacturer].device_manufacturer[0]), \
+              (sizeof((address)[0]) * 3U));                              \
+    ZB_MEMCPY(&((address)[0]), &((compressed_address).device_id[0]), (sizeof((address)[0]) * 5U)); \
                                                                         \
   }                                                                     \
 }                                                                       \
@@ -150,11 +134,11 @@ zb_bool_t zb_address_compressed_cmp(zb_ieee_addr_compressed_t *one, zb_ieee_addr
      This placement changes pointer type making it unusable
      Is this cast needed here?
   */
-#define ZB_ADDRESS_COMPRESED_IS_ZERO(dest)      \
-  (!ZB_MEMCMP(&(dest).dev_manufacturer, (void const *)g_zero_addr, sizeof(zb_ieee_addr_compressed_t)))
+#define ZB_ADDRESS_COMPRESSED_IS_ZERO(dest)      \
+  (ZB_MEMCMP(&(dest).dev_manufacturer, (void const *)g_zero_addr, sizeof(zb_ieee_addr_compressed_t)) == 0)
 
-#define ZB_ADDRESS_COMPRESED_IS_UNKNOWN(dest)      \
-  (!ZB_MEMCMP(&(dest).dev_manufacturer, (void const *)g_unknown_ieee_addr, sizeof(zb_ieee_addr_compressed_t)))
+#define ZB_ADDRESS_COMPRESSED_IS_UNKNOWN(dest)      \
+  (ZB_MEMCMP(&(dest).dev_manufacturer, (void const *)g_unknown_ieee_addr, sizeof(zb_ieee_addr_compressed_t)) == 0)
 
 #define ZB_ADDRESS_COMPRESS_UNKNOWN(dest)     \
   (ZB_MEMCPY(&(dest).dev_manufacturer, (void const *)g_unknown_ieee_addr, sizeof(zb_ieee_addr_compressed_t)))
@@ -223,7 +207,7 @@ void zb_address_get_pan_id(zb_address_pan_id_ref_t pan_id_ref, zb_ext_pan_id_t p
 
    @return nothing
 
-   See zdo_startup_copmlete_int code
+   See zdo_startup_complete_int code
  */
 void zb_address_clear_pan_id_table(zb_ext_pan_id_t pan_id);
 
@@ -232,7 +216,7 @@ void zb_address_clear_pan_id_table(zb_ext_pan_id_t pan_id);
 
    @return nothing
 
-   See zdo_startup_copmlete_int code
+   See zdo_startup_complete_int code
  */
 void zb_address_reset_pan_id_table(void);
 
@@ -283,9 +267,9 @@ void zb_address_get_short_pan_id(zb_address_pan_id_ref_t pan_id_ref, zb_uint16_t
    Compare Pan ID in the source form with Pan ID reference.
 
    @param pan_id_ref - Pan ID ref
-   @param pan_id     - PAn ID (64-bit)
+   @param pan_id     - Pan ID (64-bit)
 
-   @return ZB_TRUE if addresses are equal, ZB_FALSE otherwhise
+   @return ZB_TRUE if addresses are equal, ZB_FALSE otherwise
 
    @b Example
 @code
@@ -304,8 +288,8 @@ zb_bool_t zb_address_cmp_pan_id_by_ref(zb_address_pan_id_ref_t pan_id_ref, zb_ex
 
 /**
    Update long/short address pair. Create the pair if not exist. Optionally, lock.
-   Reaction on device annonce etc. Long and short addresses are present. Must
-   syncronize the address translation table with this inforormation.
+   Reaction on device announce etc. Long and short addresses are present. Must
+   synchronize the address translation table with this information.
 
    @note Never call zb_address_update() with empty (zero) ieee_address or empty
    (-1) short_address.
@@ -334,6 +318,7 @@ zb_bool_t zb_address_cmp_pan_id_by_ref(zb_address_pan_id_ref_t pan_id_ref, zb_ex
  */
 zb_ret_t zb_address_update(zb_ieee_addr_t ieee_address, zb_uint16_t short_address, zb_bool_t lock, zb_address_ieee_ref_t *ref_p);
 
+void zb_long_address_update_by_ref(zb_ieee_addr_t ieee_address, zb_address_ieee_ref_t ref);
 
 /**
    Get address with address reference.
@@ -403,7 +388,7 @@ void zb_address_ieee_by_ref(zb_ieee_addr_t ieee_address, zb_address_ieee_ref_t r
 void zb_address_short_by_ref(zb_uint16_t *short_address_p, zb_address_ieee_ref_t ref);
 
 /**
-   Get address ref by long address, optionaly create if not exist, optionally lock.
+   Get address ref by long address, optionally create if not exist, optionally lock.
    Update address alive time if not locked.
    @param ieee - IEEE device address
    @param create - if TRUE, create address entry if it does not exist
@@ -430,7 +415,7 @@ void zb_address_short_by_ref(zb_uint16_t *short_address_p, zb_address_ieee_ref_t
 
   See nwk_addr sample
  */
-zb_ret_t zb_address_by_ieee(zb_ieee_addr_t ieee, zb_bool_t create, zb_bool_t lock, zb_address_ieee_ref_t *ref_p);
+zb_ret_t zb_address_by_ieee(const zb_ieee_addr_t ieee, zb_bool_t create, zb_bool_t lock, zb_address_ieee_ref_t *ref_p);
 
 
 /**
@@ -438,14 +423,14 @@ zb_ret_t zb_address_by_ieee(zb_ieee_addr_t ieee, zb_bool_t create, zb_bool_t loc
 
    @param ieee_address - long address
 
-   @return short address if ok, -1 otherwhise.
+   @return short address if ok, -1 otherwise.
 
    @par Example
-   @snippet doxygen_snippets.dox zb_tp_transmit_counted_packets_req_certification_TP_NWK_BV-031_tp_nwk_bv_031_DUTZED1_c
+   @snippet thermostat/thermostat_zc/thermostat_zc.c default_short_addr
+   @snippet thermostat/thermostat_zc/thermostat_zc.c address_short_by_ieee
    @par
 
-   See tp_aps_bv_09 sample
-
+   See thermostat sample
  */
 zb_uint16_t zb_address_short_by_ieee(zb_ieee_addr_t ieee_address);
 
@@ -459,24 +444,9 @@ zb_uint16_t zb_address_short_by_ieee(zb_ieee_addr_t ieee_address);
    @return RET_OK or RET_NOT_FOUND
 
    @b Example
-@code
-    void func(zb_uint8_t param)
-    {
-        zb_uint16_t dest_addr;
-        zb_ieee_addr_t ieee_addr;
-        zb_mac_mhr_t mac_hdr;
-        zb_address_ieee_ref_t addr_ref;
-        zb_bufid_t buf = ZB_BUF_FROM_REF(param);
+   @snippet light_sample_HA_1_2_bulb/light_coordinator_HA_1_2_bulb/light_zc_HA_1_2_bulb.c address_ieee_by_short
 
-        zb_parse_mhr(&mac_hdr, zb_buf_begin(buf));
-        ZB_LETOH16(&dest_addr, &mac_hdr.dst_addr.addr_short);
-        if ( RET_OK == zb_address_ieee_by_short(dest_addr, ieee_addr) )
-        {
-          zb_address_update(ieee_addr,  ZG->nwk.handle.rejoin_req_table[ZG->nwk.handle.rejoin_req_table_cnt - 1].addr,
-                              ZB_FALSE, &addr_ref);
-        }
-    }
-@endcode
+   See light_sample
  */
 zb_ret_t zb_address_ieee_by_short(zb_uint16_t short_addr, zb_ieee_addr_t ieee_address);
 
@@ -494,22 +464,9 @@ zb_ret_t zb_address_ieee_by_short(zb_uint16_t short_addr, zb_ieee_addr_t ieee_ad
    @return RET_OK or error code
 
    @b Example
-@code
-  zb_neighbor_tbl_ent_t *get_neigghbor(zb_uint16_t addr)
-  {
-    zb_neighbor_tbl_ent_t *ret = NULL;
-    zb_address_ieee_ref_t ieee_ref;
+   @snippet simple_gw/simple_gw.c address_by_short
 
-    if ( zb_address_by_short(address, ZB_FALSE, ZB_FALSE, &ieee_ref) == RET_OK
-         && ZG->nwk.neighbor.addr_to_neighbor[ieee_ref] != (zb_uint8_t)-1 )
-    {
-      ret = &ZG->nwk.neighbor.base_neighbor[ ZG->nwk.neighbor.addr_to_neighbor[ieee_ref] ];
-    }
-    return ret;
-  }
-@endcode
-
-    See nwk_addr sample
+    See simple_gw sample
  */
 zb_ret_t zb_address_by_short(zb_uint16_t short_address, zb_bool_t create, zb_bool_t lock, zb_address_ieee_ref_t *ref_p);
 
@@ -537,6 +494,16 @@ zb_ret_t zb_address_by_sorted_table_index(zb_ushort_t index, zb_address_ieee_ref
 /*! @endcond */
 
 /**
+   Check that address is locked (has lock counter > 0)
+
+   @param ref - IEEE/network address pair reference
+
+   @return ZB_TRUE if address is locked
+ */
+zb_bool_t zb_address_is_locked(zb_address_ieee_ref_t ref);
+
+
+/**
 
    Increase address lock counter, when it used in some table.
    Address must be already locked.
@@ -544,8 +511,6 @@ zb_ret_t zb_address_by_sorted_table_index(zb_ushort_t index, zb_address_ieee_ref
    @param ref - IEEE/network address pair reference
 
    @return RET_OK or RET_ERROR
-
-   See nwk_addr sample
  */
 zb_ret_t zb_address_lock(zb_address_ieee_ref_t ref);
 
@@ -555,12 +520,8 @@ zb_ret_t zb_address_lock(zb_address_ieee_ref_t ref);
    Unlock address counter. Decrease lock counter.
 
    @param ref - IEEE/network address pair reference
-
-   @return RET_OK or RET_ERROR
-
-   See nwk_addr sample
  */
-zb_ret_t zb_address_unlock(zb_address_ieee_ref_t ref);
+void zb_address_unlock(zb_address_ieee_ref_t ref);
 
 /**
    Delete address.
@@ -573,14 +534,6 @@ zb_ret_t zb_address_delete(zb_address_ieee_ref_t ref);
 
 
 /*! @cond internals_doc */
-
-/**
-   Deinitialize Zigbee address management
-
-   Function doesn't return values
- */
-void zb_address_deinit(void);
-
 
 /**
    Compress long address: store manufacturer address part elsewhere
@@ -608,7 +561,7 @@ void zb_address_deinit(void);
   }
 @endcode
  */
-void zb_ieee_addr_compress(zb_ieee_addr_t address, zb_ieee_addr_compressed_t *compressed_address);
+void zb_ieee_addr_compress(const zb_ieee_addr_t address, zb_ieee_addr_compressed_t *compressed_address);
 
 
 /**
@@ -624,7 +577,7 @@ void zb_ieee_addr_compress(zb_ieee_addr_t address, zb_ieee_addr_compressed_t *co
     zb_ieee_addr_t long_address;
     if (ZG->nwk.neighbor.ext_neighbor[i].short_addr != (zb_uint16_t)~0)
     {
-      if (!ZB_ADDRESS_COMPRESED_IS_UNKNOWN(ZG->nwk.neighbor.ext_neighbor[i].long_addr))
+      if (!ZB_ADDRESS_COMPRESSED_IS_UNKNOWN(ZG->nwk.neighbor.ext_neighbor[i].long_addr))
       {
         zb_ieee_addr_decompress(long_address, &ZG->nwk.neighbor.ext_neighbor[i].long_addr);
         zb_address_update(long_address, ZG->nwk.neighbor.ext_neighbor[i].short_addr, ZB_FALSE, &addr_ref);

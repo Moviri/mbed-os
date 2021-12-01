@@ -1,42 +1,25 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: ZBOSS Zigbee cluster library API header
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: ZBOSS Zigbee cluster library API header
 */
 #ifndef ZBOSS_API_ZCL_H
 #define ZBOSS_API_ZCL_H 1
@@ -52,64 +35,175 @@ PURPOSE: ZBOSS Zigbee cluster library API header
 #include "zcl/zb_zcl_reporting.h"
 #endif
 
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_SCENES)
 #include "zcl/zb_zcl_scenes.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_BASIC)
 #include "zcl/zb_zcl_basic.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_ALARMS)
 #include "zcl/zb_zcl_alarms.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_POWER_CONFIG)
 #include "zcl/zb_zcl_power_config.h"
+#endif
+#if defined(ZB_ZCL_SUPPORT_CLUSTER_IDENTIFY)
 #include "zcl/zb_zcl_identify.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_ON_OFF_SWITCH_CONFIG)
 #include "zcl/zb_zcl_on_off_switch_conf.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_ON_OFF) || defined (ZB_ZCL_SUPPORT_CLUSTER_LEVEL_CONTROL)
 #include "zcl/zb_zcl_on_off.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_GROUPS)
 #include "zcl/zb_zcl_groups.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_DOOR_LOCK)
 #include "zcl/zb_zcl_door_lock.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_BINARY_INPUT)
 #include "zcl/zb_zcl_binary_input.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_LEVEL_CONTROL)
+#ifndef ZB_CVC_FEATURE_SUPPORT
+#define ZB_CVC_FEATURE_SUPPORT
+#endif
 #include "zcl/zb_zcl_level_control.h"
+#endif
+#if defined ZB_ZCL_SUPPORT_CLUSTER_WINDOW_COVERING
 #include "zcl/zb_zcl_window_covering.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_COLOR_CONTROL)
 #include "zcl/zb_zcl_color_control.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_SHADE_CONFIG)
 #include "zcl/zb_zcl_shade_config.h"
+#endif
 #include "zcl/zb_zcl_cvc_commands.h"
 
 #ifdef ZB_CONTROL4_NETWORK_SUPPORT
 #include "zcl/zb_zcl_control4_networking.h"
 #endif
 
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_TEMP_MEASUREMENT)
 #include "zcl/zb_zcl_temp_measurement.h"
-#include "zcl/zb_zcl_rel_humidity_measurement.h"
-#include "zcl/zb_zcl_illuminance_measurement.h"
-
-#include "zcl/zb_zcl_ias_ace.h"
-#include "zcl/zb_zcl_ias_wd.h"
-#include "zcl/zb_zcl_ias_zone.h"
-#include "zcl/zb_zcl_diagnostics.h"
-
-#include "zcl/zb_zcl_custom_cluster.h"
-
-#include "zcl/zb_zcl_time.h"
-#include "zcl/zb_zcl_dehumidification_control.h"
-#include "zcl/zb_zcl_el_measurement.h"
-#include "zcl/zb_zcl_fan_control.h"
-#include "zcl/zb_zcl_diagnostics.h"
-#include "zcl/zb_zcl_en50523_appliance_events_and_alerts.h"
-#include "zcl/zb_zcl_metering.h"
-#include "zcl/zb_zcl_thermostat.h"
-#include "zcl/zb_zcl_thermostat_ui_config.h"
-#include "zcl/zb_zcl_occupancy_sensing.h"
-#include "zcl/zb_zcl_meter_identification.h"
-/* #ifdef ZB_ZCL_SUPPORT_CLUSTER_WWAH */
-#include "zcl/zb_zcl_wwah.h"
-/* #endif /\* ZB_ZCL_SUPPORT_CLUSTER_WWAH *\/ */
-
-#include "zcl/zb_zcl_poll_control.h"
-#include "zcl/zb_zcl_ota_upgrade.h"
-
-#include "zcl/zb_zcl_price.h"
-#include "zcl/zb_zcl_drlc.h"
-#include "zcl/zb_zcl_metering.h"
-#include "zcl/zb_zcl_messaging.h"
-#include "zcl/zb_zcl_tunneling.h"
-
-#if defined ZB_BDB_MODE
-//#include "zb_bdb_comissioning.h"
 #endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_PRESSURE_MEASUREMENT)
+#include "zcl/zb_zcl_pressure_measurement.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_REL_HUMIDITY_MEASUREMENT)
+#include "zcl/zb_zcl_rel_humidity_measurement.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_ILLUMINANCE_MEASUREMENT)
+#include "zcl/zb_zcl_illuminance_measurement.h"
+#endif
+
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_IAS_ACE)
+#include "zcl/zb_zcl_ias_ace.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_IAS_WD)
+#include "zcl/zb_zcl_ias_wd.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_IAS_ZONE)
+#include "zcl/zb_zcl_ias_zone.h"
+#endif
+#if defined(ZB_ZCL_SUPPORT_CLUSTER_DIAGNOSTICS)
+#include "zcl/zb_zcl_diagnostics.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_CUSTOM_CLUSTER)
+#include "zcl/zb_zcl_custom_cluster.h"
+#endif
+
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_TIME)
+#include "zcl/zb_zcl_time.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_DEHUMIDIFICATION_CONTROL)
+#include "zcl/zb_zcl_dehumidification_control.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_ELECTRICAL_MEASUREMENT)
+#include "zcl/zb_zcl_el_measurement.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_FAN_CONTROL)
+#include "zcl/zb_zcl_fan_control.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_EN50523_APPLIANCE_EVENTS_AND_ALERTS)
+#include "zcl/zb_zcl_en50523_appliance_events_and_alerts.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_METERING)
+#include "zcl/zb_zcl_metering.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_THERMOSTAT)
+#include "zcl/zb_zcl_thermostat.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_THERMOSTAT_UI_CONFIG)
+#include "zcl/zb_zcl_thermostat_ui_config.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_OCCUPANCY_SENSING)
+#include "zcl/zb_zcl_occupancy_sensing.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_METER_IDENTIFICATION)
+#include "zcl/zb_zcl_meter_identification.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_WWAH)
+#include "zcl/zb_zcl_wwah.h"
+#endif /* ZB_ZCL_SUPPORT_CLUSTER_WWAH */
+
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_POLL_CONTROL)
+#include "zcl/zb_zcl_poll_control.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_OTA_UPGRADE)
+#include "zcl/zb_zcl_ota_upgrade.h"
+#endif
+
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_PRICE)
+#include "zcl/zb_zcl_price.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_DRLC)
+#include "zcl/zb_zcl_drlc.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_METERING)
+#include "zcl/zb_zcl_metering.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_MESSAGING)
+#include "zcl/zb_zcl_messaging.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_DAILY_SCHEDULE)
+#include "zcl/zb_zcl_daily_schedule.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_TUNNELING)
+#include "zcl/zb_zcl_tunneling.h"
+#endif
+
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_SUBGHZ)
+#include "zcl/zb_zcl_subghz.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_PREPAYMENT)
+#include "zcl/zb_zcl_prepayment.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_CALENDAR)
+#include "zcl/zb_zcl_calendar.h"
+#endif
+
+#ifdef ZB_ENABLE_SE_CLUSTERS
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_EVENTS)
+#include "zcl/zb_zcl_events.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_ENERGY_MANAGEMENT)
+#include "zcl/zb_zcl_energy_mgmt.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_MDU_PAIRING)
+#include "zcl/zb_zcl_mdu_pairing.h"
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_DEVICE_MANAGEMENT)
+#include "zcl/zb_zcl_device_management.h"
+#endif
+#endif /* ZB_ENABLE_SE_CLUSTERS */
+
+#ifdef ZB_ENABLE_CUSTOM_CLUSTERS
+#include "zcl/zb_zcl_tunnel.h"
+#include "zcl/zb_zcl_ir_blaster.h"
+#endif /* ZB_ENABLE_CUSTOM_CLUSTERS */
 
 #if defined ZB_ENABLE_ZGP_CLUSTER
 //#include "zgp/zgp_internal.h"
@@ -133,8 +227,8 @@ PURPOSE: ZBOSS Zigbee cluster library API header
  *    information see @ref ZB_ZCL_REPORTING "Attribute reporting" description.
  *
  *    Sample use ZB_ZCL_SET_REPORT_ATTR_CB
- *    @snippet doxygen_snippets.dox ZB_ZCL_SET_REPORT_ATTR_CB_func_snippet_reporting_th_c
- *    @snippet doxygen_snippets.dox ZB_ZCL_SET_REPORT_ATTR_CB_snippet_reporting_th_c
+ *    @snippet light_sample/dimmable_light/bulb.c zb_zcl_set_report_attr_cb_example
+ *    @snippet light_sample/dimmable_light/bulb.c zb_zcl_set_report_attr_cb
  *
  *    Sample use ZB_ZCL_SET_NO_REPORTING_CB
  *    @snippet doxygen_snippets.dox ZB_ZCL_SET_NO_REPORTING_CB_func_snippet_reporting_srv_th_c
@@ -142,8 +236,14 @@ PURPOSE: ZBOSS Zigbee cluster library API header
  *
  */
 
-/** @brief ZCL version. */
-#define ZB_ZCL_VERSION       0x02
+/** @brief ZCL version.
+*     According ZCL 7 spec:
+*     3.2.2.2.1 ZCLVersion Attribute
+*     The ZCLVersion attribute represents a published set of foundation items (in Chapter 2),
+*     such as global commands and functional descriptions.
+*     For this version of the ZCL, this attribute SHALL be set to 0x03.
+*/
+#define ZB_ZCL_VERSION       0x03U
 
 /**
  *  @brief Set modify attribute value callback.
@@ -262,13 +362,13 @@ PURPOSE: ZBOSS Zigbee cluster library API header
  *  @brief Convert beacon interval to units
  *  Uint = 1/10 sec
  */
-#define ZB_BEACON_INTERVAL_TO_TIME_UNITS(beacons)    ZB_TIME_BEACON_INTERVAL_TO_MSEC(beacons) / 100
+#define ZB_BEACON_INTERVAL_TO_TIME_UNITS(beacons)    ZB_TIME_BEACON_INTERVAL_TO_MSEC(beacons) / 100U
 
 /**
  *  @brief Convert units to beacon interval.
  *  Uint = 1/10 sec
  */
-#define ZB_TIME_UNITS_TO_BEACON_INTERVAL(uints)  ZB_MILLISECONDS_TO_BEACON_INTERVAL((uints)*100)
+#define ZB_TIME_UNITS_TO_BEACON_INTERVAL(uints)  ZB_MILLISECONDS_TO_BEACON_INTERVAL((uints)*100U)
 /** @endcond */ /* internals_doc */
 
 /**
@@ -279,21 +379,21 @@ typedef enum zb_zcl_device_callback_id_e
 {
   /** Inform user about attribute value modification */
   ZB_ZCL_SET_ATTR_VALUE_CB_ID = 0,
+/** @cond DOXYGEN_INTERNAL_DOC */
   /** Inform user about received attribute report */
   ZB_ZCL_REPORT_ATTR_CB_ID,
-  /** Inform user that report was not received during  defined time interval */
+  /** Inform user that report was not received during defined time interval */
   ZB_ZCL_NO_REPORTING_CB_ID,
-  /** Inform user about change On/Off effect @see ZLL spec 6.6.1.4.4.2 */
+/** @endcond */ /* DOXYGEN_INTERNAL_DOC */
+  /** Inform user about change On/Off effect @see ZCL spec 6.6.1.4.4.2 */
   ZB_ZCL_ON_OFF_WITH_EFFECT_VALUE_CB_ID,
-  /** */
-  /* TODO: describe this callback */
+  /** Inform user about ZCL Shade cluster shade position value modification */
   ZB_ZCL_SHADE_SET_VALUE_CB_ID,
-  /** */
-  /* TODO: describe this callback */
+  /** Inform user that shade_get_value_param of ZCL Shade custer could be changed */
   ZB_ZCL_SHADE_GET_VALUE_CB_ID,
-  /** Inform user about call identify effect command @see ZLL spec 6.3.1.2.1 */
+  /** Inform user about call identify effect command @see ZCL spec 6.3.1.2.1 */
   ZB_ZCL_IDENTIFY_EFFECT_CB_ID,
-  /** Inform user about ZCL Level Contol cluster attributes value modification */
+  /** Inform user about ZCL Level Control cluster attributes value modification */
   ZB_ZCL_LEVEL_CONTROL_SET_VALUE_CB_ID,
   /** Inform user about enroll result command @see ZCL spec 8.2.2.3.1 */
   ZB_ZCL_IAS_ZONE_ENROLL_RESPONSE_VALUE_CB_ID,
@@ -786,7 +886,7 @@ typedef enum zb_zcl_device_callback_id_e
    * @return RET_ERROR - command is handled with errors. Default Response will be send if requested.
    */
   ZB_ZCL_TUNNELING_REQUEST_TUNNEL_RESPONSE_CB_ID,
-  /** @b Server. Infrom user about received TransferData request
+  /** @b Server. Inform user about received TransferData request
    *
    * User's application callback is initialized by RET_OK status of device
    * callback parameters.
@@ -798,7 +898,7 @@ typedef enum zb_zcl_device_callback_id_e
    *                     Send @ref ZB_ZCL_TUNNELING_SRV_CMD_TRANSFER_DATA_ERROR "TransferDataError" command
    */
   ZB_ZCL_TUNNELING_TRANSFER_DATA_CLI_CB_ID,
-  /** @b Client. Infrom user about received TransferData request
+  /** @b Client. Inform user about received TransferData request
    *
    * User's application callback is initialized by RET_OK status of device
    * callback parameters.
@@ -810,7 +910,7 @@ typedef enum zb_zcl_device_callback_id_e
    *                     Send @ref ZB_ZCL_TUNNELING_SRV_CMD_TRANSFER_DATA_ERROR "TransferDataError" command
    */
   ZB_ZCL_TUNNELING_TRANSFER_DATA_SRV_CB_ID,
-  /** @b Server. Infrom user about received TransferDataError request
+  /** @b Server. Inform user about received TransferDataError request
    *
    * User's application callback is initialized by RET_OK status of device
    * callback parameters.
@@ -821,7 +921,7 @@ typedef enum zb_zcl_device_callback_id_e
    * @return RET_ERROR - command is handled with errors.
    */
   ZB_ZCL_TUNNELING_TRANSFER_DATA_ERROR_CLI_CB_ID,
-  /** @b Client. Infrom user about received TransferDataError request
+  /** @b Client. Inform user about received TransferDataError request
    *
    * User's application callback is initialized by RET_OK status of device
    * callback parameters.
@@ -845,6 +945,323 @@ typedef enum zb_zcl_device_callback_id_e
    * @return RET_ERROR - command is handled with errors. Default Response will be send if requested.
    */
   ZB_ZCL_TUNNELING_CLOSE_TUNNEL_CB_ID,
+
+#if defined ZB_ENABLE_SE || defined ZB_ZCL_SUPPORT_CLUSTER_CALENDAR || DOXYGEN
+  /** @cond DOXYGEN_ZCL_SECTION && DOXYGEN_SE_SECTION */
+  /** @b Server. Inform user about GetProfile request.
+   *
+   * User's application callback is initialized by RET_ERROR status of device
+   * callback parameters.
+   * @param[in] param_in @ref zb_zcl_metering_get_profile_payload_t
+   * @param[out] param_out @ref zb_zcl_metering_get_profile_response_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - successfully handle command.
+   *                  Send @ref ZB_ZCL_METERING_SRV_CMD_GET_PROFILE_RESPONSE "GetProfileResponse" command.
+   * @return RET_ERROR - command is handled with errors. Default Response will be send if requested.
+   *
+   */
+  /** @b Server. Ask user about payload for PublishCalendar request
+   *
+   * User's application callback is initialized by RET_ERROR status of device
+   * callback parameters.
+   * @param[in] param_in @ref zb_zcl_calendar_get_calendar_payload_t
+   * @param[out] param_out @ref zb_zcl_calendar_publish_calendar_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - successfully handle command.
+   *                  Send @ref ZB_ZCL_CALENDAR_SRV_CMD_PUBLISH_CALENDAR "PublishCalendar" command.
+   * @return RET_NOT_FOUND - no calendar is found. Default Response will be send if requested.
+   * @return RET_ERROR - command is handled with errors. Default Response will be send if requested.
+   */
+  ZB_ZCL_CALENDAR_GET_CALENDAR_CB_ID,
+  /** @b Server. Ask user about payload for PublishDayProfiles request
+   *
+   * User's application callback is initialized by RET_ERROR status of device
+   * callback parameters.
+   * @param[in] param_in @ref zb_zcl_calendar_get_day_profiles_payload_t
+   * @param[out] param_out @ref zb_zcl_calendar_publish_day_profile_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - successfully handle command.
+   *                  Send @ref ZB_ZCL_CALENDAR_SRV_CMD_PUBLISH_DAY_PROFILE "PublishDayProfiles" command.
+   * @return RET_NOT_FOUND - no calendar is found. Default Response will be send if requested.
+   * @return RET_ERROR - command is handled with errors. Default Response will be send if requested.
+   */
+  ZB_ZCL_CALENDAR_GET_DAY_PROFILES_CB_ID,
+  /** @b Server. Ask user about payload for PublishWeekProfiles request
+   *
+   * User's application callback is initialized by RET_ERROR status of device
+   * callback parameters.
+   * @param[in] param_in @ref zb_zcl_calendar_get_week_profiles_payload_t
+   * @param[out] param_out @ref zb_zcl_calendar_publish_week_profile_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - successfully handle command.
+   *                  Send @ref ZB_ZCL_CALENDAR_SRV_CMD_PUBLISH_WEEK_PROFILE "PublishWeekProfiles" command.
+   * @return RET_NOT_FOUND - no calendar is found. Default Response will be send if requested.
+   * @return RET_ERROR - command is handled with errors. Default Response will be send if requested.
+   */
+  ZB_ZCL_CALENDAR_GET_WEEK_PROFILES_CB_ID,
+  /** @b Server. Ask user about payload for PublishSeasons request
+   *
+   * User's application callback is initialized by RET_ERROR status of device
+   * callback parameters.
+   * @param[in] param_in @ref zb_zcl_calendar_get_seasons_payload_t
+   * @param[out] param_out @ref zb_zcl_calendar_publish_seasons_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - successfully handle command.
+   *                  Send @ref ZB_ZCL_CALENDAR_SRV_CMD_PUBLISH_SEASONS "PublishSeasons" command.
+   * @return RET_NOT_FOUND - no calendar is found. Default Response will be send if requested.
+   * @return RET_ERROR - command is handled with errors. Default Response will be send if requested.
+   */
+  ZB_ZCL_CALENDAR_GET_SEASONS_CB_ID,
+  /** @b Server. Ask user about payload for PublishSpecialDays request
+   *
+   * User's application callback is initialized by RET_ERROR status of device
+   * callback parameters.
+   * @param[in] param_in @ref zb_zcl_calendar_get_special_days_payload_t
+   * @param[out] param_out @ref zb_zcl_calendar_publish_special_days_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - successfully handle command.
+   *                  Send @ref ZB_ZCL_CALENDAR_SRV_CMD_PUBLISH_SPECIAL_DAYS "PublishSpecialDays" command.
+   * @return RET_NOT_FOUND - no calendar is found. Default Response will be send if requested.
+   * @return RET_ERROR - command is handled with errors. Default Response will be send if requested.
+   */
+  ZB_ZCL_CALENDAR_GET_SPECIAL_DAYS_CB_ID,
+  /** @b Server. Ask user about payload for CancelCalendar request
+   *
+   * User's application callback is initialized by RET_ERROR status of device
+   * callback parameters.
+   * @param[out] param_out @ref zb_zcl_calendar_cancel_calendar_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - successfully handle command.
+   *                  Send @ref ZB_ZCL_CALENDAR_SRV_CMD_CANCEL_CALENDAR "CancelCalendar" command.
+   * @return RET_NOT_FOUND - no calendar is found. Default Response will be send if requested.
+   * @return RET_ERROR - command is handled with errors. Default Response will be send if requested.
+   */
+  ZB_ZCL_CALENDAR_GET_CALENDAR_CANCELLATION_CB_ID,
+  /** @b Client. Inform user about PublishCalendar request
+   *
+   * User's application callback is initialized by RET_ERROR status of device
+   * callback parameters.
+   * @param[in] param_in @ref zb_zcl_calendar_publish_calendar_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - successfully handle command. Default Response will be send if requested.
+   * @return RET_NOT_FOUND - IssuerCalendarID doesn't match with one of the stored
+   *                         calendar instances. Default Response will be send if requested.
+   * @return RET_NO_MEMORY - not able to store new calendar instance. Default Response will be send if requested.
+   * @return RET_ERROR - command is handled with errors. Default Response will be send if requested.
+   */
+  ZB_ZCL_CALENDAR_PUBLISH_CALENDAR_CB_ID,
+  /** @b Client. Calendar Inform user about PublishDayProfile request
+   *
+   * User's application callback is initialized by RET_ERROR status of device
+   * callback parameters.
+   * @param[in] param_in @ref zb_zcl_calendar_publish_day_profile_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - successfully handle command. Default Response will be send if requested.
+   * @return RET_NOT_FOUND - IssuerCalendarID doesn't match with one of the stored
+   *                         calendar instances. Default Response will be send if requested.
+   * @return RET_NO_MEMORY - not able to store new calendar instance. Default Response will be send if requested.
+   * @return RET_ERROR - command is handled with errors. Default Response will be send if requested.
+   */
+  ZB_ZCL_CALENDAR_PUBLISH_DAY_PROFILE_CB_ID,
+  /** @b Client. Calendar Inform user about PublishWeekProfile request
+   *
+   * User's application callback is initialized by RET_ERROR status of device
+   * callback parameters.
+   * @param[in] param_in @ref zb_zcl_calendar_publish_week_profile_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - successfully handle command. Default Response will be send if requested.
+   * @return RET_NOT_FOUND - IssuerCalendarID doesn't match with one of the stored
+   *                         calendar instances. Default Response will be send if requested.
+   * @return RET_NO_MEMORY - not able to store new calendar instance. Default Response will be send if requested.
+   * @return RET_ERROR - command is handled with errors. Default Response will be send if requested.
+   */
+  ZB_ZCL_CALENDAR_PUBLISH_WEEK_PROFILE_CB_ID,
+  /** @b Client. Calendar Inform user about PublishSeasons request
+   *
+   * User's application callback is initialized by RET_ERROR status of device
+   * callback parameters.
+   * @param[in] param_in @ref zb_zcl_calendar_publish_seasons_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - successfully handle command. Default Response will be send if requested.
+   * @return RET_NOT_FOUND - IssuerCalendarID doesn't match with one of the stored
+   *                         calendar instances. Default Response will be send if requested.
+   * @return RET_NO_MEMORY - not able to store new calendar instance. Default Response will be send if requested.
+   * @return RET_ERROR - command is handled with errors. Default Response will be send if requested.
+   */
+  ZB_ZCL_CALENDAR_PUBLISH_SEASONS_CB_ID,
+  /** @b Client. Calendar Inform user about PublishSpecialDays request
+   *
+   * User's application callback is initialized by RET_ERROR status of device
+   * callback parameters.
+   * @param[in] param_in @ref zb_zcl_calendar_publish_special_days_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - successfully handle command. Default Response will be send if requested.
+   * @return RET_NOT_FOUND - IssuerCalendarID doesn't match with one of the stored
+   *                         calendar instances. Default Response will be send if requested.
+   * @return RET_NO_MEMORY - not able to store new calendar instance. Default Response will be send if requested.
+   * @return RET_ERROR - command is handled with errors. Default Response will be send if requested.
+   */
+  ZB_ZCL_CALENDAR_PUBLISH_SPECIAL_DAYS_CB_ID,
+  /** @b Client. Calendar Inform user about CancelCalendar request
+   *
+   * User's application callback is initialized by RET_ERROR status of device
+   * callback parameters.
+   * @param[in] param_in @ref zb_zcl_calendar_cancel_calendar_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - successfully handle command. Default Response will be send if requested.
+   * @return RET_NOT_FOUND - IssuerCalendarID doesn't match with one of the stored
+   *                         calendar instances. Default Response will be send if requested.
+   * @return RET_NO_MEMORY - not able to store new calendar instance. Default Response will be send if requested.
+   * @return RET_ERROR - command is handled with errors. Default Response will be send if requested.
+   */
+  ZB_ZCL_CALENDAR_CANCEL_CALENDAR_CB_ID,
+  /** @endcond */ /* DOXYGEN_ZCL_SECTION && DOXYGEN_SE_SECTION */
+#endif /* ZB_ENABLE_SE || ZB_ZCL_SUPPORT_CLUSTER_CALENDAR */
+
+#if defined ZB_ENABLE_SE || defined ZB_ZCL_SUPPORT_CLUSTER_DAILY_SCHEDULE
+  /** @cond DOXYGEN_ZCL_SECTION && DOXYGEN_SE_SECTION */
+  /** @b Server. Inform user about GetScheduleCancellation request.
+   *
+   * @param[out] param_out @ref zb_zcl_daily_schedule_cancel_schedule_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - command is handled successfully. Send @ref
+   * ZB_ZCL_DAILY_SCHEDULE_SRV_CMD_CANCEL_SCHEDULE "CancelSchedule" command.
+   * @return RET_ERROR - command is handled with errors.
+   *
+   */
+  ZB_ZCL_DAILY_SCHEDULE_GET_SCHEDULE_CANCELLATION_CB_ID,
+  /** @b Server. Inform user about GetDayProfile request.
+   *
+   * @param[in] param_in @ref zb_zcl_daily_schedule_get_day_profile_payload_t
+   * @param[out] param_out @ref zb_zcl_daily_schedule_publish_day_profile_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - command is handled successfully. Send @ref
+   * ZB_ZCL_DAILY_SCHEDULE_SRV_CMD_PUBLISH_DAY_PROFILE "PublishDayProfile" command.
+   * Application may put one or several day schedule entries.
+   * @return RET_ERROR - command is handled with errors.
+   *
+   */
+  ZB_ZCL_DAILY_SCHEDULE_GET_DAY_PROFILE_CB_ID,
+  /** @b Server. Inform user about GetSchedule request.
+   *
+   * @param[in] param_in @ref zb_zcl_daily_schedule_get_schedule_payload_t
+   * @param[out] param_out @ref zb_zcl_daily_schedule_publish_schedule_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - command is handled successfully. Send @ref
+   * ZB_ZCL_DAILY_SCHEDULE_SRV_CMD_PUBLISH_SCHEDULE "PublishSchedule" command.
+   * @return RET_ERROR - command is handled with errors.
+   *
+   */
+  ZB_ZCL_DAILY_SCHEDULE_GET_SCHEDULE_CB_ID,
+  /** @b Client. Inform user about PublishSchedule cmd.
+   *
+   * @param[in] param_in @ref zb_zcl_daily_schedule_publish_schedule_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - command is handled successfully.
+   * @return RET_ERROR - command is handled with errors.
+   *
+   */
+  ZB_ZCL_DAILY_SCHEDULE_PUBLISH_SCHEDULE_CB_ID,
+  /** @b Client. Inform user about PublishDayProfile cmd.
+   *
+   * @param[in] param_in @ref zb_zcl_daily_schedule_publish_schedule_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - command is handled successfully.
+   * @return RET_ERROR - command is handled with errors.
+   *
+   */
+  ZB_ZCL_DAILY_SCHEDULE_PUBLISH_DAY_PROFILE_CB_ID,
+  /** @b Client. Inform user about CancelSchedule cmd.
+   *
+   * @param[in] param_in @ref zb_zcl_daily_schedule_cancel_schedule_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - command is handled successfully.
+   * @return RET_ERROR - command is handled with errors.
+   *
+   */
+  ZB_ZCL_DAILY_SCHEDULE_CANCEL_SCHEDULE_CB_ID,
+  /** @endcond */ /* DOXYGEN_ZCL_SECTION && DOXYGEN_SE_SECTION */
+#endif /* ZB_ENABLE_SE || ZB_ZCL_SUPPORT_CLUSTER_DAILY_SCHEDULE */
+
+#if defined ZB_ENABLE_SE || defined ZB_ZCL_SUPPORT_CLUSTER_ENERGY_MANAGEMENT || DOXYGEN
+  /** @cond DOXYGEN_ZCL_SECTION && DOXYGEN_SE_SECTION */
+  /** @b Client. Inform user about ReportEventStatus request
+   *
+   * User's application callback is initialized by RET_OK status of device
+   * callback parameters.
+   * @param[in] param_in @ref zb_zcl_energy_management_report_event_status_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - successfully handle command.
+   * @return RET_ERROR - command is handled with errors.
+   */
+  ZB_ZCL_ENERGY_MANAGEMENT_REPORT_EVENT_STATUS_CB_ID,
+  /** @b Server. Inform user about ManageEvent request
+   *
+   * User's application callback is initialized by RET_ERROR status of device
+   * callback parameters.
+   *
+   * @param[in] param_in @ref zb_zcl_energy_management_manage_event_payload_t
+   * @param[out] param_out @ref zb_zcl_energy_management_report_event_status_payload_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - successfully handle command.
+   *                  Send @ref ZB_ZCL_ENERGY_MANAGEMENT_SRV_CMD_REPORT_EVENT_STATUS "ReportEventStatusCommandPayload" command.
+   * @return RET_ERROR - command is handled with errors. Default Response will be send if requested.
+   */
+  ZB_ZCL_ENERGY_MANAGEMENT_MANAGE_EVENT_CB_ID,
+  /** @endcond */ /* DOXYGEN_ZCL_SECTION && DOXYGEN_SE_SECTION */
+#endif /* ZB_ENABLE_SE || ZB_ZCL_SUPPORT_CLUSTER_ENERGY_MANAGEMENT */
+
+#if defined ZB_ENABLE_SE || defined ZB_ZCL_SUPPORT_CLUSTER_MDU_PAIRING
+  /** @cond DOXYGEN_ZCL_SECTION && DOXYGEN_SE_SECTION */
+  /** @b Server. Inform user about MDU Paring Request. You may provide MDU list as reply
+   *
+   * User's application callback is initialized by RET_ERROR status of device
+   * callback parameters.
+   *
+   * @param[in] param_in @ref zb_zcl_mdu_pairing_request_t
+   * @param[out] param_out @ref zb_zcl_mdu_pairing_response_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - successfully handle command.
+   *                  Send @ref ZB_ZCL_MDU_PAIRING_SRV_CMD_PAIRING_RESPONSE "MDUPairingResponse" command
+   * @return RET_ERROR - command is handled with errors. Default Response will be send if requested.
+   */
+  ZB_ZCL_MDU_PAIRING_REQUEST_CB_ID,
+  /** @b Client. Inform user about MDU Pairing Response. List of MDU Paired devices passed
+   *
+   * User's application callback is initialized by RET_OK status of device
+   * callback parameters.
+   * @param[in] param_in @ref zb_zcl_mdu_pairing_response_t
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - successfully handle command.
+   * @return RET_ERROR - command is handled with errors.
+   */
+  ZB_ZCL_MDU_PAIRING_RESPONSE_CB_ID,
+  /** @endcond */ /* DOXYGEN_ZCL_SECTION && DOXYGEN_SE_SECTION */
+#endif /* ZB_ENABLE_SE || ZB_ZCL_SUPPORT_CLUSTER_MDU_PAIRING */
+
   /** @b Server. Inform user about GetProfile request.
    *
    * User's application callback is initialized by RET_ERROR status of device
@@ -950,11 +1367,15 @@ typedef enum zb_zcl_device_callback_id_e
    *
    */
   ZB_ZCL_METERING_GET_SAMPLED_DATA_RESPONSE_CB_ID,
+/** @cond DOXYGEN_INTERNAL_DOC */
   /** Inform user about APS fragmented data transfer completion */
   ZB_ZCL_BIG_DATA_TRANSFER_COMPLETE_CB_ID,
+/** @endcond */ /* DOXYGEN_INTERNAL_DOC */
+#ifdef ZB_ENABLE_SE
   /** Inform user about Time receiving from Time server */
   ZB_ZCL_TIME_SYNC_CB_ID,
   ZB_ZCL_TIME_SYNC_FAILED_CB_ID,
+#endif /* ZB_ENABLE_SE */
   /** @b Server. Inform user about Window Covering Up/Open command.
    *
    * User's application callback is initialized by RET_OK status of device
@@ -1196,7 +1617,7 @@ typedef enum zb_zcl_device_callback_id_e
    *
    */
   ZB_ZCL_DOOR_LOCK_UNLOCK_DOOR_RESP_CB_ID,
-  /** @b Server. Inform user about Alarams Reset Alarm command.
+  /** @b Server. Inform user about Alarms Reset Alarm command.
    *
    * User's application callback is initialized by RET_OK status of device
    * callback parameters.
@@ -1208,7 +1629,7 @@ typedef enum zb_zcl_device_callback_id_e
    *
    */
   ZB_ZCL_ALARMS_RESET_ALARM_CB_ID,
-  /** @b Server. Inform user about Alarams Reset All Alarms command.
+  /** @b Server. Inform user about Alarms Reset All Alarms command.
    *
    * User's application callback is initialized by RET_OK status of device
    * callback parameters.
@@ -1219,15 +1640,21 @@ typedef enum zb_zcl_device_callback_id_e
    *
    */
   ZB_ZCL_ALARMS_RESET_ALL_ALARMS_CB_ID,
-  /** @b Client. Inform user about Alarms Alarm command. 
+#ifdef ZB_ENABLE_CUSTOM_CLUSTERS
+  ZB_ZCL_IR_BLASTER_TRANSMIT_IR_DATA_CB_ID,
+  ZB_ZCL_IR_BLASTER_TRANSMISSION_STATUS_CB_ID,
+  ZB_ZCL_IR_BLASTER_GET_IR_SIGNATURE_CB_ID,
+  ZB_ZCL_IR_BLASTER_GET_IR_SIGNATURE_RESP_CB_ID,
+#endif /* ZB_ENABLE_CUSTOM_CLUSTERS */
+  /** @b Client. Inform user about Alarms Alarm command.
    * User's application callback is initialized by RET_OK status of device
    * callback parameters.
    * @param[in] param_in zb_zcl_alarms_alarm_res_t
-   * 
+   *
    * One of the following statuses must be returned:
    * @return RET_OK - successfully handled command. Response will be send if requested.
    * @return RET_ERROR - command is handled with errors
-   * 
+   *
   */
   ZB_ZCL_ALARMS_ALARM_CB_ID,
   /** @b Server. Inform user about receiving "Enable WWAH App Event Retry Algorithm" command.
@@ -1263,7 +1690,7 @@ typedef enum zb_zcl_device_callback_id_e
    */
   ZB_ZCL_CONTROL4_NETWORK_ZAP_INFO_CB_ID,
   /** @b Server. Inform user about receiving "Debug Report Query" command.
-   * If debug report exists, application must return pointer to tjis report
+   * If debug report exists, application must return pointer to this report
    * User's application callback is initialized by RET_NOT_FOUND status of device
    * callback parameter.
    *
@@ -1324,38 +1751,54 @@ typedef struct zb_zcl_device_callback_param_s
   /** Callback custom data */
   union
   {
-    /* TODO: If def by cluster */
     zb_zcl_set_attr_value_param_t  set_attr_value_param;
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_ON_OFF)
     /* Off with effect command, On/Off cluster */
     zb_zcl_on_off_set_effect_value_param_t  on_off_set_effect_value_param;
     /* */
-
+#endif
 #if defined(ZB_ZCL_SUPPORT_CLUSTER_IDENTIFY)
     zb_zcl_identify_effect_value_param_t  identify_effect_value_param;
 #endif
 
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_SHADE_CONFIG)
    // TODO: descript parameters struct for translate to User App ZB_ZCL_SHADE_SET_VALUE_CB_ID event
    zb_zcl_shade_set_value_param_t  shade_set_value_param;
    // TODO: descript parameters struct for translate to User App ZB_ZCL_SHADE_GET_VALUE_CB_ID event
    zb_zcl_shade_get_value_param_t  shade_get_value_param;
-   //
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_LEVEL_CONTROL)
    zb_zcl_level_control_set_value_param_t  level_control_set_value_param;
-   //
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_IAS_WD)
    zb_zcl_ias_wd_start_warning_value_param_t  start_warning_value_param;
+#endif
 #if defined ZB_ENABLE_HA
-   //
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_IAS_ZONE)
    zb_zcl_ias_zone_enroll_response_value_param_t enroll_response_value_param;
-   //
-   zb_zcl_thermostat_value_param_t thermostat_value_param;
+#endif
 #endif /* defined ZB_ENABLE_HA */
-   //
+    /* moved thermostat_value_param out of ZB_ENABLE_HA to be able to compile without that define */
+#if defined ZB_ZCL_SUPPORT_CLUSTER_THERMOSTAT
+   zb_zcl_thermostat_value_param_t thermostat_value_param;
+#endif
+#if defined (ZB_ZCL_SUPPORT_CLUSTER_IAS_WD)
    zb_zcl_ias_wd_squawk_value_param_t  squawk_value_param;
+#endif
+#ifdef ZB_ZCL_SUPPORT_CLUSTER_IR_BLASTER
+   zb_zcl_ir_blaster_transmit_ir_data_value_param_t irb_tr_value_param;
+   zb_zcl_ir_blaster_transmission_status_value_param_t irb_tr_status_value_param;
+   zb_zcl_ir_blaster_get_ir_signature_value_param_t irb_get_ir_sig_value_param;
+   zb_zcl_ir_blaster_get_ir_signature_resp_value_param_t irb_get_ir_sig_resp_value_param;
+#endif
 #if defined ZB_ENABLE_HA
 #if defined ZB_HA_ENABLE_OTA_UPGRADE_CLIENT || defined DOXYGEN
    //
    zb_zcl_ota_upgrade_value_param_t  ota_value_param;
 #endif /*defined ZB_HA_ENABLE_OTA_UPGRADE_CLIENT || defined DOXYGEN */
+#if defined ZB_ZCL_SUPPORT_CLUSTER_POLL_CONTROL
    zb_zcl_poll_control_check_in_cli_param_t checkin_cli_param;
+#endif /* defined ZB_ZCL_SUPPORT_CLUSTER_POLL_CONTROL */
 #if defined ZB_HA_ENABLE_OTA_UPGRADE_SERVER
    zb_zcl_ota_upgrade_srv_query_img_param_t       ota_upgrade_srv_query_img_param;
    zb_zcl_ota_upgrade_srv_upgrade_started_param_t ota_upgrade_srv_upgrade_started_param;
@@ -1466,6 +1909,7 @@ void zb_zcl_mark_report_not_sent(zb_zcl_reporting_info_t *rep_info);
    Use @ref ZB_AF_REGISTER_DEVICE_CTX.
  */
 void zb_zcl_register_device_ctx(zb_af_device_ctx_t *device_ctx);
+void zb_zcl_init_endpoint(zb_af_endpoint_desc_t* ep);
 zb_bool_t zb_zcl_check_cluster_list(void);
 /** @endcond */ /* internals_doc */
 /** @} */ /* ZB_ZCL_INITIALIZATION */
@@ -1514,10 +1958,10 @@ enum zb_bdb_error_codes_e
 /** @brief BDB commissioning mode mask bits */
 typedef enum zb_bdb_commissioning_mode_mask_e
 {
-  /** @cond internals_doc 
-   * Used internally */
+  /** @cond internals_doc */
+  /** Used internally */
   ZB_BDB_INITIALIZATION = 0,
-  /** @endcond*/ /** internals_doc */
+  /** @endcond */ /* internals_doc */
   /** @cond touchlink */
   /** Touchlink: 0 = Do not attempt Touchlink commissioning;
                   1 = Attempt Touchlink commissioning
@@ -1540,7 +1984,7 @@ typedef enum zb_bdb_commissioning_mode_mask_e
           @ref zb_bdb_finding_binding_target or @ref zb_bdb_finding_binding_initiator.
    */
   ZB_BDB_FINDING_N_BINDING = 8,
-  
+
   /* Used internally */
   ZB_BDB_LAST_COMMISSIONING_STEP = 0x10,
   /* Used internally */
@@ -1559,13 +2003,13 @@ typedef enum zb_bdb_commissioning_mode_mask_e
 /**
    @brief Start top level commissioning procedure with specified mode mask.
    When the selected commissioning procedure finishes one of the following ZBOSS signals is generated:
-    - @ref ZB_BDB_SIGNAL_STEERING 
+    - @ref ZB_BDB_SIGNAL_STEERING
     - @ref ZB_BDB_SIGNAL_FORMATION
-    
+
    @param mode_mask - commissioning modes, see @ref zb_bdb_commissioning_mode_mask_e
-   
+
    @return ZB_TRUE - in case the device starts successfully
-   @return ZB_FALSE - ZB_FALSE -- in case an error occured (for example: the device has already been running)
+   @return ZB_FALSE - ZB_FALSE -- in case an error occurred (for example: the device has already been running)
 
    @b Example:
    @code
@@ -1581,7 +2025,7 @@ typedef enum zb_bdb_commissioning_mode_mask_e
          break;
 
        case ZB_BDB_SIGNAL_STEERING:
-         TRACE_MSG(TRACE_APP1, "Successfull steering", (FMT__0));
+         TRACE_MSG(TRACE_APP1, "Successful steering", (FMT__0));
          break;
      }
    @endcode
@@ -1621,7 +2065,7 @@ zb_bool_t zb_bdb_is_factory_new(void);
    @note: endpoint should be registered on target
 
    @b Example
-   @snippet doxygen_snippets.dox zb_bdb_finding_binding_target_example_snippet_fb_dap_tc_01a_dutzc_c
+   @snippet onoff_server/on_off_output_zc.c zb_bdb_finding_binding_target_usage
   */
 zb_ret_t zb_bdb_finding_binding_target(zb_uint8_t endpoint);
 
@@ -1648,11 +2092,11 @@ typedef enum zb_bdb_comm_binding_cb_state_e
  *  @param status - status of the binding (ask user, success or fail) @see zb_bdb_comm_binding_cb_state_t
  *  @param addr - extended address of a device to bind
  *  @param ep - endpoint of a device to bind
- *  @param cluster - cluster id to bind
+ *  @param cluster - cluster ID to bind
  *  @return bool - agree or disagree
  *
  * @b Example:
- * @snippet doxygen_snippets.dox zb_bdb_finding_binding_initiator_snippet_fb_ini_tc_06a_dut_ci_c
+ * @snippet onoff_server/on_off_switch_zed.c zb_bdb_finding_binding_initiator_cb_example
  */
 typedef zb_bool_t (ZB_CODE * zb_bdb_comm_binding_callback_t)(
   zb_int16_t status, zb_ieee_addr_t addr, zb_uint8_t ep, zb_uint16_t cluster);
@@ -1670,7 +2114,12 @@ typedef zb_bool_t (ZB_CODE * zb_bdb_comm_binding_callback_t)(
  *  @return bool - RET_OK or error code
  *
  * @b Example:
- * @snippet doxygen_snippets.dox zb_bdb_finding_binding_initiator_snippet_fb_ini_tc_06a_dut_ci_c
+ *
+ * Define callback:
+ * @snippet onoff_server/on_off_switch_zed.c zb_bdb_finding_binding_initiator_cb_example
+ *
+ * Start finding and binding as initiator:
+ * @snippet onoff_server/on_off_switch_zed.c zb_bdb_finding_binding_initiator
  */
 zb_ret_t zb_bdb_finding_binding_initiator(zb_uint8_t endpoint, zb_bdb_comm_binding_callback_t user_binding_cb);
 
@@ -1730,7 +2179,7 @@ void zb_bdb_set_legacy_device_support(zb_uint8_t state);
 /**
   * @brief Set commissioning mode.
   * @param  commissioning_mode - bitfield with the bdbCommissioningMode
-  * attribute. Set 1 to the corresponding bit to enable, 0 to disable. 
+  * attribute. Set 1 to the corresponding bit to enable, 0 to disable.
   * All the possible mask bits are stored in @ref zb_bdb_commissioning_mode_mask_t
  */
 void zb_set_bdb_commissioning_mode(zb_uint8_t commissioning_mode);
@@ -1756,159 +2205,15 @@ void zb_set_bdb_commissioning_mode(zb_uint8_t commissioning_mode);
  */
 typedef enum zb_bdb_comm_state_e
 {
-  ZB_BDB_COMM_IDLE                  = 0,        /*!< EZ-Mode isn't invoked */
-  ZB_BDB_COMM_FACTORY_RESET         = 1,        /*!< EZ-Mode factory reset in progress */
-  ZB_BDB_COMM_NWK_STEERING          = 2,        /*!< EZ-Mode network steering in progress (scanning or forming network) */
-  ZB_BDB_COMM_NWK_STEERING_JOINED   = 3,        /*!<  EZ-Mode network steering in progress (scanning or forming network finished) */
-  ZB_BDB_COMM_FINDING_AND_BINDING   = 4,        /*!< EZ-Mode finding and binding in progress (on initiator) */
-  ZB_BDB_COMM_FINDING_AND_BINDING_TARGET   = 5, /*!< EZ-Mode finding and binding in progress (on target) */
+  ZB_BDB_COMM_IDLE                       = 0,   /*!< EZ-Mode isn't invoked */
+  ZB_BDB_COMM_FINDING_AND_BINDING        = 4,   /*!< EZ-Mode finding and binding in progress (on initiator) */
+  ZB_BDB_COMM_FINDING_AND_BINDING_TARGET = 5,   /*!< EZ-Mode finding and binding in progress (on target) */
 }
   zb_bdb_comm_state_t;
 
-/** @cond internals_doc */
-typedef ZB_PACKED_PRE struct zb_bdb_comm_respondent_info_s
-{
-  zb_address_ieee_ref_t addr_ref; /*!< Address reference in Translation Table for "respondent" */
-  zb_uint8_t ep_list[ZB_BDB_COMM_ACTIVE_ENDP_LIST_LEN];  /*!< Respondent's active endpoints list */
-#if defined(ZB_BDB_ENABLE_FINDING_BINDING)
-  zb_uint8_t ep_cnt;   /*!< Count of endpoints received during finding and binding */
-#endif
-
-  zb_uint8_t eps_checked; /*!< Count of the currently checked endpoints */
-} ZB_PACKED_STRUCT zb_bdb_comm_respondent_info_t;
-
-typedef enum bdb_commissioning_signal_e
-{
-  BDB_COMM_SIGNAL_BAD,          /* 0 */
-
-  BDB_COMM_SIGNAL_INIT_START,   /* 1 */
-  BDB_COMM_SIGNAL_INIT_SECURE_REJOIN,
-  BDB_COMM_SIGNAL_INIT_TC_REJOIN,
-  BDB_COMM_SIGNAL_INIT_FINISH,
-
-  BDB_COMM_SIGNAL_TOUCHLINK_START, /* 5 */
-  BDB_COMM_SIGNAL_TOUCHLINK_INITIATOR_DONE,
-  BDB_COMM_SIGNAL_TOUCHLINK_INITIATOR_FAILED,
-  BDB_COMM_SIGNAL_TOUCHLINK_NOTIFY_TASK_RESULT,
-  BDB_COMM_SIGNAL_TOUCHLINK_FINISH,
-
-  BDB_COMM_SIGNAL_NETWORK_STEERING_START, /* 10 */
-  BDB_COMM_SIGNAL_NETWORK_STEERING_DISCOVERY_FAILED,
-  BDB_COMM_SIGNAL_NETWORK_STEERING_TCLK_EX_FAILURE,
-  BDB_COMM_SIGNAL_NETWORK_STEERING_TCLK_DONE,
-  /* TODO: BDB_COMM_SIGNAL_NETWORK_STEERING_LEAVE, */
-  BDB_COMM_SIGNAL_NETWORK_STEERING_FINISH,
-
-  BDB_COMM_SIGNAL_NETWORK_FORMATION_START, /* 15 */
-  BDB_COMM_SIGNAL_NETWORK_FORMATION_FINISH,
-
-  BDB_COMM_SIGNAL_FINDING_N_BINDING_START, /* 17 */
-  BDB_COMM_SIGNAL_FINDING_N_BINDING_FINISH,
-
-  BDB_COMM_SIGNAL_REJOIN_START, /* 19 */
-  BDB_COMM_SIGNAL_REJOIN_TRY_SECURE_REJOIN_ON_CURRENT_CHANNEL,
-  BDB_COMM_SIGNAL_REJOIN_TRY_TC_REJOIN_ON_CURRENT_CHANNEL,
-  BDB_COMM_SIGNAL_REJOIN_TRY_TC_REJOIN_ON_ALL_CHANNELS,
-  BDB_COMM_SIGNAL_REJOIN_TRY_SECURE_REJOIN_ON_ALL_CHANNELS,
-  BDB_COMM_SIGNAL_REJOIN_FINISH,
-
-  BDB_COMM_SIGNAL_FINISH, /* 25 */
-
-  BDB_COMM_SIGNAL_NWK_FORMATION_OK, /* 26 */
-  BDB_COMM_SIGNAL_NWK_START_ROUTER_CONF,
-  BDB_COMM_SIGNAL_LEAVE_DONE,
-  BDB_COMM_SIGNAL_NWK_JOIN_FAILED,
-  BDB_COMM_SIGNAL_NWK_JOIN_DONE,
-  BDB_COMM_SIGNAL_NWK_AUTH_FAILED,
-
-  BDB_COMM_N_SIGNALS
-} bdb_commissioning_signal_t;
-
-enum bdb_commissioning_rejoin_reason_e
-{
-  BDB_COMM_REJOIN_REASON_UNSPECIFIED = 0,
-  BDB_COMM_REJOIN_REASON_POLL_CONTROL_CHECK_IN,
-};
-/*!
-* @ brief BDB Commissioning rejoin context
-*/
-typedef ZB_PACKED_PRE struct bdb_commissioning_rejoin_ctx_t
-{
-  zb_bitfield_t rejoin_by_checkin_failure:1;
-  zb_bitfield_t rr_have_unique_tclk:1;
-  zb_bitfield_t waiting:1;
-  zb_bitfield_t reserved:5;
-
-  zb_uint8_t rr_sv_device_type; /* zb_nwk_device_type_t */
-  zb_uint16_t rr_sv_parent_short;
-  zb_ieee_addr_t rr_sv_parent_long;
-  zb_neighbor_tbl_ent_t rr_sv_parent_nent;
-  zb_uint8_t rr_sv_authenticated;
-  zb_uint8_t rr_retries;
-  zb_uint8_t rr_ignore_start_router_conf;
-  zb_uint16_t rr_global_retries;
-  zb_uint8_t rr_skip_savepoint;
-
-  bdb_commissioning_signal_t last_rejoin_signal;
-  bdb_commissioning_signal_t next_rejoin_signal;
-}
-ZB_PACKED_STRUCT bdb_commissioning_rejoin_ctx_t;
-
-/**
- * BDB commissioning context
- */
-typedef ZB_PACKED_PRE struct zb_bdb_comm_ctx_s
-{
-  /** State of commissioning */
-  zb_bdb_comm_state_t state;
-  zb_ret_t status;
-  /** Callback function invoked when factory fresh or network steering operations finish */
-  zb_callback_t user_cb;
-
-#if defined(ZB_BDB_ENABLE_FINDING_BINDING)
-  /** Callback function invoked when binding operation start */
-  zb_bdb_comm_binding_callback_t finding_binding_progress_cb;
-/* [AV] After having separated binding user callbacks from f&b complete callback
-    the last one can be stored in the user_cb field. */
-#endif
-
-  /** Duration of PermitJoining and IdentifyTime */
-  zb_uint16_t duration;
-/*Data array to store info from Identity_Query_Resp */
-  zb_bdb_comm_respondent_info_t respondent[BDB_MAX_IDENTIFY_QUERY_RESP_NUMBER];
-  zb_uint8_t respondent_number;
-
-#if defined(ZB_BDB_ENABLE_FINDING_BINDING)
-  /** Endpoint which participate in finding and binding*/
-  zb_uint8_t ep;
-#endif
-
-  /** Endpoint descriptor*/
-  zb_af_endpoint_desc_t *ep_desc;
-
-#if defined(ZB_BDB_ENABLE_FINDING_BINDING)
-  /** Count of endpoints received during finding and binding */
-  zb_uint8_t ep_cnt;
-
-  /** Signals that at least one endpoint was bound during finding and binding;
-    * it is used to invoke user callback if no endpoint was binded
-    */
-  zb_bool_t was_bound;
-#endif
-  /*EZ mode in progress flag. Sets for EZScanTimeout*/
-  zb_bool_t ez_scan_inprogress;
-  /** Reference to the buffer holding simple descriptor response */
-  zb_uint8_t simple_desc_buf_ref;
-
-  /* ------------- */
-  bdb_commissioning_signal_t signal;
-  bdb_commissioning_rejoin_ctx_t rejoin;
-} ZB_PACKED_STRUCT zb_bdb_comm_ctx_t;
-/** @endcond */ /* internals_doc */
-
 /** @} */
 
-#endif /*#ifdef ZB_BDB_MODE*/
+#endif /* ZB_BDB_MODE*/
 
 
 /** \addtogroup ZB_ZCL_INITIALIZATION
@@ -1924,7 +2229,7 @@ typedef struct zcl_cluster_handlers_s
   zb_zcl_cluster_write_attr_hook_t cluster_write_attr_hook;
 } zcl_cluster_handlers_t;
 
-#define ZB_ZCL_GENERAL_GET_CMD_LISTS_PARAM 0xff
+#define ZB_ZCL_GENERAL_GET_CMD_LISTS_PARAM 0xFFU
 
 #define ZB_ZCL_CLUSTER_HANDLERS_TABLE_SIZE 20
 
@@ -1935,6 +2240,29 @@ typedef struct zb_discover_cmd_list
   zb_uint8_t generated_cnt;
   zb_uint8_t *generated;
 } zb_discover_cmd_list_t;
+
+typedef zb_bool_t (*zb_zcl_is_high_freq_msg_func_t)(zb_bufid_t);
+typedef zb_bool_t (*zb_zcl_block_zcl_cmd_t)(zb_zcl_parsed_hdr_t*);
+typedef zb_bool_t (*zb_zcl_read_attr_resp_handler_t)(zb_bufid_t);
+
+#if defined ZB_ENABLE_SE || defined ZB_BDB_ENABLE_FINDING_BINDING || defined ZB_ZCL_SUPPORT_CLUSTER_WWAH
+typedef struct zb_zcl_func_selector_s
+{
+#ifdef ZB_ENABLE_SE
+  zb_zcl_is_high_freq_msg_func_t is_high_freq_msg;
+#endif /* ZB_ENABLE_SE */
+
+#if defined ZB_SE_COMMISSIONING || (defined ZB_ZCL_SUPPORT_CLUSTER_WWAH && defined ZB_ZCL_ENABLE_WWAH_SERVER)
+  zb_zcl_block_zcl_cmd_t block_zcl_cmd;
+  zb_zcl_read_attr_resp_handler_t read_attr_resp_handler;
+#endif /* ZB_SE_COMMISSINONING || (ZB_ZCL_SUPPORT_CLUSTER_WWAH && ZB_ZCL_ENABLE_WWAH_SERVER) */
+
+#ifdef ZB_BDB_ENABLE_FINDING_BINDING
+  zb_callback_t process_identify_query_res;
+#endif /* ZB_BDB_ENABLE_FINDING_BINDING */
+} zb_zcl_func_selector_t;
+
+#endif /* ZB_ENABLE_SE || ZB_BDB_ENABLE_FINDING_BINDING || ZB_ZCL_SUPPORT_CLUSTER_WWAH */
 
 /** @cond internals_doc */
 typedef struct zb_zcl_globals_s
@@ -1983,19 +2311,32 @@ typedef struct zb_zcl_globals_s
 #ifdef ZB_HA_ENABLE_OTA_UPGRADE_CLIENT
   zb_zcl_ota_upgrade_cli_ctx_t ota_cli;
 #endif
-#if defined ZB_BDB_MODE
-  /** @internal BDB commissioning context */
-  zb_bdb_comm_ctx_t bdb_comm_ctx;
-#endif /*ZB_BDB_MODE*/
 
 #if defined ZB_ENABLE_HA
   zb_zcl_disc_manuf_cmd_cb_t disc_manuf_cmd_cb;
 #endif /* ZB_ENABLE_HA */
 
   zcl_cluster_handlers_t zcl_handlers[ZB_ZCL_CLUSTER_HANDLERS_TABLE_SIZE];
+#ifdef ZB_CONTROL4_NETWORK_SUPPORT
+  /* Control4 Network cluster specific handlers. Server and Client cluster roles */
+  zcl_cluster_handlers_t control4_zcl_handlers[2];
+#endif /* ZB_CONTROL4_NETWORK_SUPPORT */
   zb_uint8_t zcl_handlers_cnt;
   zb_discover_cmd_list_t *zb_zcl_cluster_cmd_list;
+#ifdef ZB_ZCL_SUPPORT_CLUSTER_SUBGHZ
+  zb_zcl_subghz_ctx_t subghz_ctx;         /* Sub-GHz cluster context of current device */
+#endif /* ZB_ZCL_SUPPORT_CLUSTER_SUBGHZ */
+#if (defined ZB_ZCL_SUPPORT_CLUSTER_WWAH && (defined ZB_ZCL_ENABLE_WWAH_SERVER || defined ZB_ZCL_ENABLE_WWAH_CLIENT))
+  /* TODO: Split (client/server) ! */
+  zb_zcl_wwah_context_t wwah_ctx;
+#endif
+
+#if defined ZB_ENABLE_SE || defined ZB_BDB_ENABLE_FINDING_BINDING || defined ZB_ZCL_SUPPORT_CLUSTER_WWAH
+  zb_zcl_func_selector_t selector;
+#endif /* ZB_ENABLE_SE || ZB_BDB_ENABLE_FINDING_BINDING || ZB_ZCL_SUPPORT_CLUSTER_WWAH */
 } zb_zcl_globals_t;
+
+#define ZCL_SELECTOR() ZG->zcl.selector
 
 /**
    Returns ZCL context.
@@ -2010,7 +2351,7 @@ zb_zcl_globals_t *zb_zcl_get_ctx(void);
 
 /*! @} */ /* ZB_ZCL_INITIALIZATION */
 
-#define ZB_ZCL_MAX_EP_NUMBER 10
+#define ZB_ZCL_MAX_EP_NUMBER 10U
 
 typedef zb_uint8_t *(*zb_zcl_put_payload_cb_t)(zb_uint8_t *, const void *);
 
@@ -2026,14 +2367,14 @@ void zb_zcl_send_cmd(
   zb_zcl_put_payload_cb_t put_payload,
   zb_zcl_cluster_id_t cluster_id,
   zb_zcl_disable_default_response_t def_resp,
-  zb_uint16_t cmd_id,
+  zb_uint8_t cmd_id,
   zb_callback_t cb
 );
 
 void zb_zcl_send_cmd_tsn(
   zb_uint8_t param,
   const zb_addr_u *dst_addr,
-  enum zb_aps_addr_mode_e dst_addr_mode,
+  zb_aps_addr_mode_t dst_addr_mode,
   zb_uint8_t dst_ep,
   zb_zcl_frame_direction_t direction,
   zb_uint8_t src_ep,
@@ -2042,16 +2383,19 @@ void zb_zcl_send_cmd_tsn(
   zb_zcl_put_payload_cb_t put_payload,
   zb_zcl_cluster_id_t cluster_id,
   zb_zcl_disable_default_response_t def_resp,
-  zb_uint16_t cmd_id,
+  zb_uint8_t cmd_id,
   zb_uint8_t tsn,
   zb_callback_t cb
 );
 
 zb_bool_t zb_zcl_send_default_handler(zb_uint8_t param,
   const zb_zcl_parsed_hdr_t *cmd_info, zb_zcl_status_t status);
+
 void zb_zcl_send_default_resp_ext(zb_uint8_t param,
   const zb_zcl_parsed_hdr_t *cmd_info, zb_zcl_status_t status);
 
+#if defined ZB_APS_ENCRYPTION_PER_CLUSTER
 void zb_zcl_set_cluster_encryption(zb_uint8_t endpoint_id, zb_uint16_t cluster_id, zb_uint8_t encrypt);
+#endif /* ZB_APS_ENCRYPTION_PER_CLUSTER */
 
 #endif /* ZBOSS_API_ZCL_H */

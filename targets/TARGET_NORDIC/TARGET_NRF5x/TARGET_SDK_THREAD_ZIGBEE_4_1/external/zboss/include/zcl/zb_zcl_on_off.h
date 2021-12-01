@@ -1,46 +1,29 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: On/Off cluster defintions
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: On/Off cluster definitions
 */
 
-#if ! defined ZB_ZCL_ON_OFF_H
-#define ZB_ZCL_ON_OFF_H
+#ifndef ZB_ZCL_ON_OFF_H
+#define ZB_ZCL_ON_OFF_H 1
 
 #include "zcl/zb_zcl_common.h"
 #include "zcl/zb_zcl_commands.h"
@@ -54,8 +37,8 @@ PURPOSE: On/Off cluster defintions
  *
  *    @par Example
  *    On command sending:
- *    @snippet doxygen_snippets.dox Send On command param_snippet_5.7.3_onoff_server_ha_th_c
- *    @snippet doxygen_snippets.dox Send On command_snippet_5.7.3_onoff_server_ha_th_c
+ *    @snippet HA_samples/on_off_output/sample_zed.c onoff_server_send_on_req_param
+ *    @snippet HA_samples/on_off_output/sample_zed.c onoff_server_send_on_req_command
  *    @par
  *
  *    Other two commands can be sent in the same way using appropriate macros.
@@ -171,12 +154,10 @@ enum zb_zcl_on_off_cmd_e
 
 #define ZB_ZCL_CLUSTER_ID_ON_OFF_CLIENT_ROLE_RECEIVED_CMD_LIST ZB_ZCL_CLUSTER_ID_ON_OFF_SERVER_ROLE_GENERATED_CMD_LIST
 
-#define ZB_ZCL_CLUSTER_ID_ON_OFF_CLIENT_ROLE_GENERATED_CMD_LIST     \
-                                      ZB_ZCL_CMD_ON_OFF_OFF_ID,     \
-                                      ZB_ZCL_CMD_ON_OFF_ON_ID,      \
-                                      ZB_ZCL_CMD_ON_OFF_TOGGLE_ID
-
-#define ZB_ZCL_CLUSTER_ID_ON_OFF_TL_CLIENT_ROLE_GENERATED_CMD_LIST                      \
+#define ZB_ZCL_CLUSTER_ID_ON_OFF_CLIENT_ROLE_GENERATED_CMD_LIST                         \
+                                      ZB_ZCL_CMD_ON_OFF_OFF_ID,                         \
+                                      ZB_ZCL_CMD_ON_OFF_ON_ID,                          \
+                                      ZB_ZCL_CMD_ON_OFF_TOGGLE_ID,                      \
                                       ZB_ZCL_CMD_ON_OFF_OFF_WITH_EFFECT_ID,             \
                                       ZB_ZCL_CMD_ON_OFF_ON_WITH_RECALL_GLOBAL_SCENE_ID, \
                                       ZB_ZCL_CMD_ON_OFF_ON_WITH_TIMED_OFF_ID
@@ -316,7 +297,7 @@ enum zb_zcl_on_off_effect_variant_dying_e
 * @see ZCL spec 3.8.2.3.6.1 */
 #define ZB_ZCL_ON_OFF_ACCEPT_ONLY_WHEN_ON   1
 
-/*! @brief Structured representsation of Off with effect command payload */
+/*! @brief Structured representation of Off with effect command payload */
 typedef ZB_PACKED_PRE struct zb_zcl_on_off_off_with_effect_req_s
 {
   /** Effect identify */
@@ -325,7 +306,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_on_off_off_with_effect_req_s
   zb_uint8_t effect_variant;
 } ZB_PACKED_STRUCT zb_zcl_on_off_off_with_effect_req_t;
 
-/*! @brief Structured representsation of On with timed off command payload */
+/*! @brief Structured representation of On with timed off command payload */
 typedef ZB_PACKED_PRE struct zb_zcl_on_off_on_with_timed_off_req_s
 {
   /** On/off control */
@@ -434,7 +415,7 @@ typedef struct zb_zcl_on_off_effect_user_app_schedule_e
   ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID,                                                              \
   ZB_ZCL_ATTR_TYPE_BOOL,                                                                     \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_REPORTING | ZB_ZCL_ATTR_ACCESS_SCENE,    \
-  (zb_voidp_t) data_ptr                                                                      \
+  (void*) data_ptr                                                                      \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_ON_OFF_GLOBAL_SCENE_CONTROL(data_ptr) \
@@ -442,7 +423,7 @@ typedef struct zb_zcl_on_off_effect_user_app_schedule_e
   ZB_ZCL_ATTR_ON_OFF_GLOBAL_SCENE_CONTROL,                                       \
   ZB_ZCL_ATTR_TYPE_BOOL,                                                         \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                                  \
-  (zb_voidp_t) data_ptr                                                          \
+  (void*) data_ptr                                                          \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_ON_OFF_ON_TIME(data_ptr)  \
@@ -450,7 +431,7 @@ typedef struct zb_zcl_on_off_effect_user_app_schedule_e
   ZB_ZCL_ATTR_ON_OFF_ON_TIME,                                        \
   ZB_ZCL_ATTR_TYPE_U16,                                              \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                                     \
-  (zb_voidp_t) data_ptr                                              \
+  (void*) data_ptr                                              \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_ON_OFF_OFF_WAIT_TIME(data_ptr)    \
@@ -458,7 +439,7 @@ typedef struct zb_zcl_on_off_effect_user_app_schedule_e
   ZB_ZCL_ATTR_ON_OFF_OFF_WAIT_TIME,                                          \
   ZB_ZCL_ATTR_TYPE_U16,                                                      \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                                             \
-  (zb_voidp_t) data_ptr                                                      \
+  (void*) data_ptr                                                      \
 }
 
 /** @struct zb_zcl_on_off_attrs_s
@@ -474,7 +455,7 @@ typedef struct zb_zcl_on_off_attrs_s
   ZB_ZCL_ATTR_ON_OFF_START_UP_ON_OFF,                                        \
   ZB_ZCL_ATTR_TYPE_8BIT_ENUM,                                                \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                                             \
-  (zb_voidp_t) data_ptr                                                      \
+  (void*) data_ptr                                                      \
 }
 
 #define ZB_ZCL_DECLARE_ON_OFF_ATTR_LIST(attr_list, attrs)               \
@@ -499,9 +480,9 @@ typedef struct zb_on_off_user_app_schedule_e
 
 /** @endcond */ /* DOXYGEN_ZCL_SECTION */
 
-zb_void_t zb_zcl_on_off_init_server(void);
-zb_void_t zb_zcl_on_off_init_client(void);
+void zb_zcl_on_off_init_server(void);
+void zb_zcl_on_off_init_client(void);
 #define ZB_ZCL_CLUSTER_ID_ON_OFF_SERVER_ROLE_INIT zb_zcl_on_off_init_server
 #define ZB_ZCL_CLUSTER_ID_ON_OFF_CLIENT_ROLE_INIT zb_zcl_on_off_init_client
 
-#endif /* ! defined ZB_ZCL_ON_OFF_H */
+#endif /* ZB_ZCL_ON_OFF_H */

@@ -1,46 +1,29 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: ZCL "Identify cluster" definitions
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: ZCL "Identify cluster" definitions
 */
 
-#if ! defined ZB_ZCL_IDENTIFY_H
-#define ZB_ZCL_IDENTIFY_H
+#ifndef ZB_ZCL_IDENTIFY_H
+#define ZB_ZCL_IDENTIFY_H 1
 
 #if defined(ZB_ZCL_SUPPORT_CLUSTER_IDENTIFY) || defined(DOXYGEN)
 
@@ -58,16 +41,12 @@ PURPOSE: ZCL "Identify cluster" definitions
  *
  *    @par Example
  *    Identify sending:
- *    @snippet doxygen_snippets.dox Send Identify command_snippet_groups_dut_553_c
+ *    @snippet HA_samples/door_lock/sample_zed.c send_identify_req
  *
  *    Identify Query request sending:
- *    @snippet doxygen_snippets.dox Send Identify Query request_snippet_5.4.2_identify_ha_th_c
+ *    @snippet HA_samples/on_off_switch/sample_zed.c identify_send_identify_query_req
  *
- *    Identify Query response parsing:
- *    @snippet doxygen_snippets.dox Parse Identify Query response_snippet_5.4.2_identify_ha_th_c
- *    @par
- *
- *    For more information see 5.5.3_groups, 5.4.2_identify samples
+ *    For more information see HA_samples/door_lock and HA_samples/on_off_switch samples
  */
 
 /** @name Identify cluster attributes
@@ -152,7 +131,7 @@ enum zb_zcl_identify_trigger_variant_e
 };
 
 
-/*! @brief Structured representsation of Trigger effect command payload */
+/*! @brief Structured representation of Trigger effect command payload */
 typedef ZB_PACKED_PRE struct zb_zcl_identify_effect_req_s
 {
   zb_uint8_t effect_id;         /*!< Effect identify, see @ref zb_zcl_identify_trigger_effect_e */
@@ -277,6 +256,8 @@ typedef struct zb_zcl_identify_effect_user_app_schedule_e
     @param prfl_id - profile identifier
     @param def_resp - flag "Default response required"
     @param cb - callback for getting command send status
+
+    @snippet on_off_switch/sample_zed.c identify_send_identify_query_req
 */
 #define ZB_ZCL_IDENTIFY_SEND_IDENTIFY_QUERY_REQ(                                         \
     buffer, addr, dst_addr_mode, dst_ep, ep, prfl_id, def_resp, cb)                      \
@@ -299,7 +280,7 @@ typedef struct zb_zcl_identify_effect_user_app_schedule_e
     @param ep - sending endpoint
     @param prfl_id - profile identifier
     @param seq_num - sequence number
-    @param aps_secured - APS sequrity mode
+    @param aps_secured - APS security mode
 */
 #define ZB_ZCL_IDENTIFY_SEND_IDENTIFY_QUERY_RES(                                              \
     buffer, time, addr, dst_addr_mode, dst_ep, ep, prfl_id, seq_num, aps_secured)             \
@@ -405,7 +386,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_identify_query_res_s
   ZB_ZCL_ATTR_IDENTIFY_IDENTIFY_TIME_ID,                               \
   ZB_ZCL_ATTR_TYPE_U16,                                         \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                                \
-  (zb_voidp_t) data_ptr                                         \
+  (void*) data_ptr                                         \
 }
 
 #if defined ZB_ZCL_SUPPORT_CLUSTER_SCENES
@@ -435,7 +416,7 @@ typedef struct zb_zcl_identify_attrs_s
    * @see ZB_ZCL_ATTR_IDENTIFY_IDENTIFY_TIME_ID
    */
   zb_uint16_t identify_time;
-}zb_zcl_identify_attrs_t;
+} zb_zcl_identify_attrs_t;
 
 
 /** @brief Declare attribute list for Identify cluster cluster
@@ -462,4 +443,4 @@ void zb_zcl_identify_init_client(void);
 
 #endif /* defined(ZB_ZCL_SUPPORT_CLUSTER_IDENTIFY) */
 
-#endif /* ! defined ZB_ZCL_IDENTIFY_H */
+#endif /* ZB_ZCL_IDENTIFY_H */

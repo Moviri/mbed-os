@@ -1,42 +1,25 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: HA devices configuration
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: HA devices configuration
 */
 
 #ifndef ZB_HA_DEVICE_CONFIG_H
@@ -54,7 +37,7 @@ PURPOSE: HA devices configuration
 enum zb_ha_standard_devs_e
 {
   /*! General On/Off switch */
-  ZB_HA_ON_OFF_SWITCH_DEVICE_ID       = 0x0000,         
+  ZB_HA_ON_OFF_SWITCH_DEVICE_ID       = 0x0000,
   /*! Level Control Switch  */
   ZB_HA_LEVEL_CONTROL_SWITCH_DEVICE_ID = 0x0001,
   /*! General On/Off output */
@@ -63,7 +46,7 @@ enum zb_ha_standard_devs_e
   ZB_HA_LEVEL_CONTROLLABLE_OUTPUT_DEVICE_ID = 0x0003,
   /*! Scene Selector */
   ZB_HA_SCENE_SELECTOR_DEVICE_ID      = 0x0004,
-  /*! Configuration Tool */ 
+  /*! Configuration Tool */
   ZB_HA_CONFIGURATION_TOOL_DEVICE_ID  = 0x0005,
   /*! Remote Control */
   ZB_HA_REMOTE_CONTROL_DEVICE_ID      = 0x0006,
@@ -133,9 +116,10 @@ enum zb_ha_standard_devs_e
 };
 
 
-/** @cond internals_doc */
+/** @cond DOXYGEN_INTERNAL_DOC */
 /* Define supported devices here */
 #ifdef ZB_ALL_DEVICE_SUPPORT
+
 #define ZB_HA_DEFINE_DEVICE_ON_OFF_SWITCH
 #define ZB_HA_DEFINE_DEVICE_ON_OFF_OUTPUT
 #define ZB_HA_DEFINE_DEVICE_DOOR_LOCK
@@ -169,7 +153,7 @@ enum zb_ha_standard_devs_e
 
 #define ZB_HA_DEFINE_DEVICE_TEST_DEVICE
 
-/************** Custome Devices ******************/
+/************** Custom Devices ******************/
 /* Define device support for custom security sensor */
 #define ZB_HA_DEFINE_DEVICE_CUSTOM_SECURITY_SENSOR
 /* this device definition - for coordinator (CIE) role, need for test
@@ -177,6 +161,24 @@ enum zb_ha_standard_devs_e
 #define ZB_HA_DEFINE_DEVICE_CUSTOM_SECURITY_CONTROL
 /* Define device support for Low Cost Gateway */
 #define ZB_HA_DEFINE_DEVICE_GATEWAY
+#define ZB_HA_DEFINE_DEVICE_CUSTOM_DIMMABLE_LIGHT
+/* Linky */
+#define ZB_HA_DEFINE_DEVICE_ERL_INTERFACE_DEVICE
+#define ZB_HA_DEFINE_DEVICE_ERL_GW
+
+#ifdef ZB_ENABLE_CUSTOM_CLUSTERS
+#define ZB_PROFILE_DEFINE_DEVICE_CUSTOM_TUNNEL
+#endif
+
+#ifdef ZB_ENABLE_SE_CLUSTERS
+#define ZB_ZCL_SUPPORT_CLUSTER_EVENTS 1
+#define ZB_ZCL_SUPPORT_CLUSTER_CALENDAR 1
+#define ZB_ZCL_SUPPORT_CLUSTER_PREPAYMENT 1
+#define ZB_ZCL_SUPPORT_CLUSTER_DEVICE_MANAGEMENT 1
+#define ZB_ZCL_SUPPORT_CLUSTER_MDU_PAIRING 1
+#define ZB_ZCL_SUPPORT_CLUSTER_ENERGY_MANAGEMENT 1
+#define ZB_ZCL_SUPPORT_CLUSTER_TIME 1
+#endif
 
 #define ZB_ZCL_SUPPORT_CLUSTER_DRLC 1
 #define ZB_ZCL_SUPPORT_CLUSTER_PRICE 1
@@ -184,6 +186,35 @@ enum zb_ha_standard_devs_e
 #define ZB_ZCL_SUPPORT_CLUSTER_MESSAGING 1
 
 #define ZB_ZCL_SUPPORT_CLUSTER_METER_IDENTIFICATION 1
+
+/* Define optional common clusters. These clusters are common to all devices
+ * and expected to be part of the build if ZB_ALL_DEVICE_SUPPORT is declared.
+ * For example, application 'multi_ep' expects "Alarms" cluster to be present.
+ *
+ * Clusters with reporting capability are omitted since common part implies
+ * client role which receives attribute reports. It is not necessary to enable
+ * ZB_ZCL_SUPPORT_* during stack build. It will be enough for applications to
+ * define corresponding ZB_ZCL_SUPPORT_* during application's build because
+ * only headers should be included, no *.c files.
+ *
+ * Also, common manufacturer-specific clusters are ignored here.
+ */
+#define ZB_ZCL_SUPPORT_CLUSTER_POWER_CONFIG           1
+#define ZB_ZCL_SUPPORT_CLUSTER_ALARMS                 1
+#define ZB_ZCL_SUPPORT_CLUSTER_ELECTRICAL_MEASUREMENT 1
+#define ZB_ZCL_SUPPORT_CLUSTER_POLL_CONTROL           1
+
+/* Define clusters which are not used by any device but expected to be
+ * supported in ZBOSS stack when ZB_ALL_DEVICE_SUPPORT is defined.
+ * For example, some samples from application/HA_samples may use them.
+ *
+ * The main intention of ZB_ALL_DEVICE_SUPPORT define is to compile in ZBOSS
+ * stack as much HA-related functionality as possible so declaring support for
+ * clusters not being used by any device but used by some sample seems to be
+ * fine.
+ */
+#define ZB_ZCL_SUPPORT_CLUSTER_DEHUMIDIFICATION_CONTROL 1
+#define ZB_ZCL_SUPPORT_CLUSTER_OCCUPANCY_SENSING        1
 
 #endif /* ZB_ALL_DEVICE_SUPPORT */
 
@@ -454,10 +485,10 @@ enum zb_ha_standard_devs_e
 #define ZB_ZCL_SUPPORT_CLUSTER_POWER_CONFIG              1
 #define ZB_ZCL_SUPPORT_CLUSTER_REL_HUMIDITY_MEASUREMENT  1
 #define ZB_ZCL_SUPPORT_CLUSTER_TEMP_MEASUREMENT          1
+#define ZB_ZCL_SUPPORT_CLUSTER_PRESSURE_MEASUREMENT      1
 #define ZB_ZCL_SUPPORT_CLUSTER_ON_OFF                    1
 #define ZB_ZCL_SUPPORT_CLUSTER_SCENES                    1
 #define ZB_ZCL_SUPPORT_CLUSTER_GROUPS                    1
-#define ZB_ZCL_SUPPORT_CLUSTER_DIAGNOSTICS               1
 #define ZB_ZCL_SUPPORT_CLUSTER_METERING                  1
 #define ZB_ZCL_SUPPORT_CLUSTER_IAS_ACE                   1
 /*
@@ -467,7 +498,7 @@ enum zb_ha_standard_devs_e
 /* #define ZB_HA_SUPPORT_EZ_MODE                         1 */
 #endif /* ZB_HA_DEFINE_DEVICE_GATEWAY */
 
-/* Custome device should not be declared as a part of HA, keep it
+/* Custom device should not be declared as a part of HA, keep it
  * here foe simplicity */
 #ifdef ZB_PROFILE_DEFINE_DEVICE_CUSTOM_TUNNEL
 #define ZB_ZCL_SUPPORT_CLUSTER_BASIC                1
@@ -487,6 +518,16 @@ enum zb_ha_standard_devs_e
 #define ZB_ZCL_SUPPORT_CLUSTER_OTA_UPGRADE          1
 #endif /* ZB_HA_DEFINE_DEVICE_SMART_PLUG */
 
+#ifdef ZB_HA_DEFINE_DEVICE_IR_BLASTER
+#define ZB_ZCL_SUPPORT_CLUSTER_BASIC                1
+#define ZB_ZCL_SUPPORT_CLUSTER_IDENTIFY             1
+#define ZB_ZCL_SUPPORT_CLUSTER_GROUPS               1
+#define ZB_ZCL_SUPPORT_CLUSTER_POWER_CONFIG         1
+#define ZB_ZCL_SUPPORT_CLUSTER_OTA_UPGRADE          1
+#define ZB_ZCL_SUPPORT_CLUSTER_ON_OFF               1
+#define ZB_ZCL_SUPPORT_CLUSTER_IR_BLASTER           1
+#endif /* ZB_HA_DEFINE_DEVICE_IR_BLASTER */
+
 #ifdef ZB_HA_DEFINE_DEVICE_CUSTOM_DIMMABLE_LIGHT
 #define ZB_ZCL_SUPPORT_CLUSTER_BASIC    1
 #define ZB_ZCL_SUPPORT_CLUSTER_IDENTIFY 1
@@ -496,6 +537,18 @@ enum zb_ha_standard_devs_e
 #define ZB_ZCL_SUPPORT_CLUSTER_LEVEL_CONTROL 1
 #define ZB_ZCL_SUPPORT_CLUSTER_COLOR_CONTROL 1
 #endif /* ZB_HA_DEFINE_DEVICE_CUSTOM_DIMMABLE_LIGHT */
+
+#if defined  ZB_HA_DEFINE_DEVICE_ERL_INTERFACE_DEVICE || defined ZB_HA_DEFINE_DEVICE_ERL_GW
+#define ZB_ZCL_SUPPORT_CLUSTER_BASIC                  1
+#define ZB_ZCL_SUPPORT_CLUSTER_IDENTIFY               1
+#define ZB_ZCL_SUPPORT_CLUSTER_TIME                   1
+#define ZB_ZCL_SUPPORT_CLUSTER_METER_IDENTIFICATION   1
+#define ZB_ZCL_SUPPORT_CLUSTER_ELECTRICAL_MEASUREMENT 1
+#define ZB_ZCL_SUPPORT_CLUSTER_DIAGNOSTICS            1
+#define ZB_ZCL_SUPPORT_CLUSTER_METERING               1
+#define ZB_ZCL_SUPPORT_CLUSTER_MESSAGING              1
+#define ZB_ZCL_SUPPORT_CLUSTER_DAILY_SCHEDULE         1
+#endif /* defined  ZB_HA_DEFINE_DEVICE_ERL_INTERFACE_DEVICE || defined ZB_HA_DEFINE_DEVICE_ERL_GW */
 
 /* BDB uses identify */
 #if defined ZB_BDB_MODE && !defined ZB_ZCL_SUPPORT_CLUSTER_IDENTIFY
@@ -508,7 +561,20 @@ enum zb_ha_standard_devs_e
 
 /** @endcond */ /* DOXYGEN_HA_SECTION */
 
+#ifdef ZB_ZCL_SUPPORT_CLUSTER_DIAGNOSTICS
+/* need to define it here because that .h file can be included after zb_config.h */
+#ifndef ZB_MAC_DIAGNOSTICS
+#define ZB_MAC_DIAGNOSTICS
+#endif
+#ifndef ZDO_DIAGNOSTICS
+#define ZDO_DIAGNOSTICS
+#endif
+#endif
 
 #endif /* ZB_ENABLE_HA */
+
+#if defined ZB_ZCL_SUPPORT_CLUSTER_DIAGNOSTICS && ! defined ZDO_DIAGNOSTICS
+#error Define ZDO_DIAGNOSTICS in vendor file if you need Diagnostic cluster!
+#endif
 
 #endif /* ZB_HA_DEVICE_CONFIG_H */

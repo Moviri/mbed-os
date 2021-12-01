@@ -1,42 +1,25 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: Zigbee cluster library definitions for reporting functionality
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: Zigbee cluster library definitions for reporting functionality
 */
 
 #ifndef ZB_ZCL_REPORTING_H
@@ -63,11 +46,11 @@ PURPOSE: Zigbee cluster library definitions for reporting functionality
  *    @ref ZB_ZCL_SET_NO_REPORTING_CB() macros respectively.
  *
  *    @par Example
- *    @snippet doxygen_snippets.dox ZB_ZCL_SET_REPORT_ATTR_CB_func_snippet_reporting_th_c
- *    @snippet doxygen_snippets.dox ZB_ZCL_SET_REPORT_ATTR_CB_snippet_reporting_th_c
+ *    @snippet light_sample/dimmable_light/bulb.c zb_zcl_set_report_attr_cb
+ *    @snippet light_sample/dimmable_light/bulb.c zb_zcl_set_report_attr_cb_example
  *    @par
  *
- *    For more information see 546_reporting, reporting_srv samples
+ *    For more information see light_sample/dimmable_light sample
  */
 
 /* Boundary and default values are defined by application profile */
@@ -128,8 +111,8 @@ typedef struct zb_zcl_reporting_info_s
 
   struct
   {
-    zb_uint16_t short_addr; /*!< Destinition short address */
-    zb_uint8_t  endpoint;   /*!< Destinition endpoint */
+    zb_uint16_t short_addr; /*!< Destination short address */
+    zb_uint8_t  endpoint;   /*!< Destination endpoint */
     zb_uint16_t profile_id; /*!< Profile id */
   }
   dst;
@@ -156,8 +139,8 @@ typedef ZB_PACKED_PRE struct zb_zcl_reporting_info_nvram_s
    * the most cases... */
   zb_uint32_t delta; /*!< Reportable change */
 
-  zb_uint16_t short_addr_dest; /*!< Destinition short address */
-  zb_uint8_t  endpoint_dest;   /*!< Destinition endpoint */
+  zb_uint16_t short_addr_dest; /*!< Destination short address */
+  zb_uint8_t  endpoint_dest;   /*!< Destination endpoint */
   zb_uint16_t profile_id_dest; /*!< Profile id */
   zb_uint8_t align[3];
 } ZB_PACKED_STRUCT zb_zcl_reporting_info_nvram_t;
@@ -246,7 +229,7 @@ zb_zcl_reporting_flags_t;
 /************************** Reporting functions declarations **********************************/
 
 #ifdef ZB_ZCL_ENABLE_DEFAULT_REPORT_ATTR_PROCESSING
-zb_void_t zb_zcl_report_attr_cmd_handler(zb_uint8_t param);
+void zb_zcl_report_attr_cmd_handler(zb_uint8_t param);
 #endif
 
 void zb_zcl_report_received(zb_uint8_t ep, zb_uint16_t cluster_id, zb_uint8_t cluster_role, zb_uint16_t attr_id);
@@ -266,9 +249,9 @@ zb_zcl_reporting_info_t* zb_zcl_find_reporting_info(  zb_uint8_t ep,
 zb_zcl_reporting_info_t* zb_zcl_get_next_reporting_info(
   zb_zcl_reporting_info_t *rep_info_init, zb_uint8_t is_manuf_spec);
 
-zb_void_t zb_zcl_reporting_cb(zb_uint8_t param);
+void zb_zcl_reporting_cb(zb_uint8_t param);
 
-zb_void_t zb_zcl_save_reported_value(zb_zcl_reporting_info_t *rep_info, zb_zcl_attr_t* attr_desc);
+void zb_zcl_save_reported_value(zb_zcl_reporting_info_t *rep_info, zb_zcl_attr_t* attr_desc);
 
 void zb_zcl_mark_attr_for_reporting(zb_uint8_t ep, zb_uint16_t cluster_id, zb_uint8_t cluster_role, zb_uint16_t attr_id);
 
@@ -294,7 +277,7 @@ zb_ret_t zb_zcl_start_attr_reporting(zb_uint8_t ep, zb_uint16_t cluster_id, zb_u
 */
 zb_ret_t zb_zcl_stop_attr_reporting(zb_uint8_t ep, zb_uint16_t cluster_id, zb_uint8_t cluster_role, zb_uint16_t attr_id);
 
-/** @brief Check if an atrtibute is configured for reporting or not
+/** @brief Check if an attribute is configured for reporting or not
     @param ep - endpoint number
     @param cluster_id - cluster ID
     @param cluster_role - cluster role

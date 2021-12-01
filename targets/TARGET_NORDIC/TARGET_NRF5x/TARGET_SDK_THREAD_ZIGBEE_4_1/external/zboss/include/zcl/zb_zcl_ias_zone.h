@@ -1,46 +1,29 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: IAS Zone cluster defintions
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: IAS Zone cluster defintions
 */
 
-#if ! defined ZB_ZCL_IAS_ZONE_H
-#define ZB_ZCL_IAS_ZONE_H
+#ifndef ZB_ZCL_IAS_ZONE_H
+#define ZB_ZCL_IAS_ZONE_H 1
 
 #include "zcl/zb_zcl_common.h"
 #include "zcl/zb_zcl_commands.h"
@@ -56,7 +39,7 @@ PURPOSE: IAS Zone cluster defintions
 /** @cond internals_doc */
 /** @brief Hook on Write attribute
  * send Zone Status Change Notification Command if change ZoneStatus attribute */
-zb_void_t zb_zcl_ias_zone_write_attr_hook(zb_uint8_t endpoint, zb_uint16_t attr_id, zb_uint8_t *new_value);
+void zb_zcl_ias_zone_write_attr_hook(zb_uint8_t endpoint, zb_uint16_t attr_id, zb_uint8_t *new_value);
 /*! @}
  *  @endcond */ /* internals_doc */
 
@@ -214,7 +197,7 @@ enum zb_zcl_ias_zone_zonestatus_e
   ZB_ZCL_ATTR_CUSTOM_CIE_EP,                            \
   ZB_ZCL_ATTR_TYPE_U8,                                  \
   ZB_ZCL_ATTR_ACCESS_INTERNAL,                         \
-  (zb_voidp_t) data_ptr                                 \
+  (void*) data_ptr                                 \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_CUSTOM_CIE_SHORT_ADDR(data_ptr) \
@@ -222,7 +205,7 @@ enum zb_zcl_ias_zone_zonestatus_e
   ZB_ZCL_ATTR_CUSTOM_CIE_SHORT_ADDR,                    \
   ZB_ZCL_ATTR_TYPE_U16,                                 \
   ZB_ZCL_ATTR_ACCESS_INTERNAL,                         \
-  (zb_voidp_t) data_ptr                                 \
+  (void*) data_ptr                                 \
 }
 
 
@@ -231,7 +214,7 @@ enum zb_zcl_ias_zone_zonestatus_e
   ZB_ZCL_ATTR_IAS_ZONE_ZONESTATE_ID,                    \
   ZB_ZCL_ATTR_TYPE_8BIT_ENUM,                           \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                         \
-  (zb_voidp_t) data_ptr                                 \
+  (void*) data_ptr                                 \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_IAS_ZONE_ZONETYPE_ID(data_ptr) \
@@ -239,7 +222,7 @@ enum zb_zcl_ias_zone_zonestatus_e
   ZB_ZCL_ATTR_IAS_ZONE_ZONETYPE_ID,                     \
   ZB_ZCL_ATTR_TYPE_16BIT_ENUM,                          \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                         \
-  (zb_voidp_t) data_ptr                                 \
+  (void*) data_ptr                                 \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_IAS_ZONE_ZONESTATUS_ID(data_ptr) \
@@ -247,7 +230,7 @@ enum zb_zcl_ias_zone_zonestatus_e
   ZB_ZCL_ATTR_IAS_ZONE_ZONESTATUS_ID,                           \
   ZB_ZCL_ATTR_TYPE_16BITMAP,                                    \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY | ZB_ZCL_ATTR_ACCESS_REPORTING,  \
-  (zb_voidp_t) data_ptr                                         \
+  (void*) data_ptr                                         \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_IAS_ZONE_IAS_CIE_ADDRESS_ID(data_ptr) \
@@ -255,7 +238,7 @@ enum zb_zcl_ias_zone_zonestatus_e
   ZB_ZCL_ATTR_IAS_ZONE_IAS_CIE_ADDRESS_ID,              \
   ZB_ZCL_ATTR_TYPE_IEEE_ADDR,                           \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                        \
-  (zb_voidp_t) data_ptr                                 \
+  (void*) data_ptr                                 \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_IAS_ZONE_ZONEID_ID(data_ptr) \
@@ -263,7 +246,7 @@ enum zb_zcl_ias_zone_zonestatus_e
   ZB_ZCL_ATTR_IAS_ZONE_ZONEID_ID,                       \
   ZB_ZCL_ATTR_TYPE_U8,                                  \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                         \
-  (zb_voidp_t) data_ptr                                 \
+  (void*) data_ptr                                 \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_IAS_ZONE_NUMBER_OF_ZONE_SENSITIVITY_LEVELS_SUPPORTED_ID(data_ptr) \
@@ -271,7 +254,7 @@ enum zb_zcl_ias_zone_zonestatus_e
   ZB_ZCL_ATTR_IAS_ZONE_NUMBER_OF_ZONE_SENSITIVITY_LEVELS_SUPPORTED_ID,                      \
   ZB_ZCL_ATTR_TYPE_U8,                                \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                         \
-  (zb_voidp_t) data_ptr                                 \
+  (void*) data_ptr                                 \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_IAS_ZONE_CURRENT_ZONE_SENSITIVITY_LEVEL_ID(data_ptr) \
@@ -279,7 +262,7 @@ enum zb_zcl_ias_zone_zonestatus_e
   ZB_ZCL_ATTR_IAS_ZONE_CURRENT_ZONE_SENSITIVITY_LEVEL_ID,                      \
   ZB_ZCL_ATTR_TYPE_U8,                                \
   ZB_ZCL_ATTR_ACCESS_READ_WRITE,                         \
-  (zb_voidp_t) data_ptr                                 \
+  (void*) data_ptr                                 \
 }
 
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_IAS_ZONE_INT_CTX_ID(data_ptr) \
@@ -287,7 +270,7 @@ enum zb_zcl_ias_zone_zonestatus_e
   ZB_ZCL_ATTR_IAS_ZONE_INT_CTX_ID,                      \
   ZB_ZCL_ATTR_TYPE_NULL,                                \
   ZB_ZCL_ATTR_ACCESS_INTERNAL,                          \
-  (zb_voidp_t) data_ptr                                 \
+  (void*) data_ptr                                 \
 }
 
 /*! @internal Number of attributes mandatory for reporting in IAS Zone cluster */
@@ -729,7 +712,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ias_zone_enroll_res_s
 
 /* Set or clear Zone Status bits
  */
-zb_void_t zb_zcl_ias_zone_change_status(zb_uint8_t param);
+void zb_zcl_ias_zone_change_status(zb_uint8_t param);
 
 /** @brief Declare Set/Clear Zone Status bits
 */
@@ -860,7 +843,7 @@ typedef struct zb_zcl_ias_zone_enroll_response_user_app_schedule_e
     @param process_result_cb - notification sent callback function
     @param general_cb - general callback function
 */
-zb_void_t zb_zcl_ias_zone_register_cb(
+void zb_zcl_ias_zone_register_cb(
     zb_uint8_t endpoint,
     zb_callback_t process_result_cb,
     zb_ias_zone_app_callback_t general_cb);
@@ -876,19 +859,19 @@ zb_bool_t zb_zcl_ias_zone_check_attr_notify(
 /**
    @brief fills in notification command and sends it
 */
-zb_void_t zb_zcl_ias_zone_send_status_change_not(zb_uint8_t param);
+void zb_zcl_ias_zone_send_status_change_not(zb_uint8_t param);
 
 
 /*! @} */ /* ZCL IAS Zone cluster definitions */
 
 /** @endcond */ /* DOXYGEN_ZCL_SECTION */
 
-zb_void_t zb_zcl_ias_zone_init_server(void);
-zb_void_t zb_zcl_ias_zone_init_client(void);
+void zb_zcl_ias_zone_init_server(void);
+void zb_zcl_ias_zone_init_client(void);
 #define ZB_ZCL_CLUSTER_ID_IAS_ZONE_SERVER_ROLE_INIT zb_zcl_ias_zone_init_server
 #define ZB_ZCL_CLUSTER_ID_IAS_ZONE_CLIENT_ROLE_INIT zb_zcl_ias_zone_init_client
 
 zb_bool_t zb_zcl_process_ias_zone_specific_commands(zb_uint8_t param);
 zb_bool_t zb_zcl_ias_zone_check_bind_unbind_request(zb_apsme_binding_req_t *aps_bind_req);
 
-#endif /* ! defined ZB_ZCL_IAS_ZONE_H */
+#endif /* ZB_ZCL_IAS_ZONE_H */

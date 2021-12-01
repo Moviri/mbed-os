@@ -1,42 +1,25 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: Messaging cluster defintions
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: Messaging cluster defintions
 */
 #ifndef ZB_ZCL_MESSAGING_H_
 #define ZB_ZCL_MESSAGING_H_
@@ -519,9 +502,9 @@ typedef struct zb_zcl_messaging_get_last_message_response_s {
  * @par Usage
  * @n Example of sending ZB_ZCL_MESSAGING_CLI_CMD_GET_LAST_MESSAGE "GetLastMessage" command
  */
-zb_void_t zb_zcl_messaging_send_get_last_msg(zb_uint8_t param,
+void zb_zcl_messaging_send_get_last_msg(zb_uint8_t param,
                                              const zb_addr_u *dst_addr,
-                                             enum zb_aps_addr_mode_e dst_addr_mode,
+                                             zb_aps_addr_mode_t dst_addr_mode,
                                              zb_uint8_t dst_ep,
                                              zb_uint8_t src_ep,
                                              zb_callback_t cb);
@@ -541,9 +524,9 @@ zb_void_t zb_zcl_messaging_send_get_last_msg(zb_uint8_t param,
  * @par Usage
  * @n Handle @ref ZB_ZCL_MESSAGING_CLI_CMD_GET_LAST_MESSAGE "GetLastMessage" command
  */
-zb_void_t zb_zcl_messaging_send_display_msg(zb_uint8_t param,
+void zb_zcl_messaging_send_display_msg(zb_uint8_t param,
                                             const zb_addr_u *dst_addr,
-                                            enum zb_aps_addr_mode_e dst_addr_mode,
+                                            zb_aps_addr_mode_t dst_addr_mode,
                                             zb_uint8_t dst_ep,
                                             zb_uint8_t src_ep,
                                             const zb_zcl_messaging_display_message_payload_t *payload,
@@ -560,9 +543,9 @@ zb_void_t zb_zcl_messaging_send_display_msg(zb_uint8_t param,
  * @param payload - Packet payload (@ref zb_zcl_messaging_message_confirm_payload_t).
  * @param cb - Callback which should be called when the ZCL stack receives APS ack.
  */
-zb_void_t zb_zcl_messaging_send_msg_confirmation(zb_uint8_t param,
+void zb_zcl_messaging_send_msg_confirmation(zb_uint8_t param,
                                             const zb_addr_u *dst_addr,
-                                            enum zb_aps_addr_mode_e dst_addr_mode,
+                                            zb_aps_addr_mode_t dst_addr_mode,
                                             zb_uint8_t dst_ep,
                                             zb_uint8_t src_ep,
                                             const zb_zcl_messaging_message_confirm_payload_t *payload,
@@ -579,9 +562,9 @@ zb_void_t zb_zcl_messaging_send_msg_confirmation(zb_uint8_t param,
  * @param payload - Packet payload (@ref zb_zcl_messaging_cancel_message_payload_t).
  * @param cb - Callback which should be called when the ZCL stack receives APS ack.
  */
-zb_void_t zb_zcl_messaging_send_cancel_msg(zb_uint8_t param,
+void zb_zcl_messaging_send_cancel_msg(zb_uint8_t param,
                                            const zb_addr_u *dst_addr,
-                                           enum zb_aps_addr_mode_e dst_addr_mode,
+                                           zb_aps_addr_mode_t dst_addr_mode,
                                            zb_uint8_t dst_ep,
                                            zb_uint8_t src_ep,
                                            const zb_zcl_messaging_cancel_message_payload_t *payload,
@@ -613,8 +596,8 @@ zb_void_t zb_zcl_messaging_send_cancel_msg(zb_uint8_t param,
 
 /** @cond internals_doc */
 
-zb_void_t zb_zcl_messaging_init_server(void);
-zb_void_t zb_zcl_messaging_init_client(void);
+void zb_zcl_messaging_init_server(void);
+void zb_zcl_messaging_init_client(void);
 #define ZB_ZCL_CLUSTER_ID_MESSAGING_SERVER_ROLE_INIT zb_zcl_messaging_init_server
 #define ZB_ZCL_CLUSTER_ID_MESSAGING_CLIENT_ROLE_INIT zb_zcl_messaging_init_client
 

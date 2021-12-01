@@ -1,42 +1,25 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: Demand Response and Load Control cluster defintions
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: Demand Response and Load Control cluster definitions
 */
 
 #ifndef ZB_ZCL_DRLC_H_
@@ -66,7 +49,7 @@ PURPOSE: Demand Response and Load Control cluster defintions
 typedef enum zb_zcl_drlc_cli_attr_e
 {
   ZB_ZCL_ATTR_DRLC_UTILITY_ENROLLMENT_GROUP        = 0x0000,   /**< UtilityEnrollmentGroup attribute.
-                                                               * Provides for utilites to assing devices to groups.
+                                                               * Provides for utilities to assign devices to groups.
                                                                */
 
   ZB_ZCL_ATTR_DRLC_START_RANDOMIZATION_MINUTES     = 0x0001,   /**< StartRandomizationMinutes attribute.
@@ -87,7 +70,7 @@ typedef enum zb_zcl_drlc_cli_attr_e
 
 
 /** Criticality Level value applied by the device.
- * @see SE spe, Table D-3
+ * @see SE spec, Table D-3
  */
 typedef enum zb_zcl_drlc_criticality_levels_e
 {
@@ -471,11 +454,11 @@ typedef ZB_PACKED_PRE struct zb_zcl_drlc_get_scheduled_events_payload_s {
  * @param cb - Callback which should be called when the ZCL stack receives APS ack.
  * @par Usage
  * @n Handle @ref ZB_ZCL_DRLC_GET_SCHEDULED_EVENTS_CB_ID
- * @snippet doxygen_snippets.dox handle_get_scheduled_events_samples_se_energy_service_interface_se_esi_zc_c
+ * @snippet se/energy_service_interface/se_esi_zc.c handle_get_scheduled_events
  * @n Example of sending @ref ZB_ZCL_DRLC_SRV_CMD_LOAD_CONTROL_EVENT "LoadControlEvent" command
- * @snippet doxygen_snippets.dox esi_dev_cmd_send_lce_event1_samples_se_energy_service_interface_se_esi_zc_c
+ * @snippet se/energy_service_interface/se_esi_zc.c esi_dev_cmd_send_lce_event1
  */
-zb_void_t zb_drlc_server_send_load_control_event(zb_uint8_t param,
+void zb_drlc_server_send_load_control_event(zb_uint8_t param,
   zb_addr_u *dst_addr, zb_aps_addr_mode_t dst_addr_mode, zb_uint8_t dst_ep,
   zb_uint8_t src_ep, zb_zcl_drlc_lce_payload_t *payload, zb_callback_t cb);
 
@@ -492,9 +475,9 @@ zb_void_t zb_drlc_server_send_load_control_event(zb_uint8_t param,
  * @param cb - Callback which should be called when the ZCL stack receives APS ack.
  * @par Usage
  * @n Example of sending @ref ZB_ZCL_DRLC_SRV_CMD_CANCEL_LOAD_CONTROL_EVENT "CancelLoadControlEvent" command
- * @snippet doxygen_snippets.dox esi_dev_cmd_send_lce_event2_samples_se_energy_service_interface_se_esi_zc_c
+ * @snippet se/energy_service_interface/se_esi_zc.c esi_dev_cmd_send_lce_event2
  */
-zb_void_t zb_drlc_server_send_cancel_load_control_event(zb_uint8_t param,
+void zb_drlc_server_send_cancel_load_control_event(zb_uint8_t param,
   zb_addr_u *dst_addr, zb_aps_addr_mode_t dst_addr_mode, zb_uint8_t dst_ep,
   zb_uint8_t src_ep, zb_zcl_drlc_cancel_lce_payload_t *payload, zb_callback_t cb);
 
@@ -512,9 +495,9 @@ zb_void_t zb_drlc_server_send_cancel_load_control_event(zb_uint8_t param,
  * @param cb - Callback which should be called when the ZCL stack receives APS ack.
  * @par Usage
  * @n Example of sending @ref ZB_ZCL_DRLC_SRV_CMD_CANCEL_ALL_LOAD_CONTROL_EVENTS "CancellAllLoadControlEvents" command
- * @snippet doxygen_snippets.dox esi_dev_cmd_send_lce_event3_samples_se_energy_service_interface_se_esi_zc_c
+ * @snippet se/energy_service_interface/se_esi_zc.c esi_dev_cmd_send_lce_event3
  */
-zb_void_t zb_drlc_server_send_cancel_all_load_control_events(zb_uint8_t param,
+void zb_drlc_server_send_cancel_all_load_control_events(zb_uint8_t param,
   zb_addr_u *dst_addr, zb_aps_addr_mode_t dst_addr_mode, zb_uint8_t dst_ep,
   zb_uint8_t src_ep, zb_uint8_t *payload, zb_callback_t cb);
 
@@ -536,11 +519,11 @@ zb_void_t zb_drlc_server_send_cancel_all_load_control_events(zb_uint8_t param,
  * @param cb - Callback which should be called when the ZCL stack receives APS ack.
  * @par Usage
  * @n Handle @ref ZB_ZCL_DRLC_SRV_CMD_CANCEL_ALL_LOAD_CONTROL_EVENTS "CancellAllLoadControlEvents" command
- * @snippet doxygen_snippets.dox ihd_handle_cancel_all_load_control_events_samples_se_in_home_display_se_ihd_zr_c
+ * @snippet se/in_home_display/se_ihd_zr.c ihd_handle_cancel_all_load_control_events
  * @n Example of sending @ref ZB_ZCL_DRLC_CLI_CMD_REPORT_EVENT_STATUS "ReportEventStatus" command
- * @snippet doxygen_snippets.dox ihd_send_report_event_status_samples_se_in_home_display_se_ihd_zr_c
+ * @snippet se/in_home_display/se_ihd_zr.c ihd_send_report_event_status
  */
-zb_void_t zb_drlc_client_send_report_event_status(zb_uint8_t param,
+void zb_drlc_client_send_report_event_status(zb_uint8_t param,
   zb_addr_u *dst_addr, zb_aps_addr_mode_t dst_addr_mode, zb_uint8_t dst_ep,
   zb_uint8_t src_ep, zb_zcl_drlc_report_event_status_payload_t *payload, zb_callback_t cb);
 
@@ -557,9 +540,9 @@ zb_void_t zb_drlc_client_send_report_event_status(zb_uint8_t param,
  * @param cb - Callback which should be called when the ZCL stack receives APS ack.
  * @par Usage
  * @n Example of sending @ref ZB_ZCL_DRLC_CLI_CMD_GET_SCHEDULED_EVENTS "GetScheduledEvents"
- * @snippet doxygen_snippets.dox ihd_dev_cmd_get_scheduled_events_samples_se_in_home_display_se_ihd_zr_c
+ * @snippet se/in_home_display/se_ihd_zr.c ihd_dev_cmd_get_scheduled_events
  */
-zb_void_t zb_drlc_client_send_get_scheduled_events(zb_uint8_t param,
+void zb_drlc_client_send_get_scheduled_events(zb_uint8_t param,
   zb_addr_u *dst_addr, zb_aps_addr_mode_t dst_addr_mode, zb_uint8_t dst_ep,
   zb_uint8_t src_ep, zb_zcl_drlc_get_scheduled_events_payload_t *payload, zb_callback_t cb);
 
@@ -667,8 +650,8 @@ typedef struct zb_zcl_drlc_client_attrs_s
 /** @endcond */ /* DOXYGEN_ZCL_SECTION */
 /** Internal handler for DRLC Cluster commands */
 
-zb_void_t zb_zcl_drlc_init_server(void);
-zb_void_t zb_zcl_drlc_init_client(void);
+void zb_zcl_drlc_init_server(void);
+void zb_zcl_drlc_init_client(void);
 #define ZB_ZCL_CLUSTER_ID_DRLC_SERVER_ROLE_INIT zb_zcl_drlc_init_server
 #define ZB_ZCL_CLUSTER_ID_DRLC_CLIENT_ROLE_INIT zb_zcl_drlc_init_client
 

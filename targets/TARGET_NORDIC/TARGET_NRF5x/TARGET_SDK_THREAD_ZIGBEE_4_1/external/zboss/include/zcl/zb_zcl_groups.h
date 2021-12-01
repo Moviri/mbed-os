@@ -1,42 +1,25 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: Groups cluster defintions
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: Groups cluster definitions
 */
 
 #ifndef ZB_ZCL_GROUPS_H
@@ -160,7 +143,7 @@ enum zb_zcl_groups_cmd_resp_e
  *    @par Examples
  *
  *    Filling and sending Add Group request:
- *    @snippet doxygen_snippets.dox Send Add Group request_snippet_groups_dut_553_c
+ *    @snippet HA_samples/door_lock/sample_zed.c send_add_group_req
  *
  *    Parsing Add Group request:
  *    @code
@@ -191,7 +174,7 @@ zb_zcl_groups_add_group_req_t;
 /** @endcond */ /* internals_doc */
 
 /** @brief Parses Add group command and fills in data request
-    structure. If request contains invlid data, ZB_ZCL_NULL_ID is stored as group_id.
+    structure. If request contains invalid data, ZB_ZCL_NULL_ID is stored as group_id.
     @param data_buf - pointer to zb_buf_t buffer containing command request data
     @param add_group_req - variable to save command request
     @note data_buf buffer should contain command request payload without ZCL header.
@@ -230,7 +213,7 @@ zb_zcl_groups_add_group_res_t;
 /** @endcond */ /* internals_doc */
 
 /** @brief Parses Add group response command and returns response data
-    structure or NULL if request contains invlid data.
+    structure or NULL if request contains invalid data.
     @param data_buf - pointer to zb_buf_t buffer containing command response data
     @param add_group_res - out pointer to zb_zcl_groups_add_group_res_t, containing command
     response record
@@ -281,12 +264,12 @@ zb_zcl_groups_add_group_res_t;
 /** @defgroup ZB_ZCL_GROUPS_VIEW_GROUP View group command definitions
  *  @{
  *    @details
- *    View Group command and response have simpe payload. View group command is being processed,
- *    and View Group responce command originates from ZCL internals.
+ *    View Group command and response have simple payload. View group command is being processed,
+ *    and View Group response command originates from ZCL internals.
  *
  *    @par Examples
  *    View Group request command can be formed as:
- *    @snippet doxygen_snippets.dox Send View Group request_snippet_groups_dut_c
+ *    @snippet HA_samples/door_lock/sample_zed.c view_group_req
  *    View Group response command can be parsed as:
  *    @snippet doxygen_snippets.dox Parse View Group response_snippet_groups_dut_c
  *    @par
@@ -310,7 +293,7 @@ zb_zcl_groups_view_group_req_t;
 /** @endcond */ /* internals_doc */
 
 /** @brief Parses View group command and fills in data request
-    structure. If request contains invlid data, ZB_ZCL_NULL_ID is stored as group_id.
+    structure. If request contains invalid data, ZB_ZCL_NULL_ID is stored as group_id.
     @param data_buf - pointer to zb_buf_t buffer containing command request data
     @param view_group_req - variable to save command request
     @note data_buf buffer should contain command request payload without ZCL header.
@@ -349,7 +332,7 @@ zb_zcl_groups_view_group_res_t;
 /** @endcond */ /* internals_doc */
 
 /** @brief Parses View group response command and returns response data
-    structure or NULL if request contains invlid data.
+    structure or NULL if request contains invalid data.
     @param data_buf - pointer to zb_buf_t buffer containing command response data
     @param view_group_res - out pointer to zb_zcl_groups_add_group_res_t, containing command
     response record
@@ -400,7 +383,7 @@ zb_zcl_groups_view_group_res_t;
  *
  *    @par Examples
  *    Get Group Membership request can be filled in as:
- *    @snippet doxygen_snippets.dox Send Get Group Membership request_snippet_groups_dut_c
+ *    @snippet HA_samples/door_lock/sample_zed.c send_get_group_membership_req
  *
  *    Get Group Membership response can be parsed as:
  *    @snippet doxygen_snippets.dox Parse Get Group Membership response_snippet_groups_dut_c
@@ -427,7 +410,7 @@ zb_zcl_groups_get_group_membership_req_t;
 /** @endcond */ /* internals_doc */
 
 /** @brief Parses Get Group Membership command and returns pointer to data request
-    structure. If request contains invlid data, NULL is returned
+    structure. If request contains invalid data, NULL is returned
     @param data_buf - pointer to zb_buf_t buffer containing command request data
     @param group_member_req - pointer to command request
     @note data_buf buffer should contain command request payload without ZCL header.
@@ -475,7 +458,7 @@ zb_zcl_groups_get_group_membership_res_t;
 /** @endcond */ /* internals_doc */
 
 /** @brief Parses Get Group Membership command response and returns pointer to data response
-    structure. If response contains invlid data, NULL is returned.
+    structure. If response contains invalid data, NULL is returned.
     @param data_buf - pointer to zb_buf_t buffer containing command response data
     @param group_member_res - pointer to command response
     @note data_buf buffer should contain command response payload without ZCL header.
@@ -559,7 +542,7 @@ zb_zcl_groups_get_group_membership_res_t;
  *
  *    @par Examples
  *    Remove Group request sending:
- *    @snippet doxygen_snippets.dox Send Remove Group request_snippet_groups_dut_c
+ *    @snippet HA_samples/door_lock/sample_zed.c send_remove_group_req
  *
  *    Remove Group response parsing:
  *    @snippet doxygen_snippets.dox Parse Remove Group response_snippet_groups_dut_c
@@ -584,7 +567,7 @@ zb_zcl_groups_remove_group_req_t;
 /** @endcond */ /* internals_doc */
 
 /** @brief Parses Remove group command and fills in data request
-    structure. If request contains invlid data, ZB_ZCL_NULL_ID is stored as group_id.
+    structure. If request contains invalid data, ZB_ZCL_NULL_ID is stored as group_id.
     @param data_buf - pointer to zb_buf_t buffer containing command request data
     @param rem_group_req - variable to save command request
     @note data_buf buffer should contain command request payload without ZCL header.
@@ -622,7 +605,7 @@ zb_zcl_groups_remove_group_res_t;
 /** @endcond */ /* internals_doc */
 
 /** @brief Parses Remove group response command and returns response data
-    structure or NULL if request contains invlid data.
+    structure or NULL if request contains invalid data.
     @param data_buf - pointer to zb_buf_t buffer containing command response data
     @param rem_group_res - out pointer to zb_zcl_groups_remove_group_res_t, containing command
     response record
@@ -675,7 +658,7 @@ zb_zcl_groups_remove_group_res_t;
  *
  *    @par Example
  *    Remove All Groups command sending:
- *    @snippet doxygen_snippets.dox Send Remove All Groups command_snippet_groups_dut_c
+ *    @snippet HA_samples/door_lock/sample_zed.c send_remove_all_groups_req
  *    @par
  *
  *    For more information see 516_groups sample
@@ -715,7 +698,7 @@ zb_zcl_groups_remove_group_res_t;
  *
  *    @b Example:
  *    Add Group if Identifying send:
- *    @snippet doxygen_snippets.dox Send Add Group if Identifying command_snippet_groups_dut_553_c
+ *    @snippet HA_samples/door_lock/sample_zed.c add_group_if_ident_req
  *
  *    For more information see 545_groups sample
  */
@@ -779,7 +762,7 @@ zb_bool_t zb_zcl_process_groups_commands_cli(zb_uint8_t param);
   ZB_ZCL_ATTR_GROUPS_NAME_SUPPORT_ID,                             \
   ZB_ZCL_ATTR_TYPE_8BITMAP,                                       \
   ZB_ZCL_ATTR_ACCESS_READ_ONLY,                                   \
-  (zb_voidp_t) data_ptr                                           \
+  (void*) data_ptr                                           \
 }
 
 /** @internal @brief Number of attributes mandatory for reporting in Groups cluster. */
@@ -797,8 +780,8 @@ zb_bool_t zb_zcl_process_groups_commands_cli(zb_uint8_t param);
 
 /** @endcond */ /* DOXYGEN_ZCL_SECTION */
 
-zb_void_t zb_zcl_groups_init_server(void);
-zb_void_t zb_zcl_groups_init_client(void);
+void zb_zcl_groups_init_server(void);
+void zb_zcl_groups_init_client(void);
 #define ZB_ZCL_CLUSTER_ID_GROUPS_SERVER_ROLE_INIT zb_zcl_groups_init_server
 #define ZB_ZCL_CLUSTER_ID_GROUPS_CLIENT_ROLE_INIT zb_zcl_groups_init_client
 

@@ -1,42 +1,25 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: general-purpose typedefs
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: general-purpose typedefs
 */
 
 #ifndef ZB_TYPES_H
@@ -50,14 +33,50 @@ PURPOSE: general-purpose typedefs
  * @addtogroup base_types
  * @{
  */
+typedef void               zb_void_t;
+typedef void *             zb_voidp_t;
 
+/*
+ * C standard being used during compilation.
+ * The preferred standard is C99 and it should be used whenever possible.
+ * However, C90 compatibility should be maintained. Macroses ZB_STDC_* can be
+ * used for conditional compilation based on C standard. Note: __STDC__ and
+ * __STDC_VERSION__ are expected to be supported by all compilers in use.
+ */
+#if defined __STDC__
+#if defined __STDC_VERSION__  && (__STDC_VERSION__ >= 199901L)
+#define ZB_STDC_99
+#else
+#define ZB_STDC_90
+#endif /* __STDC_VERSION__  && (__STDC_VERSION__ >= 199901L) */
+#else
+#warning __STDC__ is not defined, assume C90 standard
+#define ZB_STDC_90
+#endif /* __STDC__ */
+
+#ifdef __IAR_SYSTEMS_ICC__
+#ifndef ZB_IAR
+#define ZB_IAR
+#endif
+#endif
+
+#if defined ZB8051
+#define ZB_8BIT_WORD
+#elif defined ZB_PLATFORM_XAP5
+#define ZB_16BIT_WORD
+#else
 #define ZB_32BIT_WORD
+#endif
 
-/* Really need xdata declaration here, not in osif: don't want to include osig.h here */
+/* Really need xdata declaration here, not in osif: don't want to include osif.h here */
 #ifdef ZB_IAR
 #define ZB_XDATA
 #define ZB_CODE
+#ifdef ZB8051
+#define ZB_IAR_CODE  __code
+#else
 #define ZB_IAR_CODE
+#endif
 #elif defined KEIL
 #define ZB_XDATA xdata
 #define ZB_CODE  code
@@ -65,7 +84,11 @@ PURPOSE: general-purpose typedefs
 #else
 #define ZB_XDATA
 #define ZB_CODE
+#ifdef ZB8051
+#define ZB_IAR_CODE code
+#else
 #define ZB_IAR_CODE
+#endif
 #endif
 
 /* register modifier for variables. Can be defined to "register". Will it help to the compiler? */
@@ -106,18 +129,18 @@ enum zb_param_e
    ZB_UNUSED_PARAM = 0
 };
 
-/** @brief General purpose boolean type. */
-enum zb_bool_e
-{
-  ZB_FALSE = 0, /**< False value literal. */
-  ZB_TRUE = 1   /**<  True value literal. */
-};
-
 #if defined WIN32 && !defined ZB_WINDOWS
 #define ZB_WINDOWS
 #endif
+#if defined ZB_WINDOWS && !defined ZB_LITTLE_ENDIAN
+#define ZB_LITTLE_ENDIAN
+#endif
 
-#if (! defined UNIX) || (defined ZB_WINDOWS)
+#if !defined ZB_USE_STDINT && defined UNIX && !defined ZB_WINDOWS
+#define ZB_USE_STDINT
+#endif
+
+#ifndef ZB_USE_STDINT
 
 /* base types */
 
@@ -132,7 +155,27 @@ typedef signed char        zb_int8_t;
 typedef unsigned short     zb_uint16_t;
 
 typedef signed short       zb_int16_t;
-#if   defined ZB_16BIT_WORD
+#if defined ZB8051
+typedef unsigned long      zb_uint32_t;
+
+typedef signed long        zb_int32_t;
+
+typedef zb_uint16_t        zb_bitfield_t;
+typedef zb_uint16_t        zb_lbitfield_t;
+
+typedef zb_int16_t         zb_sbitfield_t;
+
+typedef zb_uint16_t        zb_size_t;
+
+#ifdef ZB_CC25XX
+
+/* Warning: just for an alignment in the macsplit!
+   long long arithmetic won't work */
+typedef zb_uint32_t zb_uint64_t[2];
+
+#endif
+
+#elif defined ZB_16BIT_WORD
 
 typedef unsigned long      zb_uint32_t;
 
@@ -313,21 +356,54 @@ typedef zb_int_t           zb_long_t;
 typedef zb_uint_t          zb_ulong_t;
 #endif
 
-typedef void *             zb_voidp_t;
-typedef void               zb_void_t;
+/** @brief General purpose boolean type.
+ * For C90, 'zb_bool_t' is an alias of 'zb_uint8_t'.
+ * For C99, the availabilty of the 'stdbool.h' standard header is expected and 'zb_bool_t' is an
+ * alias of 'bool'.
+ * ZB_FALSE and ZB_TRUE are defined as macros for both standards.
+ *
+ * To ensure that zb_bool_t always has the same size of one byte, static
+ * compile time assertions were added. See 'zb_common.h'.
+ */
+#ifdef ZB_STDC_90
+typedef zb_uint8_t zb_bool_t;
+typedef zb_bitfield_t zb_bitbool_t;
 
-/** @brief General purpose boolean type. */
-typedef enum zb_bool_e zb_bool_t;
+#define ZB_FALSE 0U /**< False value literal. */
+#define ZB_TRUE  1U /**< True value literal. */
+
+#define ZB_FALSE_U ZB_FALSE
+#define ZB_TRUE_U ZB_TRUE
+
+#define ZB_B2U(b) (((b) != ZB_FALSE) ? (1U) : (0U))
+#define ZB_U2B(u) (((u) != 0U) ? (ZB_TRUE) : (ZB_FALSE))
+
+#else /* ZB_STDC_90 */
+#include <stdbool.h>
+
+typedef bool zb_bool_t;
+typedef bool zb_bitbool_t;
+
+#define ZB_FALSE false /**< False value literal. */
+#define ZB_TRUE  true  /**< True value literal. */
+
+#define ZB_FALSE_U 0U
+#define ZB_TRUE_U 1U
+
+#define ZB_B2U(b) ((b) ? (1U) : (0U))
+#define ZB_U2B(u) ((u) != 0U)
+
+#endif /* ZB_STDC_90 */
 
 #define ZB_INT8_MIN       (-127 - 1)
 #define ZB_INT8_MAX       127
-#define ZB_UINT8_MIN      0
-#define ZB_UINT8_MAX      255
+#define ZB_UINT8_MIN      0U
+#define ZB_UINT8_MAX      255U
 
 #define ZB_INT16_MIN       (-32767 - 1)
 #define ZB_INT16_MAX       32767
-#define ZB_UINT16_MIN      0
-#define ZB_UINT16_MAX      65535
+#define ZB_UINT16_MIN      0U
+#define ZB_UINT16_MAX      65535U
 
 /* 2147483648 is unsigned indeed - can't change its sign. prevent warning from
  * msvc 8 */
@@ -357,7 +433,7 @@ typedef enum zb_bool_e zb_bool_t;
 #define ZB_INT_MAX       ZB_INT32_MAX
 #define ZB_UINT_MAX      ZB_UINT32_MAX
 
-#define ZB_INT_MASK      0x7fffffff
+#define ZB_INT_MASK      0x7fffffffU
 
 #elif defined ZB_16BIT_WORD
 
@@ -369,7 +445,7 @@ typedef enum zb_bool_e zb_bool_t;
 #define ZB_INT_MAX       ZB_INT16_MAX
 #define ZB_UINT_MAX      ZB_UINT16_MAX
 
-#define ZB_INT_MASK      0x7fff
+#define ZB_INT_MASK      0x7fffU
 
 #elif defined ZB_8BIT_WORD
 
@@ -417,6 +493,11 @@ typedef enum zb_bool_e zb_bool_t;
 #define ZB_ALIGNED_PRE
 #endif
 
+#if defined __GNUC__
+  #define ZB_DEPRECATED __attribute__((deprecated))
+#else
+  #define ZB_DEPRECATED
+#endif /* __GNUC__ */
 
 /*
    8-bytes address (xpanid or long device address) base type
@@ -440,8 +521,8 @@ extern ZB_CODE ZB_CONST zb_64bit_addr_t g_unknown_ieee_addr;
      This placement changes pointer type making it unusable
      Is this cast needed here?
   */
-#define ZB_IS_64BIT_ADDR_ZERO(addr) (!ZB_MEMCMP((addr), (void const*)g_zero_addr, 8))
-#define ZB_IS_64BIT_ADDR_UNKNOWN(addr) (!ZB_MEMCMP((addr), (void const*)g_unknown_ieee_addr, 8))
+#define ZB_IS_64BIT_ADDR_ZERO(addr) (ZB_MEMCMP((addr), (void const*)g_zero_addr, 8) == 0)
+#define ZB_IS_64BIT_ADDR_UNKNOWN(addr) (ZB_MEMCMP((addr), (void const*)g_unknown_ieee_addr, 8) == 0)
 
 /*
    Clear long address
@@ -463,14 +544,14 @@ extern ZB_CODE ZB_CONST zb_64bit_addr_t g_unknown_ieee_addr;
 /*
    Return 1 if long addresses are equal
  */
-#define ZB_64BIT_ADDR_CMP(one, two) ((zb_bool_t)!ZB_MEMCMP((one), (two), 8))
+#define ZB_64BIT_ADDR_CMP(one, two) (ZB_MEMCMP((one), (two), 8) == 0)
 
 /*
   Long (64-bit) device address
  */
 typedef zb_64bit_addr_t zb_ieee_addr_t;
 /*
-  Long (64-bit) Extented Pan id
+  Long (64-bit) Extended Pan ID
  */
 typedef zb_64bit_addr_t zb_ext_pan_id_t;
 
@@ -486,7 +567,7 @@ typedef zb_64bit_addr_t zb_ext_pan_id_t;
 #define ZB_IEEE_ADDR_COPY ZB_64BIT_ADDR_COPY
 #define ZB_IEEE_ADDR_CMP ZB_64BIT_ADDR_CMP
 
-#define ZB_CCM_KEY_IS_ZERO(k) (ZB_IS_64BIT_ADDR_ZERO((zb_uint8_t*)(k)) && ZB_IS_64BIT_ADDR_ZERO(((zb_uint8_t*)(k)) + 8))
+#define ZB_CCM_KEY_IS_ZERO(k) (ZB_IS_64BIT_ADDR_ZERO((zb_uint8_t*)(k)) && ZB_IS_64BIT_ADDR_ZERO(((zb_uint8_t*)(k)) + 8U))
 #define ZB_IEEE_ADDR_IS_VALID(addr) !(ZB_IEEE_ADDR_IS_ZERO(addr)||ZB_IEEE_ADDR_IS_UNKNOWN(addr))
 
 #define ZB_ADDR_CMP(addr_mode, addr1, addr2)                            \
@@ -515,7 +596,7 @@ zb_addr_u;
 #if (defined __GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
 #define ZB_OFFSETOF(t, f) __builtin_offsetof(t,f)
 #else
-#define ZB_OFFSETOF(t, f) ((zb_size_t)(&((t *)0)->f))
+#define ZB_OFFSETOF(t, f) ((zb_size_t)(&((t *)NULL)->f))
 #endif
 
 #define ZB_OFFSETOF_VAR(s, f) (zb_size_t)(((zb_int8_t *)(&(s)->f)) - ((zb_int8_t *)(s)))
@@ -528,14 +609,14 @@ zb_addr_u;
 #define ZB_SIGNED_SHIFT(v, s) ((zb_int_t)(v) >> (s))
 
 #define ZB_ASSERT_IF_NOT_ALIGNED(data_type,length)                \
-  ZB_ASSERT_COMPILE_DECL(((sizeof(data_type) % (length)) == 0));
+  ZB_ASSERT_COMPILE_DECL(((sizeof(data_type) % (length)) == 0U))
 
-#define ZB_ASSERT_IF_NOT_ALIGNED_TO_4(data_type) ZB_ASSERT_IF_NOT_ALIGNED(data_type,4)
+#define ZB_ASSERT_IF_NOT_ALIGNED_TO_4(data_type) ZB_ASSERT_IF_NOT_ALIGNED(data_type,4U)
 
 #define ZB_ASSERT_VALUE_ALIGNED(const_expr, length)               \
-  ZB_ASSERT_COMPILE_DECL((((const_expr) % (length)) == 0));
+  ZB_ASSERT_COMPILE_DECL((((const_expr) % (length)) == 0U))
 
-#define ZB_ASSERT_VALUE_ALIGNED_TO_4(const_expr) ZB_ASSERT_VALUE_ALIGNED(const_expr, 4)
+#define ZB_ASSERT_VALUE_ALIGNED_TO_4(const_expr) ZB_ASSERT_VALUE_ALIGNED(const_expr, 4U)
 
 /**
  *  @name Endian change API.
@@ -549,12 +630,12 @@ zb_addr_u;
 /**
  */
 
-#define ZB_8BIT_SIZE 1
-#define ZB_16BIT_SIZE 2
-#define ZB_24BIT_SIZE 3
-#define ZB_32BIT_SIZE 4
-#define ZB_48BIT_SIZE 6
-#define ZB_64BIT_SIZE 8
+#define ZB_8BIT_SIZE 1U
+#define ZB_16BIT_SIZE 2U
+#define ZB_24BIT_SIZE 3U
+#define ZB_32BIT_SIZE 4U
+#define ZB_48BIT_SIZE 6U
+#define ZB_64BIT_SIZE 8U
 
 #ifdef ZB_LITTLE_ENDIAN
 
@@ -582,11 +663,11 @@ zb_addr_u;
 #endif  /* need_align */
 
 
-#define ZB_HTOLE16_ONPLACE(v)
+#define ZB_HTOLE16_ONPLACE(v) ZVUNUSED(v)
 
-#define ZB_HTOLE32_ONPLACE(v)
+#define ZB_HTOLE32_ONPLACE(v) ZVUNUSED(v)
 
-#define ZB_HTOLE64_ONPLACE(v)
+#define ZB_HTOLE64_ONPLACE(v) ZVUNUSED(v)
 
 #define ZB_HTOBE16(ptr, val)                            \
   (((zb_uint8_t *)(ptr))[0] = ((zb_uint8_t *)(val))[1], \
@@ -609,18 +690,18 @@ void zb_htole16(zb_uint8_t ZB_XDATA *ptr, zb_uint8_t ZB_XDATA *val);
 
 #define ZB_HTOLE16_ONPLACE(val) 		\
 {						\
-  zb_uint8_t *pval = (zb_uint8_t*)val;		\
+  zb_uint8_t *pval = (zb_uint8_t*)(&(val));     \
   zb_uint8_t a = pval[0];			\
   pval[0] = pval[1]; 				\
   pval[1] = a;  				\
 }
 
-#define ZB_HTOLE32_ONPLACE(val) { zb_uint32_t _v = *(val); ZB_HTOLE32((val), &_v); }
+#define ZB_HTOLE32_ONPLACE(val) { zb_uint32_t _v = (val); ZB_HTOLE32(&(val), &_v); }
 
 void zb_htole32(zb_uint8_t ZB_XDATA *ptr, zb_uint8_t ZB_XDATA *val);
 #define ZB_HTOLE32(ptr, val) zb_htole32((zb_uint8_t*)(ptr), (zb_uint8_t*)(val))
 
-#define ZB_HTOBE32(ptr, val) ZB_MEMCPY(ptr, val, 4)
+#define ZB_HTOBE32(ptr, val) ZB_MEMCPY(ptr, val, 4U)
 
 #define ZB_HTOBE16(ptr, val) (*(zb_uint16_t *)(ptr)) = *((zb_uint16_t *)(val))
 
@@ -629,7 +710,7 @@ void zb_htole32(zb_uint8_t ZB_XDATA *ptr, zb_uint8_t ZB_XDATA *val);
 #define ZB_HTOBE16_VAL(ptr, val)                \
 {                                               \
   zb_uint16_t _v = (val);                       \
-  ZB_MEMCPY((ptr), &_v, 2);                     \
+  ZB_MEMCPY((ptr), &_v, 2U)                     \
 }
 
 #else  /* ZB_NEED_ALIGN */
@@ -657,11 +738,11 @@ void zb_htole32(zb_uint8_t ZB_XDATA *ptr, zb_uint8_t ZB_XDATA *val);
 }
 
 /**
-   Put next 2-bute value into buffer, move pointer
+   Put next 2-bite value into buffer, move pointer
 
    To be used for headers compose.
 
-   @param dst - (in/out) address os the buffer pointer
+   @param dst - (in/out) address of the buffer pointer
           As a side effect it will be incremented by 2.
    @param val - value
  */
@@ -669,17 +750,17 @@ void zb_htole32(zb_uint8_t ZB_XDATA *ptr, zb_uint8_t ZB_XDATA *val);
 void* zb_put_next_htole16(zb_uint8_t *dst, zb_uint16_t val);
 
 #ifdef ZB_LITTLE_ENDIAN
-#define ZB_PUT_NEXT_HTOLE16(ptr, val)  \
-{                                               \
-*((ptr)++) = (val) & 0xff;                      \
-*((ptr)++) = ((val) >> 8) & 0xff;               \
+#define ZB_PUT_NEXT_HTOLE16(ptr, val)                \
+{                                                    \
+  *((ptr)++) = (zb_uint8_t)((val) & 0xffU);          \
+  *((ptr)++) = (zb_uint8_t)(((val) >> 8U) & 0xffU);  \
 }
 
 #else
 #define ZB_PUT_NEXT_HTOLE16(ptr, val)  \
-{                                               \
-  *((ptr)++) = ((val) >> 8) & 0xff;             \
-  *((ptr)++) = (val) & 0xff;                    \
+{                                                   \
+  *((ptr)++) = (zb_uint8_t)(((val) >> 8U) & 0xffU); \
+  *((ptr)++) = (zb_uint8_t)((val) & 0xffU);         \
 }
 #endif                          /* ZB_LITTLE_ENDIAN */
 
@@ -694,7 +775,7 @@ void zb_get_next_letoh16(zb_uint16_t *dst, zb_uint8_t **src);
 #define zb_get_next_letoh16(dst, src)           \
 {                                               \
   ZB_LETOH16((dst), *(src));                    \
-  (*(src)) = (void *)(((char *)(*(src))) + 2);  \
+  (*(src)) = (void *)(((char *)(*(src))) + 2U);  \
 }
 #endif
 
@@ -720,23 +801,23 @@ void* zb_put_next_2_htole32(zb_uint8_t *dst, zb_uint32_t val1, zb_uint32_t val2)
 
 /** @} */ /* Endian change API. */
 
-#define ZB_GET_LOW_BYTE(val) ((val) & 0xFF)
-#define ZB_GET_HI_BYTE(val)  (((val) >> 8) & 0xFF)
+#define ZB_GET_LOW_BYTE(val) (zb_uint8_t)((val) & 0xFFU)
+#define ZB_GET_HI_BYTE(val)  (zb_uint8_t)(((val) >> 8U) & 0xFFU)
 
-#define ZB_SET_LOW_BYTE(res, val) (res) = (((res) & 0xFF00) | ((val) & 0xFF))
-#define ZB_SET_HI_BYTE(res, val) (res) = ((((val) << 8) & 0xFF00) | ((res) & 0xFF))
+#define ZB_SET_LOW_BYTE(res, val) (res) = ((((zb_uint16_t)res) & 0xFF00U) | (((zb_uint16_t)val) & 0xFFU))
+#define ZB_SET_HI_BYTE(res, val) (res) = (((((zb_uint16_t)val) << 8U) & 0xFF00U) | (((zb_uint16_t)res) & 0xFFU))
 
-#define ZB_PKT_16B_ZERO_BYTE 0
-#define ZB_PKT_16B_FIRST_BYTE 1
+#define ZB_PKT_16B_ZERO_BYTE 0U
+#define ZB_PKT_16B_FIRST_BYTE 1U
 
 #ifdef ZB_NEED_ALIGN
 
-#define ZB_ASSIGN_UINT16(ptr, vp) ZB_MEMCPY((ptr), (vp), 2)
-#define ZB_ASSIGN_INT16(ptr, vp)  ZB_MEMCPY((ptr), (vp), 2)
-#define ZB_COPY_UINT24(ptr, vp)   ZB_MEMCPY((ptr), (vp), 3)
-#define ZB_COPY_INT24(ptr, vp)    ZB_MEMCPY((ptr), (vp), 3)
-#define ZB_ASSIGN_UINT32(ptr, vp) ZB_MEMCPY((ptr), (vp), 4)
-#define ZB_ASSIGN_INT32(ptr, vp)  ZB_MEMCPY((ptr), (vp), 4)
+#define ZB_ASSIGN_UINT16(ptr, vp) ZB_MEMCPY((ptr), (vp), 2U)
+#define ZB_ASSIGN_INT16(ptr, vp)  ZB_MEMCPY((ptr), (vp), 2U)
+#define ZB_COPY_UINT24(ptr, vp)   ZB_MEMCPY((ptr), (vp), 3U)
+#define ZB_COPY_INT24(ptr, vp)    ZB_MEMCPY((ptr), (vp), 3U)
+#define ZB_ASSIGN_UINT32(ptr, vp) ZB_MEMCPY((ptr), (vp), 4U)
+#define ZB_ASSIGN_INT32(ptr, vp)  ZB_MEMCPY((ptr), (vp), 4U)
 
 #else
 
@@ -823,14 +904,11 @@ void* zb_put_next_2_htole32(zb_uint8_t *dst, zb_uint32_t val1, zb_uint32_t val2)
  *    @typedef zb_ulong_t
  *    @brief Unsigned long int (at least 4 bytes).
  *
- *    @typedef zb_void_t
- *    @brief Project-local void type.
- *
- *    @typedef zb_voidp_t
- *    @brief Project-local "pointer to void" type.
- *
  *    @typedef zb_bool_t
  *    @brief Boolean type can be ZB_TRUE or ZB_FALSE
+ *
+ *    @typedef zb_bitbool_t
+ *    @brief Type to be used for boolean bit fields inside structure.
  *  @}
  */
 
@@ -844,7 +922,7 @@ void* zb_put_next_2_htole32(zb_uint8_t *dst, zb_uint32_t val1, zb_uint32_t val2)
  *    @brief Long (64-bit) device address.
  *
  *    @typedef zb_ext_pan_id_t
- *    @brief Long (64-bit) extended Pan Id.
+ *    @brief Long (64-bit) extended Pan ID.
  *
  *    @union zb_addr_u
  *    @brief Union to address either long or short address.
@@ -871,12 +949,16 @@ void* zb_put_next_2_htole32(zb_uint8_t *dst, zb_uint32_t val1, zb_uint32_t val2)
  *  @}
  */
 
+/* FIXME: which value to prefer? Because 0x800000 is reserved in ZCL */
+/* IAR C-STAT generates falsepositive for hexadecimal value */
+#define MIN_SIGNED_24BIT_VAL    (-8388607LL) /* (0xFF800001LL) */
+#define MAX_SIGNED_24BIT_VAL    (0x7FFFFF)
+#define MAX_UNSIGNED_24BIT_VAL  (0xFFFFFFU)
 
-#define MIN_SIGNED_24BIT_VAL ((zb_int32_t)0xFF800001)  /* FIXME: which value to prefer? Because 0x800000 is reserved in ZCL */
-#define MAX_SIGNED_24BIT_VAL ((zb_int32_t)0x7FFFFF)
-
-#define MIN_SIGNED_48BIT_VAL ((zb_int32_t)0xFFFF800000000001)
-#define MAX_SIGNED_48BIT_VAL ((zb_int32_t)0x7FFFFFFFFFFF)
+/* IAR C-STAT generates falsepositive for hexadecimal value */
+#define MIN_SIGNED_48BIT_VAL   (-140737488355327LL) /* (0xFFFF800000000001LL) */
+#define MAX_SIGNED_48BIT_VAL   (0x7FFFFFFFFFFF)
+#define MAX_UNSIGNED_48BIT_VAL (0xFFFFFFFFFFFFU)
 
 #define ZB_S64_FROM_S48(x) ((x & 0xFFFFFFFFFFFF) | ((x & 0x800000000000) ? 0xFFFF000000000000 : 0x0))
 
@@ -892,7 +974,7 @@ void* zb_put_next_2_htole32(zb_uint8_t *dst, zb_uint32_t val1, zb_uint32_t val2)
 #define ZB_INT24_MAX_POSITIVE (0x7FFFFF)
 
 #define ZB_INT24_IS_NEGATIVE(int24_val) \
-  ((int24_val).high & 0x80)
+  ((int24_val).high & 0x80U)
 
 
 #if defined ZB_LITTLE_ENDIAN
@@ -963,17 +1045,17 @@ typedef ZB_PACKED_PRE struct zb_int48_s
 }
 
 #define ZB_GET_INT32_FROM_INT24(int24_val)                                                        \
-  (zb_int32_t)                                                         \
+  (zb_int32_t)                                                                                    \
   (                                                                                               \
-   ((ZB_INT24_IS_NEGATIVE(int24_val))? ((zb_uint32_t)0xFF << 24): 0) | \
-   ((zb_uint32_t)(int24_val).high << 16)                             | \
+   ((ZB_INT24_IS_NEGATIVE(int24_val))? ((zb_uint32_t)0xFFU << 24U): 0U) |                         \
+   ((zb_uint32_t)(int24_val).high << 16U)                             |                           \
    (int24_val).low                                                                                \
   )
 
-#define ZB_ASSIGN_UINT24_FROM_UINT32(uint32_val)  \
-{                                                 \
-  .low = (zb_uint16_t)((uint32_val) & 0xFFFF),    \
-    .high = (zb_uint8_t)((uint32_val) >> 16)      \
+#define ZB_ASSIGN_UINT24_FROM_UINT32(uint32_val)   \
+{                                                  \
+  .low = (zb_uint16_t)((uint32_val) & 0xFFFFU),    \
+    .high = (zb_uint8_t)((uint32_val) >> 16U)      \
 }
 
 #define ZB_GET_UINT32_FROM_UINT24(uint24_val)    \
@@ -1009,7 +1091,7 @@ typedef ZB_PACKED_PRE struct zb_int48_s
   {                                                                                 \
     if ((uint48_val).low < (zb_uint32_t)((int24_val).low + (int24_val).high))       \
     {                                                                               \
-      (uint48_val).high -= 1;                                                       \
+      (uint48_val).high -= 1U;                                                      \
     }                                                                               \
     (uint48_val).low -= (int24_val).low + (int24_val).high;                         \
   }                                                                                 \
@@ -1017,7 +1099,7 @@ typedef ZB_PACKED_PRE struct zb_int48_s
   {                                                                                 \
     if (((zb_uint64_t) (uint48_val).low) + ZB_GET_UINT32_FROM_UINT24(int24_val) > ZB_UINT32_MAX) \
     {                                                                               \
-      (uint48_val).high += 1;                                                       \
+      (uint48_val).high += 1U;                                                      \
     }                                                                               \
     (uint48_val).low += ZB_GET_UINT32_FROM_UINT24(int24_val);                       \
   }
@@ -1045,25 +1127,31 @@ typedef ZB_PACKED_PRE struct zb_int48_s
 
 #else /* ZB_BIG_ENDIAN */
 
-zb_void_t zb_reverse_bytes(zb_uint8_t *ptr, zb_uint8_t *val, zb_uint8_t size);
+void zb_reverse_bytes(zb_uint8_t *ptr, zb_uint8_t *val, zb_uint8_t size);
 
 #define ZB_HTOLE24(ptr, val)   zb_reverse_bytes((zb_uint8_t*)(ptr), (val), ZB_24BIT_SIZE)
 #define ZB_HTOLE48(ptr, val)   zb_reverse_bytes((zb_uint8_t*)(ptr), (val), ZB_48BIT_SIZE)
 
 #endif /* ZB_BIG_ENDIAN */
 
+#if defined ZB_UINT24_48_SUPPORT || defined DOXYGEN
 /**
  * @name 24-bit and 48-bit arithmetic API
  * @{
  */
 
-/** Return statuses of mathematical operations */
-enum zb_math_status_e
-{
-  ZB_MATH_OK = 0,
-  ZB_MATH_OVERFLOW,
-  ZB_MATH_ERROR,
-};
+/**
+ * @name Return statuses of mathematical operations
+ * @anchor math_status
+ *
+ * Note: These values were members of `enum zb_math_status_e` type but were
+ * converted to a set of macros due to MISRA violations.
+ */
+/** @{ */
+#define ZB_MATH_OK       0U
+#define ZB_MATH_OVERFLOW 1U
+#define ZB_MATH_ERROR    2U
+/** @} */
 
 
 /**
@@ -1085,7 +1173,7 @@ zb_int32_t zb_int24_to_int32(const zb_int24_t *var);
 /**
  * Convert signed 32-bit value to signed 24-bit value
  * @param[in]  var - signed 32-bit value
- * @param[out]  res - pointer to signed 24-bit value
+ * @param[out]  res - pointer to signed 24-bit value (Returns #MAX_SIGNED_24BIT_VAL or #MIN_SIGNED_24BIT_VAL when out of bounds)
  */
 void zb_int32_to_int24(zb_int32_t var, zb_int24_t *res);
 
@@ -1093,7 +1181,7 @@ void zb_int32_to_int24(zb_int32_t var, zb_int24_t *res);
 /**
  * Convert signed 32-bit value to unsigned 24-bit value
  * @param[in]  var - signed 32-bit value
- * @param[out]  res - pointer to unsigned 24-bit value
+ * @param[out]  res - pointer to unsigned 24-bit value (Returns #MAX_UNSIGNED_24BIT_VAL or 0U when out of bounds)
  */
 void zb_int32_to_uint24(zb_int32_t var, zb_uint24_t *res);
 
@@ -1112,7 +1200,7 @@ zb_int32_t zb_uint24_to_int32(const zb_uint24_t *var);
  * @param[in]  s - pointer to second unsigned 24-bit operand
  * @param[out]  r - pointer to unsigned 24-bit variable to store result of operation
  * @return   @e ZB_MATH_OK on success, @e ZB_MATH_OVERFLOW on arithmetic overflow
- * and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_uint24_add(const zb_uint24_t *f, const zb_uint24_t *s, zb_uint24_t *r);
 
@@ -1123,7 +1211,7 @@ zb_uint8_t zb_uint24_add(const zb_uint24_t *f, const zb_uint24_t *s, zb_uint24_t
  * @param[in]  s - pointer to second signed 24-bit operand
  * @param[out]  r - pointer to 24-bit signed variable to store result of operation
  * @return   @e ZB_MATH_OK on success, @e ZB_MATH_OVERFLOW on arithmetic overflow
- * and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_int24_add(const zb_int24_t *f, const zb_int24_t *s, zb_int24_t *r);
 
@@ -1134,7 +1222,7 @@ zb_uint8_t zb_int24_add(const zb_int24_t *f, const zb_int24_t *s, zb_int24_t *r)
  * @param[in]  s - pointer to second signed 24-bit operand
  * @param[out]  r - pointer to 24-bit signed variable to store result of operation
  * @return   @e ZB_MATH_OK on success, @e ZB_MATH_OVERFLOW on arithmetic overflow
- * and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_int24_sub(const zb_int24_t *f, const zb_int24_t *s, zb_int24_t *r);
 
@@ -1145,7 +1233,7 @@ zb_uint8_t zb_int24_sub(const zb_int24_t *f, const zb_int24_t *s, zb_int24_t *r)
  * @param[in]  s - pointer to second unsigned 24-bit operand
  * @param[out]  r - pointer to 24-bit unsigned variable to store result of operation
  * @return   @e ZB_MATH_OK on success, @e ZB_MATH_OVERFLOW on arithmetic overflow
- * and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_uint24_sub(const zb_uint24_t *f, const zb_uint24_t *s, zb_uint24_t *r);
 
@@ -1154,7 +1242,7 @@ zb_uint8_t zb_uint24_sub(const zb_uint24_t *f, const zb_uint24_t *s, zb_uint24_t
  * Negation of signed 24-bit values
  * @param[in]  f - pointer to signed 24-bit operand
  * @param[out]  r - pointer to 24-bit signed variable to store result of operation
- * @return   @e ZB_MATH_OK on success and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * @return   @e ZB_MATH_OK on success and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_int24_neg(const zb_int24_t *f, zb_int24_t *r);
 
@@ -1165,7 +1253,7 @@ zb_uint8_t zb_int24_neg(const zb_int24_t *f, zb_int24_t *r);
  * @param[in]  s - pointer to second unsigned 24-bit operand
  * @param[out]  r - pointer to 24-bit unsigned variable to store result of operation
  * @return   @e ZB_MATH_OK on success, @e ZB_MATH_OVERFLOW on arithmetic overflow
- * and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_uint24_mul(const zb_uint24_t *f, const zb_uint24_t *s, zb_uint24_t *r);
 
@@ -1176,7 +1264,7 @@ zb_uint8_t zb_uint24_mul(const zb_uint24_t *f, const zb_uint24_t *s, zb_uint24_t
  * @param[in]  s - pointer to second signed 24-bit operand
  * @param[out]  r - pointer to 24-bit signed variable to store result of operation
  * @return   @e ZB_MATH_OK on success, @e ZB_MATH_OVERFLOW on arithmetic overflow
- * and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_int24_mul(const zb_int24_t *f, const zb_int24_t *s, zb_int24_t *r);
 
@@ -1187,7 +1275,7 @@ zb_uint8_t zb_int24_mul(const zb_int24_t *f, const zb_int24_t *s, zb_int24_t *r)
  * @param[in]  s - pointer to second unsigned 24-bit operand
  * @param[out]  r - pointer to unsigned 24-bit variable to store result of operation
  * @return   @e ZB_MATH_OK on success, @e ZB_MATH_OVERFLOW on arithmetic overflow
- * and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_uint24_div(const zb_uint24_t *f, const zb_uint24_t *s, zb_uint24_t *r);
 
@@ -1198,7 +1286,7 @@ zb_uint8_t zb_uint24_div(const zb_uint24_t *f, const zb_uint24_t *s, zb_uint24_t
  * @param[in]  s - pointer to second signed 24-bit operand
  * @param[out]  r - pointer to 24-bit signed variable to store result of operation
  * @return   @e ZB_MATH_OK on success, @e ZB_MATH_OVERFLOW on arithmetic overflow
- * and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_int24_div(const zb_int24_t *f, const zb_int24_t *s, zb_int24_t *r);
 
@@ -1209,7 +1297,7 @@ zb_uint8_t zb_int24_div(const zb_int24_t *f, const zb_int24_t *s, zb_int24_t *r)
  * @param[in]  s - pointer to second unsigned 24-bit operand
  * @param[out]  r - pointer to unsigned 24-bit variable to store result of operation
  * @return   @e ZB_MATH_OK on success, @e ZB_MATH_OVERFLOW on arithmetic overflow
- * and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_uint24_mod(const zb_uint24_t *f, const zb_uint24_t *s, zb_uint24_t *r);
 
@@ -1220,7 +1308,7 @@ zb_uint8_t zb_uint24_mod(const zb_uint24_t *f, const zb_uint24_t *s, zb_uint24_t
  * @param[in]  s - pointer to second signed 24-bit operand
  * @param[out]  r - pointer to 24-bit signed variable to store result of operation
  * @return   @e ZB_MATH_OK on success, @e ZB_MATH_OVERFLOW on arithmetic overflow
- * and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_int24_mod(const zb_int24_t *f, const zb_int24_t *s, zb_int24_t *r);
 
@@ -1244,7 +1332,7 @@ zb_int64_t zb_int48_to_int64(const zb_int48_t *var);
 /**
  * Convert signed 64-bit value to signed 48-bit value
  * @param[in]  var - signed 64-bit value
- * @param[out] res - pointer to signed 48-bit value
+ * @param[out] res - pointer to signed 48-bit value (Returns #MAX_SIGNED_48BIT_VAL or #MIN_SIGNED_48BIT_VAL when out of the bounds)
  */
 void zb_int64_to_int48(zb_int64_t var, zb_int48_t *res);
 
@@ -1252,8 +1340,7 @@ void zb_int64_to_int48(zb_int64_t var, zb_int48_t *res);
 /**
  * Convert signed 64-bit value to unsigned 48-bit value
  * @param[in]  var - signed 64-bit value
- * @param[out]  res - unsigned 48-bit value
- * @return     [description]
+ * @param[out]  res - unsigned 48-bit value (Returns #MAX_UNSIGNED_48BIT_VAL or 0U when out of the bounds)
  */
 void zb_int64_to_uint48(zb_int64_t var, zb_uint48_t *res);
 
@@ -1272,7 +1359,7 @@ zb_int64_t zb_uint48_to_int64(const zb_uint48_t *var);
  * @param[in]  s - pointer to second insigne4824-bit operand
  * @param[out]  r - pointer to 48signed 24-bit variable to store result of operation
  * @return   @e ZB_MATH_OK on success, @e ZB_MATH_OVERFLOW on arithmetic overflow
- * and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_uint48_add(const zb_uint48_t *f, const zb_uint48_t *s, zb_uint48_t *r);
 
@@ -1283,7 +1370,7 @@ zb_uint8_t zb_uint48_add(const zb_uint48_t *f, const zb_uint48_t *s, zb_uint48_t
  * @param[in]  s - pointer to second signed 48-bit operand
  * @param[out]  r - pointer to 48-bit signed variable to store result of operation
  * @return   @e ZB_MATH_OK on success, @e ZB_MATH_OVERFLOW on arithmetic overflow
- * and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_int48_add(const zb_int48_t *f, const zb_int48_t *s, zb_int48_t *r);
 
@@ -1294,7 +1381,7 @@ zb_uint8_t zb_int48_add(const zb_int48_t *f, const zb_int48_t *s, zb_int48_t *r)
  * @param[in]  s - pointer to second signed 48-bit operand
  * @param[out]  r - pointer to 48-bit signed variable to store result of operation
  * @return   @e ZB_MATH_OK on success, @e ZB_MATH_OVERFLOW on arithmetic overflow
- * and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_int48_sub(const zb_int48_t *f, const zb_int48_t *s, zb_int48_t *r);
 
@@ -1305,7 +1392,7 @@ zb_uint8_t zb_int48_sub(const zb_int48_t *f, const zb_int48_t *s, zb_int48_t *r)
  * @param[in]  s - pointer to second unsigne4824-bit operand
  * @param[out]  r - pointer to 48-bit unsigned variable to store result of operation
  * @return   @e ZB_MATH_OK on success, @e ZB_MATH_OVERFLOW on arithmetic overflow
- * and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_uint48_sub(const zb_uint48_t *f, const zb_uint48_t *s, zb_uint48_t *r);
 
@@ -1314,7 +1401,7 @@ zb_uint8_t zb_uint48_sub(const zb_uint48_t *f, const zb_uint48_t *s, zb_uint48_t
  * Negation of signed 24-bit values
  * @param[in]  f - pointer to signed 24-bit operand
  * @param[out]  r - pointer to 24-bit signed variable to store result of operation
- * @return  @e ZB_MATH_OK on success and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * @return  @e ZB_MATH_OK on success and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_int48_neg(const zb_int48_t *f, zb_int48_t *r);
 
@@ -1325,7 +1412,7 @@ zb_uint8_t zb_int48_neg(const zb_int48_t *f, zb_int48_t *r);
  * @param[in]  s - pointer to second unsigned 48-bit operand
  * @param[out]  r - pointer to 48-bit unsigned variable to store result of operation
  * @return   @e ZB_MATH_OK on success, @e ZB_MATH_OVERFLOW on arithmetic overflow
- * and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_uint48_mul(const zb_uint48_t *f, const zb_uint48_t *s, zb_uint48_t *r);
 
@@ -1336,7 +1423,7 @@ zb_uint8_t zb_uint48_mul(const zb_uint48_t *f, const zb_uint48_t *s, zb_uint48_t
  * @param[in]  s - pointer to second signed 48-bit operand
  * @param[out]  r - pointer to 48-bit signed variable to store result of operation
  * @return   @e ZB_MATH_OK on success, @e ZB_MATH_OVERFLOW on arithmetic overflow
- * and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_int48_mul(const zb_int48_t *f, const zb_int48_t *s, zb_int48_t *r);
 
@@ -1347,7 +1434,7 @@ zb_uint8_t zb_int48_mul(const zb_int48_t *f, const zb_int48_t *s, zb_int48_t *r)
  * @param[in]  s - pointer to second unsigned 48-bit operand
  * @param[out]  r - pointer to unsigned 48-bit variable to store result of operation
  * @return   @e ZB_MATH_OK on success, @e ZB_MATH_OVERFLOW on arithmetic overflow
- * and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_uint48_div(const zb_uint48_t *f, const zb_uint48_t *s, zb_uint48_t *r);
 
@@ -1358,7 +1445,7 @@ zb_uint8_t zb_uint48_div(const zb_uint48_t *f, const zb_uint48_t *s, zb_uint48_t
  * @param[in]  s - pointer to second signed 48-bit operand
  * @param[out]  r - pointer to 48-bit signed variable to store result of operation
  * @return   @e ZB_MATH_OK on success, @e ZB_MATH_OVERFLOW on arithmetic overflow
- * and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_int48_div(const zb_int48_t *f, const zb_int48_t *s, zb_int48_t *r);
 
@@ -1369,7 +1456,7 @@ zb_uint8_t zb_int48_div(const zb_int48_t *f, const zb_int48_t *s, zb_int48_t *r)
  * @param[in]  s - pointer to second unsigned 48-bit operand
  * @param[out]  r - pointer to unsigned 48-bit variable to store result of operation
  * @return   @e ZB_MATH_OK on success, @e ZB_MATH_OVERFLOW on arithmetic overflow
- * and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_uint48_mod(const zb_uint48_t *f, const zb_uint48_t *s, zb_uint48_t *r);
 
@@ -1380,7 +1467,7 @@ zb_uint8_t zb_uint48_mod(const zb_uint48_t *f, const zb_uint48_t *s, zb_uint48_t
  * @param[in]  s - pointer to second signed 48-bit operand
  * @param[out]  r - pointer to 48-bit signed variable to store result of operation
  * @return   @e ZB_MATH_OK on success, @e ZB_MATH_OVERFLOW on arithmetic overflow
- * and @e ZB_MATH_ERROR on failure (see @ref zb_math_status_e).
+ * and @e ZB_MATH_ERROR on failure (see @ref math_status).
  */
 zb_uint8_t zb_int48_mod(const zb_int48_t *f, const zb_int48_t *s, zb_int48_t *r);
 
@@ -1489,16 +1576,18 @@ typedef zb_uint32_t           zb_uint24_t;
 }
 
 /* take MSB nibble from uint8_t */
-#define ZB_UINT8_MSB_NIBBLE(X) (((X) >> 4) & 0x0F)
+#define ZB_UINT8_MSB_NIBBLE(X) (((X) >> 4U) & 0x0FU)
 
 /* take LSB nibble from uint8_t */
-#define ZB_UINT8_LSB_NIBBLE(X) ((X) & 0x0F)
+#define ZB_UINT8_LSB_NIBBLE(X) ((X) & 0x0FU)
 
 /* convert pair of nibbles into uint8_t */
 #define ZB_UINT4x2_TO_UINT8(MSB_N, LSB_N) \
   ((MSB_N << 4) | ZB_UINT8_LSB_NIBBLE(LSB_N))
 
 
+#endif /* ZB_UINT24_48_SUPPORT */
+
 /** @} */
 
-#endif /* ! defined ZB_TYPES_H */
+#endif /* ZB_TYPES_H */

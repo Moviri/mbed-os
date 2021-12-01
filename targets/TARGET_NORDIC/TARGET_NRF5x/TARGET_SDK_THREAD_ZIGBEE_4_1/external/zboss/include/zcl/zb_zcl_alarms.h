@@ -1,46 +1,29 @@
-/* ZBOSS Zigbee 3.0
+/* ZBOSS Zigbee software protocol stack
  *
- * Copyright (c) 2012-2018 DSR Corporation, Denver CO, USA.
- * http://www.dsr-zboss.com
- * http://www.dsr-corporation.com
+ * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * www.dsr-zboss.com
+ * www.dsr-corporation.com
  * All rights reserved.
  *
+ * This is unpublished proprietary source code of DSR Corporation
+ * The copyright notice does not evidence any actual or intended
+ * publication of such source code.
  *
- * Use in source and binary forms, redistribution in binary form only, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
+ * Corporation
  *
- * 1. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- *
- * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- *
- * 3. This software, with or without modification, must only be used with a Nordic
- *    Semiconductor ASA integrated circuit.
- *
- * 4. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- *
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-PURPOSE: Alarms cluster defintions
+ * Commercial Usage
+ * Licensees holding valid DSR Commercial licenses may use
+ * this file in accordance with the DSR Commercial License
+ * Agreement provided with the Software or, alternatively, in accordance
+ * with the terms contained in a written agreement between you and
+ * DSR.
+ */
+/* PURPOSE: Alarms cluster definitions
 */
 
-#if ! defined ZB_ZCL_ALARMS_H
-#define ZB_ZCL_ALARMS_H
+#ifndef ZB_ZCL_ALARMS_H
+#define ZB_ZCL_ALARMS_H 1
 
 #include "zcl/zb_zcl_common.h"
 #include "zcl/zb_zcl_commands.h"
@@ -84,7 +67,7 @@ enum zb_zcl_alarms_cmd_e
   ZB_ZCL_CMD_ALARMS_RESET_ALARM_LOG_ID     = 0x03  /**< "Reset alarm log" command. */
 };
 
-/*! @brief Structured representsation of Reset alarm command payload */
+/*! @brief Structured representation of Reset alarm command payload */
 typedef ZB_PACKED_PRE struct zb_zcl_alarms_reset_alarm_req_s
 {
   /** Alarm Code field */
@@ -123,7 +106,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_alarms_reset_alarm_req_s
 }
 
 /** @brief Parses Reset alarm command and fills in data request
-    structure. If request contains invlid data, status will set to ZB_FALSE.
+    structure. If request contains invalid data, status will set to ZB_FALSE.
     @param data_buf - pointer to zb_buf_t buffer containing command request data
     @param reset_alarm_req - variable to save command request
     @param status - variable to put parse status to (see @ref zb_zcl_parse_status_t).
@@ -135,7 +118,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_alarms_reset_alarm_req_s
   (reset_alarm_req_ptr) = zb_buf_len(data_buf) >=                                  \
     ZB_ZCL_ALARMS_RESET_ALARM_REQ_PAYLOAD_LEN ?                                    \
     (zb_zcl_alarms_reset_alarm_req_t*)zb_buf_begin(data_buf) : NULL;               \
-  if (reset_alarm_req_ptr)                                                         \
+  if (reset_alarm_req_ptr != NULL)                                                 \
   {                                                                                \
     reset_alarm_req.alarm_code = reset_alarm_req_ptr->alarm_code;                  \
     ZB_HTOLE16(&(reset_alarm_req).cluster_id, &(reset_alarm_req_ptr->cluster_id)); \
@@ -235,7 +218,7 @@ enum zb_zcl_alarms_cmd_resp_e
 /*! @}
  *  @endcond */ /* internals_doc */
 
-/*! @brief Structured representsation of Alarm command payload */
+/*! @brief Structured representation of Alarm command payload */
 typedef zb_zcl_alarms_reset_alarm_req_t zb_zcl_alarms_alarm_res_t;
 
 typedef ZB_PACKED_PRE struct zb_zcl_alarm_get_alarm_hdr_res_s
@@ -308,7 +291,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_alarm_get_alarm_res_s
 
 
 /** @brief Parses Get alarm response command and returns response data
-    structure or status = ZB_FALSE if request contains invlid data.
+    structure or status = ZB_FALSE if request contains invalid data.
     @param data_buf - pointer to zb_buf_t buffer containing command response data
     @param get_alarm_res - command response record
     @param status - variable to put parse status to (see @ref zb_zcl_parse_status_t)
@@ -356,4 +339,4 @@ void zb_zcl_alarms_init_client(void);
 #define ZB_ZCL_CLUSTER_ID_ALARMS_SERVER_ROLE_INIT zb_zcl_alarms_init_server
 #define ZB_ZCL_CLUSTER_ID_ALARMS_CLIENT_ROLE_INIT zb_zcl_alarms_init_client
 
-#endif /* ! defined ZB_ZCL_ALARMS_H */
+#endif /* ZB_ZCL_ALARMS_H */

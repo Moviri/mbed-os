@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2021 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* PURPOSE: HA devices configuration
 */
@@ -166,19 +185,7 @@ enum zb_ha_standard_devs_e
 #define ZB_HA_DEFINE_DEVICE_ERL_INTERFACE_DEVICE
 #define ZB_HA_DEFINE_DEVICE_ERL_GW
 
-#ifdef ZB_ENABLE_CUSTOM_CLUSTERS
-#define ZB_PROFILE_DEFINE_DEVICE_CUSTOM_TUNNEL
-#endif
 
-#ifdef ZB_ENABLE_SE_CLUSTERS
-#define ZB_ZCL_SUPPORT_CLUSTER_EVENTS 1
-#define ZB_ZCL_SUPPORT_CLUSTER_CALENDAR 1
-#define ZB_ZCL_SUPPORT_CLUSTER_PREPAYMENT 1
-#define ZB_ZCL_SUPPORT_CLUSTER_DEVICE_MANAGEMENT 1
-#define ZB_ZCL_SUPPORT_CLUSTER_MDU_PAIRING 1
-#define ZB_ZCL_SUPPORT_CLUSTER_ENERGY_MANAGEMENT 1
-#define ZB_ZCL_SUPPORT_CLUSTER_TIME 1
-#endif
 
 #define ZB_ZCL_SUPPORT_CLUSTER_DRLC 1
 #define ZB_ZCL_SUPPORT_CLUSTER_PRICE 1
@@ -206,7 +213,6 @@ enum zb_ha_standard_devs_e
 
 /* Define clusters which are not used by any device but expected to be
  * supported in ZBOSS stack when ZB_ALL_DEVICE_SUPPORT is defined.
- * For example, some samples from application/HA_samples may use them.
  *
  * The main intention of ZB_ALL_DEVICE_SUPPORT define is to compile in ZBOSS
  * stack as much HA-related functionality as possible so declaring support for
@@ -518,15 +524,6 @@ enum zb_ha_standard_devs_e
 #define ZB_ZCL_SUPPORT_CLUSTER_OTA_UPGRADE          1
 #endif /* ZB_HA_DEFINE_DEVICE_SMART_PLUG */
 
-#ifdef ZB_HA_DEFINE_DEVICE_IR_BLASTER
-#define ZB_ZCL_SUPPORT_CLUSTER_BASIC                1
-#define ZB_ZCL_SUPPORT_CLUSTER_IDENTIFY             1
-#define ZB_ZCL_SUPPORT_CLUSTER_GROUPS               1
-#define ZB_ZCL_SUPPORT_CLUSTER_POWER_CONFIG         1
-#define ZB_ZCL_SUPPORT_CLUSTER_OTA_UPGRADE          1
-#define ZB_ZCL_SUPPORT_CLUSTER_ON_OFF               1
-#define ZB_ZCL_SUPPORT_CLUSTER_IR_BLASTER           1
-#endif /* ZB_HA_DEFINE_DEVICE_IR_BLASTER */
 
 #ifdef ZB_HA_DEFINE_DEVICE_CUSTOM_DIMMABLE_LIGHT
 #define ZB_ZCL_SUPPORT_CLUSTER_BASIC    1

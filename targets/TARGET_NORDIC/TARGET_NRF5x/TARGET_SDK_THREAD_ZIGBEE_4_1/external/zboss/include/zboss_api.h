@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2021 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*  PURPOSE: ZBOSS API header
 */
@@ -63,7 +82,6 @@
  *    to well-known key. To be used in certification tests mainly.
  *  @snippet simple_gw/simple_gw.c zb_secur_setup_preconfigured_key_value
  *  @snippet simple_gw/simple_gw.c zb_secur_setup_preconfigured_key
- *  @see TP_R20_BV-01 sample.
  */
 void zb_secur_setup_nwk_key(zb_uint8_t *key, zb_uint8_t i);
 
@@ -99,7 +117,7 @@ void zb_secur_set_tc_rejoin_enabled(zb_bool_t enable);
  *  @param enable - whether to enable or disable TC Rejoin ignore.
  */
 void zb_secur_set_ignore_tc_rejoin(zb_bool_t enable);
-#ifndef NCP_MODE_HOST
+
 /**
  *  Specifies whether Trust Center Rejoin is allowed, when there is no unique TCLK.
  *  On joiner device it could be used to perform TC rejoin with legacy ZC.
@@ -109,7 +127,7 @@ void zb_secur_set_ignore_tc_rejoin(zb_bool_t enable);
  *  @param enable - whether to enable or disable unsecured TC Rejoin.
  */
 void zb_secur_set_unsecure_tc_rejoin_enabled(zb_bool_t enable);
-#endif
+
 /** @} */ /* secur_tc_rejoin */
 
 /** @cond DOXYGEN_INTERNAL_DOC */
@@ -418,12 +436,6 @@ void since_you_got_that_symbol_unresolved_you_probably_use_ZB_ED_ROLE_preprocess
 void since_you_got_that_symbol_unresolved_you_probably_forget_use_ZB_ED_ROLE_preprocessor_define_while_linking_with_zed_library(void);
 #endif /* ZB_ED_ROLE */
 
-/* minor internal hack for CI system */
-#if defined ZB_NSNG_CI && defined ZB_HAVE_SERIAL
-#define ZB_SET_NS_UART_CB_STUB() zb_osif_set_ns_uart_cb_stub()
-#else
-#define ZB_SET_NS_UART_CB_STUB()
-#endif /* ZB_NSNG_CI && ZB_HAVE_SERIAL */
 
 /** @endcond*/ /* DOXYGEN_INTERNAL_DOC */
 
@@ -443,14 +455,11 @@ void since_you_got_that_symbol_unresolved_you_probably_forget_use_ZB_ED_ROLE_pre
 @code
   ZB_INIT("zdo_zc");
 @endcode
-
-  See any sample
  */
 #define ZB_INIT(trace_comment)               \
 {                                            \
   ZB_CHECK_LIBRARY();                        \
   zb_init((zb_char_t *)trace_comment);       \
-  ZB_SET_NS_UART_CB_STUB();                  \
 }
 /** @cond DOXYGEN_INTERNAL_DOC */
 /** @brief Global stack initialization.
@@ -473,14 +482,11 @@ void zb_init(zb_char_t *trace_comment);
 @code
   ZB_INIT("zdo_zc");
 @endcode
-
-  See any sample
  */
 #define ZB_INIT(trace_comment)               \
 {                                            \
   ZB_CHECK_LIBRARY();                        \
   zb_init();                                 \
-  ZB_SET_NS_UART_CB_STUB();                  \
 }
 void zb_init(void);
 #endif  /* ZB_INIT_HAS_ARGS || defined DOXYGEN */
@@ -514,15 +520,54 @@ void zb_set_channel_mask(zb_uint32_t channel_mask);
 zb_ret_t zb_set_tx_power(zb_uint8_t tx_power);
 #endif
 
+#ifdef ZB_MAC_CONFIGURABLE_TX_POWER
+
+/**
+ * @brief A struct with params for zb_get_tx_power_async and zb_set_tx_power_async
+ */
+typedef struct zb_tx_power_params_s
+{
+  zb_ret_t status;    /*!< Status of the operation. Can be RET_OK, RET_UNINITIALIZED or one of 
+                            RET_INVALID_PARAMETET_1, RET_INVALID_PARAMETET_2 or RET_INVALID_PARAMETET_3
+                            for the following three fields respectively. */
+  zb_uint8_t page;    /*!< Page number. Should be provided by the application. */
+  zb_uint8_t channel; /*!< Channel number on a given page. Should be provided by the application. */
+  zb_int8_t tx_power; /*!< Transceiver power for a given page and channel. 
+                            Should be provided by the application in case of setting the power */
+  zb_callback_t cb;   /*!< Callback function to be called after the function finishes. Should be provided by the application. */
+} zb_tx_power_params_t;
+
+
+/**
+ * @brief Get transceiver power for given page and channel asynchronously.
+ * 
+ * This function requires param to contain @ref zb_tx_power_params_t. 
+ * Will return status RET_UNINITIALIZED if the channel/page storage hasn't been initialized yet.
+ * 
+ * @param param - buffer, containing @ref zb_tx_power_params_t.
+*/
+void zb_get_tx_power_async(zb_bufid_t param);
+
+/**
+ * @brief Set transceiver power to a given value on a given page and channel asynchronously.
+ * 
+ * This function requires param to contain @ref zb_tx_power_params_t. 
+ * If the power change is for the current channel, the function will attempt to change power immediately, 
+ *  otherwise it will save the change until channel switch.
+ * 
+ * @param param - buffer, containing @ref zb_tx_power_params_t.
+*/
+void zb_set_tx_power_async(zb_bufid_t param);
+#endif
+
 /** @endcond */ /* DOXYGEN_BDB_SECTION */
 
 /**
    Set RxOnWhenIdle attribute
    @param rx_on - attribute value
 
-
    @b Example:
-@snippet doxygen_snippets.dox zboss_api_h_1
+@snippet ias_zone_sensor/src/izs_device.c set_rx_on_when_idle_attribute
 */
 void zb_set_rx_on_when_idle(zb_bool_t rx_on);
 
@@ -605,6 +650,33 @@ const zb_char_t ZB_IAR_CODE *zb_get_version(void);
 zb_ret_t zboss_start_no_autostart(void);
 
 void zboss_start_continue(void);
+
+
+#ifdef ZB_ZBOSS_DEINIT
+
+/**
+   Initiate ZBOSS shut procedure.
+
+   ZBOSS shutdown is meaningful for Linux platform where it is necessary to stop
+   or restart ZBOSS without stopping the current process.
+
+   When ZBOSS is ready to be shut, application receives @ref ZB_SIGNAL_READY_TO_SHUT signal.
+   It then must call @ref zboss_complete_shut() and must not use ZBOSS afterwords.
+ */
+void zboss_start_shut(zb_bufid_t param);
+
+/**
+   Complete ZBOSS shut procedure.
+
+   ZBOSS shutdown is meaningful for Linux platform where it is necessary to stop
+   or restart ZBOSS without stopping the current process.
+
+   That function must be called after application received @ref
+   ZB_SIGNAL_READY_TO_SHUT signal.
+ */
+void zboss_complete_shut(void);
+#endif  /* #ifdef ZB_ZBOSS_DEINIT */
+
 
 #ifdef ZB_PROMISCUOUS_MODE
 
@@ -766,57 +838,77 @@ zb_uint8_t zb_get_current_channel(void);
 void zb_set_network_coordinator_role(zb_uint32_t channel_mask);
 #endif /* ZB_COORDINATOR_ROLE */
 
+#if defined ZB_ROUTER_ROLE && defined ZB_BDB_MODE && !defined BDB_OLD
 /**
    Initiate device as a Zigbee Zigbee 3.0 (not SE!) router
    @param channel_mask - Zigbee channel mask
 */
 void zb_set_network_router_role(zb_uint32_t channel_mask);
+#endif /* ZB_ROUTER_ROLE && ZB_BDB_MODE && !BDB_OLD */
 
+#if defined ZB_ED_FUNC && defined ZB_BDB_MODE && !defined BDB_OLD
 /**
    Initiate device as a Zigbee Zigbee 3.0 (not SE!) End Device
    @param channel_mask - Zigbee channel mask
 */
 void zb_set_network_ed_role(zb_uint32_t channel_mask);
+#endif /* ZB_ED_FUNC && ZB_BDB_MODE && !BDB_OLD */
 
 #ifndef ZB_USE_INTERNAL_HEADERS
+
+#ifdef ZB_COORDINATOR_ROLE
 /**
    Initiate device as a legacy (pre-r21) Zigbee coordinator
    @param channel_mask - Zigbee channel mask
 */
 void zb_set_network_coordinator_role_legacy(zb_uint32_t channel_mask);
+#endif /* ZB_COORDINATOR_ROLE */
+
+#ifdef ZB_ROUTER_ROLE
 /**
    Initiate device as a legacy (pre-r21) Zigbee router
    @param channel_mask - Zigbee channel mask
 */
 void zb_set_network_router_role_legacy(zb_uint32_t channel_mask);
+#endif /* ZB_ROUTER_ROLE */
+
+#ifdef ZB_ED_FUNC
 /**
    Initiate device as a legacy (pre-r21) Zigbee End Device
    @param channel_mask - Zigbee channel mask
 */
 void zb_set_network_ed_role_legacy(zb_uint32_t channel_mask);
+#endif /* ZB_ED_FUNC */
+
 #endif /* ZB_USE_INTERNAL_HEADERS */
 
 /** @cond DOXYGEN_SUBGHZ_FEATURE */
+#ifdef ZB_COORDINATOR_ROLE
 /**
    Initiate device as a Zigbee 3.0 BDB coordinator with channel list.
    Provides functionality to set mask for Sub-GHz and 2.4GHz page.
    @param channel_list - Zigbee channels list
 */
 void zb_set_network_coordinator_role_ext(zb_channel_list_t channel_list);
+#endif /* ZB_COORDINATOR_ROLE */
 
+#if defined ZB_ROUTER_ROLE && defined ZB_BDB_MODE && !defined BDB_OLD
 /**
    Initiate device as a Zigbee 3.0 BDB router with channel list.
    Provides functionality to set mask for Sub-GHz and 2.4GHz page.
    @param channel_list - Zigbee channels list
 */
 void zb_set_network_router_role_ext(zb_channel_list_t channel_list);
+#endif /* ZB_ROUTER_ROLE && ZB_BDB_MODE && !BDB_OLD */
 
+#if defined ZB_ED_FUNC && defined ZB_BDB_MODE && !defined BDB_OLD
 /**
    Initiate device as a Zigbee 3.0 BDB End Device with channel list.
    Provides functionality to set mask for Sub-GHz and 2.4GHz page.
    @param channel_list - Zigbee channels list
 */
 void zb_set_network_ed_role_ext(zb_channel_list_t channel_list);
+#endif /* ZB_ED_FUNC && ZB_BDB_MODE && !BDB_OLD */
 /** @endcond */ /* DOXYGEN_SUBGHZ_FEATURE */
 
 /** @} */
@@ -1142,8 +1234,6 @@ void zb_nvram_register_app4_write_cb(
  *
  * @b Example
  * @snippet light_sample/dimmable_light/bulb.c nvram_usage_example
- *
- * See light_sample
  */
 zb_ret_t zb_nvram_write_dataset(zb_nvram_dataset_types_t t);
 

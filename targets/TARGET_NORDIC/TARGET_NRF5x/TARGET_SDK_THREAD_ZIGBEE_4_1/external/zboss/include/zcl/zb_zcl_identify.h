@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2022 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* PURPOSE: ZCL "Identify cluster" definitions
 */
@@ -45,8 +64,6 @@
  *
  *    Identify Query request sending:
  *    @snippet HA_samples/on_off_switch/sample_zed.c identify_send_identify_query_req
- *
- *    For more information see HA_samples/door_lock and HA_samples/on_off_switch samples
  */
 
 /** @name Identify cluster attributes
@@ -174,7 +191,7 @@ ZB_ZCL_SEND_COMMAND_SHORT(                                                      
   */
 #define ZB_ZCL_IDENTIFY_GET_TRIGGER_VARIANT_REQ(data_ptr, buffer, status)    \
 {                                                                            \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_identify_effect_req_t))          \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_identify_effect_req_t))           \
   {                                                                          \
    (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                                   \
   }                                                                          \
@@ -338,16 +355,16 @@ typedef ZB_PACKED_PRE struct zb_zcl_identify_query_res_s
 */
 #define ZB_ZCL_IDENTIFY_GET_IDENTIFY_REQ(data_ptr, buffer, status)      \
 {                                                                       \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_identify_req_t))            \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_identify_req_t))             \
   {                                                                     \
     (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                             \
   }                                                                     \
   else                                                                  \
   {                                                                     \
     zb_zcl_identify_req_t *src_ptr =                                    \
-      (zb_zcl_identify_req_t*)zb_buf_begin((buffer));      		\
+      (zb_zcl_identify_req_t*)zb_buf_begin((buffer));                   \
     (status) = ZB_ZCL_PARSE_STATUS_SUCCESS;                             \
-    ZB_HTOLE16(&((data_ptr)->timeout), &(src_ptr->timeout));        	\
+    ZB_HTOLE16(&((data_ptr)->timeout), &(src_ptr->timeout));            \
   }                                                                     \
 }
 
@@ -357,19 +374,19 @@ typedef ZB_PACKED_PRE struct zb_zcl_identify_query_res_s
   * @param buffer containing the packet (by pointer).
   * @param status - variable to put parse status to (see @ref zb_zcl_parse_status_t).
   */
-#define ZB_ZCL_IDENTIFY_GET_IDENTIFY_QUERY_RES(data_ptr, buffer, status)	\
-{                                                                       	\
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_identify_query_res_t))            	\
-  {                                                                     	\
-    (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                             	\
-  }                                                                     	\
-  else                                                                  	\
-  {                                                                     	\
-    zb_zcl_identify_query_res_t *src_ptr =                                    	\
-      (zb_zcl_identify_query_res_t*)zb_buf_begin((buffer));                   	\
-    (status) = ZB_ZCL_PARSE_STATUS_SUCCESS;                             	\
-    ZB_HTOLE16(&((data_ptr)->timeout), &(src_ptr->timeout));            	\
-  }                                                                     	\
+#define ZB_ZCL_IDENTIFY_GET_IDENTIFY_QUERY_RES(data_ptr, buffer, status) \
+{                                                                        \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_identify_query_res_t))        \
+  {                                                                      \
+    (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                              \
+  }                                                                      \
+  else                                                                   \
+  {                                                                      \
+    zb_zcl_identify_query_res_t *src_ptr =                               \
+      (zb_zcl_identify_query_res_t*)zb_buf_begin((buffer));              \
+    (status) = ZB_ZCL_PARSE_STATUS_SUCCESS;                              \
+    ZB_HTOLE16(&((data_ptr)->timeout), &(src_ptr->timeout));             \
+  }                                                                      \
 }
 
 /*! @} */ /* Identify cluster command structures and definitions */

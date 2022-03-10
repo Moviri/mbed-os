@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2021 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* PURPOSE: Tests and debug macros
 */
@@ -94,12 +113,7 @@ void lwip_zb_assert(zb_uint16_t file_id, zb_int_t line_number);
 
 #else  /* release */
 
-#ifndef KEIL
 #define ZB_ASSERT(expr) ((void)(expr))
-#else
-#define ZB_ASSERT(expr) ((void)(expr))
-#endif
-
 #define ZB_INLINE_ASSERT_SIMPLE(expr) -1
 #define ZB_INLINE_ASSERT(expr)
 
@@ -180,7 +194,7 @@ void lwip_zb_assert(zb_uint16_t file_id, zb_int_t line_number);
 #ifdef ZB_ARRAYS_CHECK
 /**
    Address all array elements. Use this macro to test that array really inited
-   by valgring in Linux
+   by valgrind in Linux
  */
 #define ZB_CHK_ARR(arr, len)                       \
   do                                               \
@@ -206,17 +220,10 @@ while (0)
 #endif  /* ZB_ARRAYS_CHECK */
 
 
-#if !defined ZB_NS_BUILD && defined ZB8051 && defined C8051F120
-#define ZB_P3_ON() LED1 = 0
-#define ZB_P3_OFF() LED1 = 1
-#define ZB_P4_ON() LED2 = 0
-#define ZB_P4_OFF() LED2 = 1
-#else
 #define ZB_P3_ON()
 #define ZB_P3_OFF()
 #define ZB_P4_ON() 
 #define ZB_P4_OFF()
-#endif
 
 #if defined ZB_TRAFFIC_DUMP_ON
 /**
@@ -234,11 +241,7 @@ void dump_usb_traf(zb_uint8_t *buf, zb_ushort_t len);
 #define dump_usb_traf(buf, len)
 #endif
 
-#if ZB_MAC_TESTING_MODE && defined ZB_TRAFFIC_DUMP_ON
-#define DUMP_TRAF(cmt, buf, len, total) TRACE_MSG(TRACE_SECUR3, #cmt, (FMT__0)); dump_traf(buf, len)
-#else
 #define DUMP_TRAF(comment, buf, len, total)
-#endif
 
 #ifdef DEBUG
 void dump_hex_data(zb_uint_t trace_mask, zb_uint8_t trace_level, zb_uint8_t *buf, zb_ushort_t len);

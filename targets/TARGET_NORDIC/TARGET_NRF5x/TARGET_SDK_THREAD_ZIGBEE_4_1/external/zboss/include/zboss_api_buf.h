@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2021 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*  PURPOSE: Public buffer pool API (new version)
 */
@@ -329,7 +348,6 @@ void *zb_buf_alloc_left_func(TRACE_PROTO zb_bufid_t buf, zb_uint_t size);
  *
  * @param buf - buffer ID
  *
- * See any sample.
  */
 #define zb_buf_free(buf) zb_buf_free_func(TRACE_CALL (buf))
 
@@ -433,24 +451,16 @@ void *zb_buf_alloc_left_func(TRACE_PROTO zb_bufid_t buf, zb_uint_t size);
 
    Usually used to place external information _func(some parameters) to the buffer
 
-   @param buf - buffer ID
-   @param type - data type that will be placed at the buffer end
+   @param[in] buf - buffer ID
+   @param[in] type - data type that will be placed at the buffer end
 
    @return pointer to the buffer tail casted to _func(type*)
 
    @b Example
-   @code
-     zb_zdo_nwk_addr_req_param_t *req = ZB_BUF_GET_PARAM(buf, zb_zdo_nwk_addr_req_param_t);
-
-     req->dst_addr = 0xffff;
-     ZB_IEEE_ADDR_COPY_func(req->ieee_addr, g_ieee_addr_r4);
-     req->start_index  = 0;
-     req->request_type = 0x00;
-     zb_zdo_nwk_addr_req(ZB_REF_FROM_BUF_func(buf), NULL);
-   @endcode
+   @snippet linky_sample/erl_gw/erl_gw.c zb_buf_get_param_snippet
  */
 /* Note: MISRA C-STAT analysis gives false positive for rule 20.7 violation on ZB_BUF_GET_PARAM()
- * due to missing parenthesis around "type" on pointer type cast. This is a misinterpertation
+ * due to missing parenthesis around "type" on pointer type cast. This is a misinterpretation
  * of the rule by C-STAT tool, since this rule refers only to expressions, and not data type casts
  * like it is used here. */
 #define ZB_BUF_GET_PARAM(buf, type) ((type *)zb_buf_get_tail_func(TRACE_CALL (buf), sizeof(type)))

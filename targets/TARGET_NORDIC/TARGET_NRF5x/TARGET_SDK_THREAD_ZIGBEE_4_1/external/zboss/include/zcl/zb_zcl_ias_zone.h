@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2022 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* PURPOSE: IAS Zone cluster defintions
 */
@@ -71,6 +90,8 @@ enum zb_zcl_ias_zone_attr_e
   /* custom attribute */
   ZB_ZCL_ATTR_CUSTOM_ZGP_CALIBRATION = 0x8000,
   ZB_ZCL_ATTR_CUSTOM_ZGP_CLOUD_ACK = 0x8003,
+  /* IAS_CIE_Address can be reassigned via Write attribute only when ZB_ZCL_ATTR_CUSTOM_CIE_ADDR_IS_SET is equal to ZB_FALSE */
+  ZB_ZCL_ATTR_CUSTOM_CIE_ADDR_IS_SET = 0xE000,
   ZB_ZCL_ATTR_CUSTOM_CIE_EP = 0xE001,
   ZB_ZCL_ATTR_CUSTOM_CIE_SHORT_ADDR = 0xE002,
   /* TODO: move this attribute to IAS Zone ZCL implementation */
@@ -192,6 +213,14 @@ enum zb_zcl_ias_zone_zonestatus_e
     @{
 */
 
+#define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_CUSTOM_CIE_ADDR_IS_SET(data_ptr) \
+{                                                       \
+  ZB_ZCL_ATTR_CUSTOM_CIE_ADDR_IS_SET,                   \
+  ZB_ZCL_ATTR_TYPE_U8,                                  \
+  ZB_ZCL_ATTR_ACCESS_INTERNAL,                         \
+  (void*) data_ptr                                 \
+}
+
 #define ZB_SET_ATTR_DESCR_WITH_ZB_ZCL_ATTR_CUSTOM_CIE_EP(data_ptr) \
 {                                                       \
   ZB_ZCL_ATTR_CUSTOM_CIE_EP,                            \
@@ -289,16 +318,18 @@ enum zb_zcl_ias_zone_zonestatus_e
     @param cie_ep - custom attribute to store CIE Endpoint number
 */
 /* FIXME: declare custom attributes internally */
-#define ZB_ZCL_DECLARE_IAS_ZONE_ATTRIB_LIST(                            \
-  attr_list, zone_state, zone_type, zone_status,ias_cie_address,        \
-  cie_short_addr, cie_ep)                                               \
-  ZB_ZCL_START_DECLARE_ATTRIB_LIST(attr_list)                                       \
-  ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_IAS_ZONE_ZONESTATE_ID, (zone_state))             \
-  ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_IAS_ZONE_ZONETYPE_ID, (zone_type))               \
-  ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_IAS_ZONE_ZONESTATUS_ID, (zone_status))           \
-  ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_IAS_ZONE_IAS_CIE_ADDRESS_ID, (ias_cie_address))  \
-  ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_CUSTOM_CIE_SHORT_ADDR, (cie_short_addr))         \
-  ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_CUSTOM_CIE_EP, (cie_ep))                         \
+#define ZB_ZCL_DECLARE_IAS_ZONE_ATTRIB_LIST(                                                 \
+  attr_list, zone_state, zone_type, zone_status,ias_cie_address,                             \
+  cie_short_addr, cie_ep)                                                                    \
+  zb_uint8_t cie_addr_is_set_##attr_list;                                                    \
+  ZB_ZCL_START_DECLARE_ATTRIB_LIST(attr_list)                                                \
+  ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_IAS_ZONE_ZONESTATE_ID, (zone_state))                      \
+  ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_IAS_ZONE_ZONETYPE_ID, (zone_type))                        \
+  ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_IAS_ZONE_ZONESTATUS_ID, (zone_status))                    \
+  ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_IAS_ZONE_IAS_CIE_ADDRESS_ID, (ias_cie_address))           \
+  ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_CUSTOM_CIE_SHORT_ADDR, (cie_short_addr))                  \
+  ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_CUSTOM_CIE_EP, (cie_ep))                                  \
+  ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_CUSTOM_CIE_ADDR_IS_SET, &(cie_addr_is_set_##attr_list))   \
   ZB_ZCL_FINISH_DECLARE_ATTRIB_LIST
 
 /** @brief Declare attribute list for IAS Zone cluster - server side (extended attribute set)
@@ -318,6 +349,7 @@ enum zb_zcl_ias_zone_zonestatus_e
 #define ZB_ZCL_DECLARE_IAS_ZONE_ATTRIB_LIST_EXT(                                                                 \
   attr_list, zone_state, zone_type, zone_status, number_of_zone_sens_levels_supported, current_zone_sens_level,  \
   ias_cie_address, zone_id, cie_short_addr, cie_ep)                                                              \
+  zb_uint8_t cie_addr_is_set_##attr_list;                                                                        \
   zb_uint16_t last_change_##attr_list;                                                                           \
   zb_zcl_ias_zone_int_ctx_t int_ctx_##attr_list;                                                                 \
   ZB_ZCL_START_DECLARE_ATTRIB_LIST(attr_list)                                                                    \
@@ -333,6 +365,7 @@ enum zb_zcl_ias_zone_zonestatus_e
   ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_IAS_ZONE_INT_CTX_ID, &(int_ctx_##attr_list))                                  \
   ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_CUSTOM_CIE_SHORT_ADDR, (cie_short_addr))                                      \
   ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_CUSTOM_CIE_EP, (cie_ep))                                                      \
+  ZB_ZCL_SET_ATTR_DESC(ZB_ZCL_ATTR_CUSTOM_CIE_ADDR_IS_SET, &(cie_addr_is_set_##attr_list))                       \
   ZB_ZCL_FINISH_DECLARE_ATTRIB_LIST
 
 /*! @} */ /* IAS Zone cluster attributes */
@@ -401,7 +434,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ias_zone_init_test_mode_ha_s
   */
 #define ZB_ZCL_IAS_ZONE_GET_INITIATE_TEST_MODE_REQ(data_ptr, buffer, status) \
 {                                                                            \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_ias_zone_init_test_mode_t))      \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_ias_zone_init_test_mode_t))       \
   {                                                                          \
    (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                                   \
   }                                                                          \
@@ -521,7 +554,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ias_zone_status_change_not_s
   */
 #define ZB_ZCL_IAS_ZONE_GET_STATUS_CHANGE_NOTIFICATION_REQ(data_ptr, buffer, status)     \
 {                                                                           \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_ias_zone_status_change_not_t))  \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_ias_zone_status_change_not_t))   \
   {                                                                         \
    (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                                  \
   }                                                                         \
@@ -586,7 +619,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ias_zone_enroll_request_s
   */
 #define ZB_ZCL_IAS_ZONE_GET_ZONE_ENROLL_REQUEST_REQ(data_ptr, buffer, status)   \
 {                                                                           \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_ias_zone_enroll_request_t))     \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_ias_zone_enroll_request_t))      \
   {                                                                         \
    (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                                  \
   }                                                                         \
@@ -692,7 +725,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ias_zone_enroll_res_s
   */
 #define ZB_ZCL_IAS_ZONE_GET_ZONE_ENROLL_RES(data_ptr, buffer, status)     \
 {                                                                         \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_ias_zone_enroll_res_t))       \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_ias_zone_enroll_res_t))        \
   {                                                                       \
    (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                                \
   }                                                                       \
@@ -719,7 +752,7 @@ void zb_zcl_ias_zone_change_status(zb_uint8_t param);
 typedef struct zb_zcl_ias_zone_status_param_s
 {
   zb_uint16_t bits;           /*!< Bits map, see @ref zb_zcl_ias_zone_zonestatus_e */
-  zb_bool_t is_set;           /*!< true - set, fasle - clean */
+  zb_bool_t is_set;           /*!< true - set, false - clean */
   zb_uint8_t endpoint;        /*!< endpoint */
 
 } zb_zcl_ias_zone_status_param_t;
@@ -783,8 +816,8 @@ zb_zcl_ias_zone_notification_param_t;
    notification will NOT be sent
    @return Returns ZB_TRUE if notification is scheduled for send,
    ZB_FALSE otherwise
-   @note Notifiacation send result is reported to user App using
-   callback that is registered with zb_zcl_ias_zone_registrer_cb()
+   @note Notification send result is reported to user App using
+   callback that is registered with zb_zcl_ias_zone_register_cb()
 */
 zb_bool_t zb_zcl_ias_zone_set_status(
   zb_uint8_t ep,
@@ -861,6 +894,15 @@ zb_bool_t zb_zcl_ias_zone_check_attr_notify(
 */
 void zb_zcl_ias_zone_send_status_change_not(zb_uint8_t param);
 
+/**
+   @brief checks cie address on zcl initialization
+*/
+void zb_zcl_ias_zone_check_cie_addr_on_zcl_initialization(zb_uint8_t ep_id);
+
+/**
+   @brief puts cie command to binding whitelist table
+*/
+zb_ret_t zb_zcl_ias_zone_put_cie_address_to_binding_whitelist(zb_uint8_t endpoint);
 
 /*! @} */ /* ZCL IAS Zone cluster definitions */
 

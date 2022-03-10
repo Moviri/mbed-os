@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2022 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* PURPOSE: IAS Ace cluster defintions
 */
@@ -292,7 +311,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ias_ace_arm_s
 #define ZB_ZCL_IAS_ACE_GET_ARM_REQ(data_ptr, buffer, status)  \
 {                                                             \
   zb_uint8_t *data = zb_buf_begin(buffer);                    \
-  if (zb_buf_len((buffer)) !=                                 \
+  if (zb_buf_len((buffer)) <                                  \
       ZB_ZCL_IAS_ACE_ARM_REQ_PAYLOAD_SIZE(data))              \
   {                                                           \
     (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                   \
@@ -386,7 +405,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ias_ace_bypass_s
 #define ZB_ZCL_IAS_ACE_GET_BYPASS_REQ(data_ptr, buffer, status)       \
 {                                                                     \
   zb_uint8_t *data = zb_buf_begin(buffer);                            \
-  if (zb_buf_len((buffer)) != ZB_ZCL_IAS_ACE_BYPASS_PAYLOAD_SIZE(data))      \
+  if (zb_buf_len((buffer)) < ZB_ZCL_IAS_ACE_BYPASS_PAYLOAD_SIZE(data))       \
   {                                                                   \
     (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                           \
   }                                                                   \
@@ -551,7 +570,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ias_ace_get_zone_info_s
   */
 #define ZB_ZCL_IAS_ACE_GET_GET_ZONE_INFO_REQ(data_ptr, buffer, status)  \
 {                                                                       \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_ias_ace_get_zone_info_t))   \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_ias_ace_get_zone_info_t))    \
   {                                                                     \
     (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                             \
   }                                                                     \
@@ -672,7 +691,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ias_ace_get_zone_status_s
   */
 #define ZB_ZCL_IAS_ACE_GET_GET_ZONE_STATUS_REQ(data_ptr, buffer, status) \
 {                                                                       \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_ias_ace_get_zone_status_t)) \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_ias_ace_get_zone_status_t))  \
   {                                                                     \
     (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                             \
   }                                                                     \
@@ -749,7 +768,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ias_ace_arm_resp_s
   */
 #define ZB_ZCL_IAS_ACE_GET_ARM_RESP(data_ptr, buffer, status)       \
 {                                                                   \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_ias_ace_arm_resp_t))    \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_ias_ace_arm_resp_t))     \
   {                                                                 \
     (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                         \
   }                                                                 \
@@ -813,7 +832,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ias_ace_get_zone_id_map_resp_s
   */
 #define ZB_ZCL_IAS_ACE_GET_GET_ZONE_ID_MAP_RESP(data_ptr, buffer, status)       \
 {                                                                               \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_ias_ace_get_zone_id_map_resp_t))    \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_ias_ace_get_zone_id_map_resp_t))     \
   {                                                                             \
     (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                                     \
   }                                                                             \
@@ -895,7 +914,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ias_ace_get_zone_info_resp_s
 #define ZB_ZCL_IAS_ACE_GET_GET_ZONE_INFO_RESP(data_ptr, buffer, status)         \
 {                                                                               \
   zb_uint8_t *data = zb_buf_begin(buffer);                                      \
-  if (zb_buf_len((buffer)) != ZB_ZCL_IAS_ACE_GET_ZONE_INFO_RESP_PAYLOAD_SIZE(data)) \
+  if (zb_buf_len((buffer)) < ZB_ZCL_IAS_ACE_GET_ZONE_INFO_RESP_PAYLOAD_SIZE(data))  \
   {                                                                             \
     (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                                     \
   }                                                                             \
@@ -996,7 +1015,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ias_ace_zone_status_changed_s
 #define ZB_ZCL_IAS_ACE_GET_ZONE_STATUS_CHANGED_REQ(data_ptr, buffer, status)    \
 {                                                                               \
   zb_uint8_t *data = zb_buf_begin(buffer);                                      \
-  if (zb_buf_len((buffer)) != ZB_ZCL_IAS_ACE_ZONE_STATUS_CHANGED_PAYLOAD_SIZE(data)) \
+  if (zb_buf_len((buffer)) < ZB_ZCL_IAS_ACE_ZONE_STATUS_CHANGED_PAYLOAD_SIZE(data))  \
   {                                                                             \
     (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                                     \
   }                                                                             \
@@ -1131,7 +1150,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ias_ace_panel_status_changed_s
 #define ZB_ZCL_IAS_ACE_GET_PANEL_STATUS_CHANGED_REQ(data_ptr, buffer, status)   \
 {                                                                               \
   zb_uint8_t *data = zb_buf_begin(buffer);                                      \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_ias_ace_panel_status_changed_t))    \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_ias_ace_panel_status_changed_t))     \
   {                                                                             \
     (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                                     \
   }                                                                             \
@@ -1203,7 +1222,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ias_ace_get_panel_status_resp_s
 #define ZB_ZCL_IAS_ACE_GET_GET_PANEL_STATUS_RESP(data_ptr, buffer, status)      \
 {                                                                               \
   zb_uint8_t *data = zb_buf_begin(buffer);                                      \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_ias_ace_panel_status_changed_t))    \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_ias_ace_panel_status_changed_t))     \
   {                                                                             \
     (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                                     \
   }                                                                             \
@@ -1328,7 +1347,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ias_ace_set_bypassed_zone_list_s
 #define ZB_ZCL_IAS_ACE_GET_SET_BYPASSED_ZONE_LIST(data_ptr, buffer, status)     \
 {                                                                               \
   zb_uint8_t *data = zb_buf_begin(buffer);                                      \
-  if (zb_buf_len((buffer)) != ZB_ZCL_IAS_ACE_SET_BYPASSED_ZONE_LIST_PAYLOAD_SIZE(data)) \
+  if (zb_buf_len((buffer)) < ZB_ZCL_IAS_ACE_SET_BYPASSED_ZONE_LIST_PAYLOAD_SIZE(data))  \
   {                                                                             \
     (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                                     \
   }                                                                             \
@@ -1431,7 +1450,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ias_ace_bypass_resp_s
 #define ZB_ZCL_IAS_ACE_GET_BYPASS_RESP(data_ptr, buffer, status)                \
 {                                                                               \
   zb_uint8_t *data = zb_buf_begin(buffer);                                      \
-  if (zb_buf_len((buffer)) != ZB_ZCL_IAS_ACE_BYPASS_RESP_PAYLOAD_SIZE(data))    \
+  if (zb_buf_len((buffer)) < ZB_ZCL_IAS_ACE_BYPASS_RESP_PAYLOAD_SIZE(data))     \
   {                                                                             \
     (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                                     \
   }                                                                             \
@@ -1530,7 +1549,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ias_ace_get_zone_status_resp_s
 #define ZB_ZCL_IAS_ACE_GET_GET_ZONE_STATUS_RESP(data_ptr, buffer, status)       \
 {                                                                               \
   zb_uint8_t *data = zb_buf_begin(buffer);                                      \
-  if (zb_buf_len((buffer)) != ZB_ZCL_IAS_ACE_GET_ZONE_STATUS_RESP_PAYLOAD_SIZE(data)) \
+  if (zb_buf_len((buffer)) < ZB_ZCL_IAS_ACE_GET_ZONE_STATUS_RESP_PAYLOAD_SIZE(data))  \
   {                                                                             \
     (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                                     \
   }                                                                             \

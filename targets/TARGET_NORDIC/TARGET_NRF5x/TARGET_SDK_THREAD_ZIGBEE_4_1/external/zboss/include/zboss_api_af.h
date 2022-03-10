@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2021 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* PURPOSE: ZBOSS AF API
 */
@@ -81,7 +100,7 @@ typedef zb_nwk_device_type_t zb_logical_type_t;
  */
 /** @{ */
 #define ZB_FREQ_BAND_868            1U        /*!< 868-868.6 MHz BPSK */
-#define ZB_FREQ_BAND_902            (1U << 2) /*!< 902-928 MHz BPSK */
+#define ZB_FREQ_BAND_SUB_GHZ_NA_FSK (1U << 2) /*!< 902-928 MHz BPSK */
 #define ZB_FREQ_BAND_2400           (1U << 3) /*!< 2400-2483.5 MHz */
 /** Zigbee R22: European FSK sub-GHz bands (863-876MHz, 915-921MHz) */
 #define ZB_FREQ_BAND_SUB_GHZ_EU_FSK (1U << 4)
@@ -214,25 +233,6 @@ typedef ZB_PACKED_PRE struct zb_af_node_power_desc_s
      ZB_DECLARE_SIMPLE_DESC(5, 5);
    @endcode
  */
-#if defined ZB_APS_ENCRYPTION_PER_CLUSTER
-
-#define ZB_DECLARE_SIMPLE_DESC(in_clusters_count, out_clusters_count)                     \
-  typedef ZB_PACKED_PRE struct zb_af_simple_desc_ ## in_clusters_count ## _ ## out_clusters_count ## _s \
-  {                                                                                       \
-    zb_uint8_t    endpoint;                 /* Endpoint */                                \
-    zb_uint16_t   app_profile_id;           /* Application profile identifier */          \
-    zb_uint16_t   app_device_id;            /* Application device identifier */           \
-    zb_bitfield_t app_device_version:4;     /* Application device version */              \
-    zb_bitfield_t reserved:4;               /* Reserved */                                \
-    zb_uint8_t    app_input_cluster_count;  /* Application input cluster count */         \
-    zb_uint8_t    app_output_cluster_count; /* Application output cluster count */        \
-    /* Application input and output cluster list */                                       \
-    zb_uint16_t   app_cluster_list[(in_clusters_count) + (out_clusters_count)]; \
-    zb_uint8_t    cluster_encryption[((in_clusters_count) + (out_clusters_count) + 7)/8]; \
-  } ZB_PACKED_STRUCT                                                                      \
-  zb_af_simple_desc_ ## in_clusters_count ## _ ## out_clusters_count ## _t
-
-#else  /* ZB_APS_ENCRYPTION_PER_CLUSTER */
 
 #define ZB_DECLARE_SIMPLE_DESC(in_clusters_count, out_clusters_count)   \
   typedef ZB_PACKED_PRE struct zb_af_simple_desc_ ## in_clusters_count ## _ ## out_clusters_count ## _s \
@@ -249,7 +249,6 @@ typedef ZB_PACKED_PRE struct zb_af_node_power_desc_s
   } ZB_PACKED_STRUCT                                                                      \
   zb_af_simple_desc_ ## in_clusters_count ## _ ## out_clusters_count ## _t
 
-#endif  /* ZB_APS_ENCRYPTION_PER_CLUSTER */
 /** @} */ /* af_data_service */
 
 /**
@@ -412,81 +411,6 @@ zb_af_device_ctx_t;
 #define ZB_AF_START_DECLARE_ENDPOINT_LIST(ep_list_name) \
   zb_af_endpoint_desc_t *ep_list_name[] = {
 
-#if defined ZB_ENABLE_ZLL
-#define ZB_AF_SET_ENDPOINT_DESC_ZLL( \
-    ep_id,                           \
-    profile_id,                      \
-    reserved_length,                 \
-    reserved_ptr,                    \
-    cluster_number,                  \
-    cluster_list,                    \
-    simple_desc,                     \
-    group_id_count,                  \
-    rep_count,                       \
-    rep_ctx,                         \
-    lev_ctrl_count,                  \
-    lev_ctrl_ctx)                    \
-  {                                  \
-    ep_id,                           \
-    profile_id,                      \
-    NULL,                            \
-    NULL,                            \
-    reserved_length,                 \
-    reserved_ptr,                    \
-    cluster_number,                  \
-    cluster_list,                    \
-    simple_desc,                     \
-    group_id_count,                \
-    rep_count,                   \
-    rep_ctx,                     \
-    lev_ctrl_count,              \
-    lev_ctrl_ctx                 \
-  }
-
-/**
- *   @brief Initialize endpoint descriptor
- *
- * @param ep_name - endpoint name
- * @param ep_id - endpoint ID
- * @param profile_id - ID of profile deployed on this endpoint
- * @param reserved_length - unused parameter
- * @param reserved_ptr - unused parameter
- * @param cluster_number - number of clusters deployed on endpoint
- * @param cluster_list - pointer to cluster list structure
- * @param simple_desc - pointer to simple descriptor structure
- * @param rep_count - number of reporting info slots
- * @param rep_ctx - pointer to attributes reporting information
- * @param lev_ctrl_count - number of continuous value change alarm slots
- * @param lev_ctrl_ctx - pointer to CVC context
- */
-#define ZB_AF_DECLARE_ENDPOINT_DESC(            \
-  ep_name,                                      \
-  ep_id,                                        \
-  profile_id,                                   \
-  reserved_length,                              \
-  reserved_ptr,                                 \
-  cluster_number,                               \
-  cluster_list,                                 \
-  simple_desc,                                  \
-  rep_count,                                    \
-  rep_ctx,                                      \
-  lev_ctrl_count,                               \
-  lev_ctrl_ctx)                                 \
-zb_af_endpoint_desc_t ep_name =          \
-    ZB_AF_SET_ENDPOINT_DESC_ZLL(         \
-      ep_id,                             \
-      profile_id,                        \
-      reserved_length,                   \
-      (void*)reserved_ptr,          \
-      cluster_number,                    \
-      cluster_list,                      \
-      simple_desc,                       \
-      0,                                 \
-      rep_count,                         \
-      rep_ctx,                           \
-      lev_ctrl_count,                    \
-      lev_ctrl_ctx)
-#else /* defined ZB_ENABLE_ZLL */
 /**
   @brief Initialize endpoint descriptor
 
@@ -503,7 +427,6 @@ zb_af_endpoint_desc_t ep_name =          \
   @param rep_ctx - reporting context variable name (NULL if no reporting context)
   @param lev_ctrl_count - number of level control attributes
   @param lev_ctrl_ctx - level control context variable name (NULL if no level control context)
-  @see DR-TAR-TC-02 sample
 */
 #define ZB_AF_DECLARE_ENDPOINT_DESC(     \
   ep_name,                               \
@@ -534,7 +457,6 @@ zb_af_endpoint_desc_t ep_name =          \
     lev_ctrl_count,                      \
     lev_ctrl_ctx                         \
   }
-#endif /* defined ZB_ENABLE_ZLL */
 
 /** Finishes endpoint list declaration */
 #define ZB_AF_FINISH_DECLARE_ENDPOINT_LIST     }
@@ -546,7 +468,9 @@ zb_af_endpoint_desc_t ep_name =          \
  *  @attention Endpoint should be registered. ZB_AF_SET_ENDPOINT_HANDLER() should be called after
  *  device context is registered, using call to ZB_AF_REGISTER_DEVICE_CTX()
  *
- *  See HA samples
+ * @cond DOXYGEN_INTERNAL_DOC
+ *  TODO: add snippet
+ * @endcond
  */
 #define ZB_AF_SET_ENDPOINT_HANDLER(endpoint, handler)                 \
   (zb_af_get_endpoint_desc((endpoint))->device_handler = (handler))
@@ -558,7 +482,9 @@ zb_af_endpoint_desc_t ep_name =          \
     @param handler to set
     @attention Assumes that endpoint already registered
  *
- *  See HA samples
+ * @cond DOXYGEN_INTERNAL_DOC
+ *  TODO: add snippet
+ * @endcond
 */
 #define ZB_AF_SET_IDENTIFY_NOTIFICATION_HANDLER(endpoint, handler)    \
   (zb_af_get_endpoint_desc((endpoint))->identify_handler = (handler))
@@ -748,6 +674,13 @@ void zb_af_register_device_ctx(zb_af_device_ctx_t *device_ctx);
   Callback for notifying user about status of ZCL/ZDO command transmission
  */
 typedef void (*zb_af_transmission_res_cb_t) (zb_uint8_t status);
+
+/**
+   Continue inconimg packet proicessing after ZG->zdo.af_data_cb returned TRUE
+
+   @param param - incoming packet. Be sure it was initially passed to ZG->zdo.af_data_cb.
+ */
+void zb_apsde_data_indication_cont(zb_uint8_t param);
 /** @} */ /* af_management_service */
 /*! @} */
 

@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2022 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* PURPOSE: Zigbee cluster library types and macros common for all clusters
 */
@@ -332,8 +351,8 @@ typedef enum zb_zcl_parse_status_e
 /** @brief Attribute Reporting Status. */
 typedef enum zb_zcl_attribute_reporting_status_e
 {
-  ZB_ZCL_AR_STATUS_PENDING	=0x00,  	/**< Pending. */
-  ZB_ZCL_AR_STATUS_COMPLETE =0x01 	 	/**< Attribute Reporting Complete. */
+  ZB_ZCL_AR_STATUS_PENDING  = 0x00,  /**< Pending. */
+  ZB_ZCL_AR_STATUS_COMPLETE = 0x01  /**< Attribute Reporting Complete. */
 } zb_zcl_attribute_reporting_status_t;
 
 /**
@@ -345,7 +364,7 @@ typedef enum zb_zcl_attribute_reporting_status_e
 /** @{ */
 #define ZB_ZCL_STATUS_SUCCESS               0x00U /*!< ZCL Success */
 #define ZB_ZCL_STATUS_FAIL                  0x01U /*!< ZCL Fail */
-#define ZB_ZCL_STATUS_NOT_AUTHORIZED        0x7EU /*!< Server is not authorized to upgrade the client */
+#define ZB_ZCL_STATUS_NOT_AUTHORIZED        0x7EU /*!< The sender of the command does not have authorization to carry out this command. */
 #define ZB_ZCL_STATUS_MALFORMED_CMD         0x80U /*!< Malformed command */
 #define ZB_ZCL_STATUS_UNSUP_CLUST_CMD       0x81U /*!< Unsupported cluster command */
 #define ZB_ZCL_STATUS_UNSUP_GEN_CMD         0x82U /*!< Unsupported general command */
@@ -428,7 +447,6 @@ typedef void (*zb_zcl_modify_attr_value_cb_t)(
     @{
     Use @ref ZB_ZCL_SET_ATTRIBUTE
     @par
-    For more information see HA samples
 */
 
 /** @brief Sets correctly ZCL char string value */
@@ -1058,17 +1076,7 @@ typedef ZB_PACKED_PRE  struct zb_zcl_parsed_hdr_s
       zb_uint8_t reserved:4;
 #endif
     } ZB_PACKED_STRUCT common_data;
-#if defined ZB_ENABLE_ZLL
-    ZB_PACKED_PRE struct
-    {
-/* 07/26/2017 EE CR:MINOR Kill that data structure. Utilize src_addr_ext. Kill upper one nesting level. */
-      zb_ieee_addr_t src_addr;  /**< Sender device extended address. */
-    } ZB_PACKED_STRUCT intrp_data;
-#endif /* defined ZB_ENABLE_ZLL */
   } addr_data;
-#if defined ZB_ENABLE_ZLL
-  zb_uint8_t rssi;          /**< RSSI of the packet. */
-#endif /* defined ZB_ENABLE_ZLL */
   zb_uint16_t cluster_id;
   zb_uint16_t profile_id;
 
@@ -1420,8 +1428,6 @@ void *zb_zcl_start_command_header(zb_bufid_t zbbuf, zb_uint8_t frame_ctl, zb_uin
       @par Example
       @snippet HA_samples/write_attr_test/sample_zed.c ZB_ZCL_PACKET
       @par
-
-    For more information see HA samples
 */
 
 /**

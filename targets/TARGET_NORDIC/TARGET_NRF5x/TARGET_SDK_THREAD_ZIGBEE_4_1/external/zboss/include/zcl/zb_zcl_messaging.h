@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2022 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* PURPOSE: Messaging cluster defintions
 */
@@ -344,9 +363,9 @@ typedef enum zb_zcl_messaging_message_control_message_confirmation_e
 /** Check if some size in range of variable size of specified payload.
  */
 #define ZB_ZCL_MESSAGING_DISPLAY_MSG_PAYLOAD_SIZE_IS_VALID(size) \
-((size) > ((zb_int16_t)sizeof(zb_zcl_messaging_display_message_payload_t) - \
-(zb_int16_t)ZB_SIZEOF_FIELD(zb_zcl_messaging_display_message_payload_t, \
-  message) - 1/*extended_message_control field is optional*/))
+((size) >= ((zb_int16_t)sizeof(zb_zcl_messaging_display_message_payload_t) - \
+(zb_int16_t)ZB_SIZEOF_FIELD(zb_zcl_messaging_display_message_payload_t, message) -\
+(zb_int16_t)ZB_SIZEOF_FIELD(zb_zcl_messaging_display_message_payload_t, extended_message_control)))
 
 /* 8/16/2017 NK CR:MINOR Do all compilers support such initializing? More common way to initialize
  * is to provide pointer as parameter and operate with it inside the macro. */
@@ -375,9 +394,9 @@ typedef ZB_PACKED_PRE struct zb_zcl_messaging_cancel_message_payload_s
 #define ZB_ZCL_MESSAGING_CANCEL_MSG_PAYLOAD_INIT \
   (zb_zcl_messaging_cancel_message_payload_t) {0}
 
-
-/* Get last message command has no payload */
-
+/** Check if some size in range of variable size of specified payload. */
+#define ZB_ZCL_MESSAGING_MSG_CANCEL_MESSAGE_SIZE_IS_VALID(size) \
+  ((size) >= sizeof(zb_zcl_messaging_cancel_message_payload_t))
 
 /** Message Confirmation Control
  * @see SE spec, Table D-120
@@ -441,17 +460,15 @@ typedef ZB_PACKED_PRE struct zb_zcl_messaging_get_message_cancellation_payload_s
 
 /** Check if some size in range of variable size of specified payload. */
 #define ZB_ZCL_MESSAGING_MSG_CONFIRM_PAYLOAD_SIZE_IS_VALID(size) \
-  ((size) <= sizeof(zb_zcl_messaging_message_confirm_payload_t)) && \
-  ((size) > sizeof(zb_zcl_messaging_message_confirm_payload_t) - \
-   ZB_SIZEOF_FIELD(zb_zcl_messaging_message_confirm_payload_t, \
-                   message_confirmation_response))
+  ((size) >= sizeof(zb_zcl_messaging_message_confirm_payload_t) - \
+   ZB_SIZEOF_FIELD(zb_zcl_messaging_message_confirm_payload_t, message_confirmation_control) -\
+   ZB_SIZEOF_FIELD(zb_zcl_messaging_message_confirm_payload_t, message_confirmation_response))
 
 typedef enum zb_zcl_messaging_response_type_e {
   ZB_ZCL_MESSAGING_RESPONSE_TYPE_NORMAL,
   ZB_ZCL_MESSAGING_RESPONSE_TYPE_PROTECTED,
   ZB_ZCL_MESSAGING_RESPONSE_TYPE_NOT_FOUND,
 } zb_zcl_messaging_response_type_t;
-
 
 /** According to SE spec, server could send following responses to
  *  @ref ZB_ZCL_MESSAGING_CLI_CMD_GET_LAST_MESSAGE "GetLastMessage" command:

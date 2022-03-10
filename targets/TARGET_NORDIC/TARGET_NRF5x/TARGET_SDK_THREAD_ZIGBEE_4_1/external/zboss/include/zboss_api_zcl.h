@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2021 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* PURPOSE: ZBOSS Zigbee cluster library API header
 */
@@ -175,9 +194,6 @@
 #include "zcl/zb_zcl_tunneling.h"
 #endif
 
-#if defined (ZB_ZCL_SUPPORT_CLUSTER_SUBGHZ)
-#include "zcl/zb_zcl_subghz.h"
-#endif
 #if defined (ZB_ZCL_SUPPORT_CLUSTER_PREPAYMENT)
 #include "zcl/zb_zcl_prepayment.h"
 #endif
@@ -185,25 +201,7 @@
 #include "zcl/zb_zcl_calendar.h"
 #endif
 
-#ifdef ZB_ENABLE_SE_CLUSTERS
-#if defined (ZB_ZCL_SUPPORT_CLUSTER_EVENTS)
-#include "zcl/zb_zcl_events.h"
-#endif
-#if defined (ZB_ZCL_SUPPORT_CLUSTER_ENERGY_MANAGEMENT)
-#include "zcl/zb_zcl_energy_mgmt.h"
-#endif
-#if defined (ZB_ZCL_SUPPORT_CLUSTER_MDU_PAIRING)
-#include "zcl/zb_zcl_mdu_pairing.h"
-#endif
-#if defined (ZB_ZCL_SUPPORT_CLUSTER_DEVICE_MANAGEMENT)
-#include "zcl/zb_zcl_device_management.h"
-#endif
-#endif /* ZB_ENABLE_SE_CLUSTERS */
 
-#ifdef ZB_ENABLE_CUSTOM_CLUSTERS
-#include "zcl/zb_zcl_tunnel.h"
-#include "zcl/zb_zcl_ir_blaster.h"
-#endif /* ZB_ENABLE_CUSTOM_CLUSTERS */
 
 #if defined ZB_ENABLE_ZGP_CLUSTER
 //#include "zgp/zgp_internal.h"
@@ -946,7 +944,7 @@ typedef enum zb_zcl_device_callback_id_e
    */
   ZB_ZCL_TUNNELING_CLOSE_TUNNEL_CB_ID,
 
-#if defined ZB_ENABLE_SE || defined ZB_ZCL_SUPPORT_CLUSTER_CALENDAR || DOXYGEN
+#if defined ZB_ENABLE_SE || defined ZB_ZCL_SUPPORT_CLUSTER_CALENDAR || defined DOXYGEN
   /** @cond DOXYGEN_ZCL_SECTION && DOXYGEN_SE_SECTION */
   /** @b Server. Inform user about GetProfile request.
    *
@@ -1199,10 +1197,18 @@ typedef enum zb_zcl_device_callback_id_e
    *
    */
   ZB_ZCL_DAILY_SCHEDULE_CANCEL_SCHEDULE_CB_ID,
+  /** @b Client. Inform user about CancelAllSchedules cmd.
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - command is handled successfully.
+   * @return RET_ERROR - command is handled with errors.
+   *
+   */
+  ZB_ZCL_DAILY_SCHEDULE_CANCEL_ALL_SCHEDULES_CB_ID,
   /** @endcond */ /* DOXYGEN_ZCL_SECTION && DOXYGEN_SE_SECTION */
 #endif /* ZB_ENABLE_SE || ZB_ZCL_SUPPORT_CLUSTER_DAILY_SCHEDULE */
 
-#if defined ZB_ENABLE_SE || defined ZB_ZCL_SUPPORT_CLUSTER_ENERGY_MANAGEMENT || DOXYGEN
+#if defined ZB_ENABLE_SE || defined ZB_ZCL_SUPPORT_CLUSTER_ENERGY_MANAGEMENT || defined DOXYGEN
   /** @cond DOXYGEN_ZCL_SECTION && DOXYGEN_SE_SECTION */
   /** @b Client. Inform user about ReportEventStatus request
    *
@@ -1371,11 +1377,6 @@ typedef enum zb_zcl_device_callback_id_e
   /** Inform user about APS fragmented data transfer completion */
   ZB_ZCL_BIG_DATA_TRANSFER_COMPLETE_CB_ID,
 /** @endcond */ /* DOXYGEN_INTERNAL_DOC */
-#ifdef ZB_ENABLE_SE
-  /** Inform user about Time receiving from Time server */
-  ZB_ZCL_TIME_SYNC_CB_ID,
-  ZB_ZCL_TIME_SYNC_FAILED_CB_ID,
-#endif /* ZB_ENABLE_SE */
   /** @b Server. Inform user about Window Covering Up/Open command.
    *
    * User's application callback is initialized by RET_OK status of device
@@ -1640,12 +1641,6 @@ typedef enum zb_zcl_device_callback_id_e
    *
    */
   ZB_ZCL_ALARMS_RESET_ALL_ALARMS_CB_ID,
-#ifdef ZB_ENABLE_CUSTOM_CLUSTERS
-  ZB_ZCL_IR_BLASTER_TRANSMIT_IR_DATA_CB_ID,
-  ZB_ZCL_IR_BLASTER_TRANSMISSION_STATUS_CB_ID,
-  ZB_ZCL_IR_BLASTER_GET_IR_SIGNATURE_CB_ID,
-  ZB_ZCL_IR_BLASTER_GET_IR_SIGNATURE_RESP_CB_ID,
-#endif /* ZB_ENABLE_CUSTOM_CLUSTERS */
   /** @b Client. Inform user about Alarms Alarm command.
    * User's application callback is initialized by RET_OK status of device
    * callback parameters.
@@ -1784,12 +1779,6 @@ typedef struct zb_zcl_device_callback_param_s
 #endif
 #if defined (ZB_ZCL_SUPPORT_CLUSTER_IAS_WD)
    zb_zcl_ias_wd_squawk_value_param_t  squawk_value_param;
-#endif
-#ifdef ZB_ZCL_SUPPORT_CLUSTER_IR_BLASTER
-   zb_zcl_ir_blaster_transmit_ir_data_value_param_t irb_tr_value_param;
-   zb_zcl_ir_blaster_transmission_status_value_param_t irb_tr_status_value_param;
-   zb_zcl_ir_blaster_get_ir_signature_value_param_t irb_get_ir_sig_value_param;
-   zb_zcl_ir_blaster_get_ir_signature_resp_value_param_t irb_get_ir_sig_resp_value_param;
 #endif
 #if defined ZB_ENABLE_HA
 #if defined ZB_HA_ENABLE_OTA_UPGRADE_CLIENT || defined DOXYGEN
@@ -1944,8 +1933,12 @@ enum zb_bdb_error_codes_e
   ZB_BDB_STATUS_NO_IDENTIFY_QUERY_RESPONSE,  /*!< No response to an identify query command has been received during finding and binding.*/
   ZB_BDB_STATUS_BINDING_TABLE_FULL,          /*!< A binding table entry could not be created due to insufficient space in the binding table during finding and binding. */
   ZB_BDB_STATUS_NO_SCAN_RESPONSE,            /*!< No response to a scan request inter-PAN command has been received during touchlink. */
-  ZB_BDB_STATUS_NOT_PERMITTED,               /*!< A touchlink (steal) attempt was made when a node is already connected to a centralized security network.*/
-  ZB_BDB_STATUS_TCLK_EX_FAILURE              /*!< The Trust Center link key exchange procedure has failed attempting to join a centralized security network.*/
+  ZB_BDB_STATUS_NOT_PERMITTED,               /*!< A touchlink (steal) attempt was made when a node is already connected to a centralized security network.
+                                                  A node was instructed to form a network when it did not have a logical type of either Zigbee coordinator or Zigbee router.*/
+  ZB_BDB_STATUS_TCLK_EX_FAILURE,             /*!< The Trust Center link key exchange procedure has failed attempting to join a centralized security network.*/
+  ZB_BDB_STATUS_NOT_ON_A_NETWORK,            /*!< A commissioning procedure was forbidden since the node was not currently on a network.*/
+  ZB_BDB_STATUS_ON_A_NETWORK,                /*!< A commissioning procedure was forbidden since the node was currently on a network.*/
+  ZB_BDB_STATUS_CANCELLED                    /*!< The current operation (steering or formation) was cancelled by an app */
 };
 /** @endcond */ /* internals_doc */
 /** @} */
@@ -1955,7 +1948,9 @@ enum zb_bdb_error_codes_e
    @{
 */
 
-/** @brief BDB commissioning mode mask bits */
+/** @brief BDB commissioning mode mask bits
+ * This bitmask is out of BDB 3.1 spec but will continue to be used internally and as a parameter to the commissioning API
+*/
 typedef enum zb_bdb_commissioning_mode_mask_e
 {
   /** @cond internals_doc */
@@ -1977,7 +1972,6 @@ typedef enum zb_bdb_commissioning_mode_mask_e
                           1 = Attempt to form a network, according to device type2
    */
   ZB_BDB_NETWORK_FORMATION = 4,
-  /** @cond internals_doc */
   /** Finding and binding: 0 = Do not attempt finding and binding;
                           1 = Attempt finding and binding
     @note actually this mode does not call finding and binding procedure. Use
@@ -1985,52 +1979,99 @@ typedef enum zb_bdb_commissioning_mode_mask_e
    */
   ZB_BDB_FINDING_N_BINDING = 8,
 
+  /** @cond internals_doc */
   /* Used internally */
   ZB_BDB_LAST_COMMISSIONING_STEP = 0x10,
   /* Used internally */
   ZB_BDB_COMMISSIONING_STOP = 0x20,
+  /** @endcond */ /* internals_doc */
 
   /** @cond touchlink */
   /* Used internally */
   ZB_BDB_TOUCHLINK_TARGET = 0x40,
   /** @endcond */ /* touchlink */
 #ifndef BDB_OLD
+  /** @cond internals_doc */
   /* Used internally */
   ZB_BDB_REJOIN = 0x80,
+  /** @endcond */ /* internals_doc */
 #endif
 } zb_bdb_commissioning_mode_mask_t;
 
 /**
-   @brief Start top level commissioning procedure with specified mode mask.
+   @brief Start device commissioning procedure specified step.
+
+   Performs steering and network formation if appropriate for the device type. Finding and binding is not performed by this function (see note at @ref ZB_BDB_FINDING_N_BINDING)
+
    When the selected commissioning procedure finishes one of the following ZBOSS signals is generated:
     - @ref ZB_BDB_SIGNAL_STEERING
     - @ref ZB_BDB_SIGNAL_FORMATION
 
-   @param mode_mask - commissioning modes, see @ref zb_bdb_commissioning_mode_mask_e
+   @param mode_mask - bitmask of commissioning steps to perform, see @ref zb_bdb_commissioning_mode_mask_e
 
    @return ZB_TRUE - in case the device starts successfully
    @return ZB_FALSE - ZB_FALSE -- in case an error occurred (for example: the device has already been running)
 
    @b Example:
-   @code
-   zb_zdo_app_signal_hdr_t *sg_p = NULL;
-   zb_zdo_app_signal_type_type_t sig = zb_get_app_signal(param, &sg_p);
-
-   switch(sig)
-     {
-       case ZB_BDB_SIGNAL_DEVICE_FIRST_START:
-         TRACE_MSG(TRACE_APP1, "Device STARTED OK", (FMT__0));
-         zb_bdb_set_legacy_device_support(1);
-         bdb_start_top_level_commissioning(ZB_BDB_NETWORK_STEERING);
-         break;
-
-       case ZB_BDB_SIGNAL_STEERING:
-         TRACE_MSG(TRACE_APP1, "Successful steering", (FMT__0));
-         break;
-     }
-   @endcode
+   @snippet linky_sample/erl_gw/erl_gw.c bdb_start_top_level_commissioning_snippet
   */
 zb_bool_t bdb_start_top_level_commissioning(zb_uint8_t mode_mask);
+
+/**
+   @brief Cancel Steering procedure for a node not on a network started with
+   bdb_start_top_level_commissioning(ZB_BDB_NETWORK_STEERING).
+   The ZBOSS signal ZB_BDB_SIGNAL_STEERING_CANCELLED with the status of this operation will be
+   raised.
+   Possible statuses:
+   - RET_ILLEGAL_REQUEST (device is a ZC)
+   - RET_INVALID_STATE (steering for a node not a network is not in progress)
+   - RET_PENDING (it is too late to cancel a steering, it will be completed soon)
+   - RET_IGNORE (cancellation was already requested)
+   - RET_OK (steering is cancelled successfully)
+
+   If the steering is cancelled the signal ZB_BDB_SIGNAL_STEERING with the status
+   ZB_BDB_STATUS_CANCELLED will be raised as well.
+
+   @param buf - a ZBOSS buffer
+*/
+void bdb_cancel_joining(zb_bufid_t buf);
+
+
+/**
+   @brief Cancel Formation procedure started with bdb_start_top_level_commissioning(ZB_BDB_NETWORK_FORMATION).
+   The ZBOSS signal ZB_BDB_SIGNAL_FORMATION_CANCELLED with the status of the operation will be
+   raised.
+   Possible statuses:
+   - RET_INVALID_STATE (formation is not in progress)
+   - RET_PENDING (it is too late to cancel a formation, it will be completed soon)
+   - RET_IGNORE (cancellation was already requested)
+   - RET_OK (formation is cancelled successfully)
+
+   If the formation is cancelled the signal ZB_BDB_SIGNAL_FORMATION with the status
+   ZB_BDB_STATUS_FORMATION will be raised as well.
+
+   @param buf - a ZBOSS buffer
+*/
+void bdb_cancel_formation(zb_bufid_t buf);
+
+/**
+ * @brief Close the network
+ *
+ * Implements BDB 3.0.1 - 8.1.1 "Local disabling of Network Steering."
+ *
+ * Will broadcast a Mgmt_Permit_Joining_req with PermitDuration of 0
+ *
+ * In case it is a router or coordinator it will also issue NLME-PERMIT-JOINING.request primitive with PermitDuration of 0
+ * The ZBOSS signal @ref ZB_NWK_SIGNAL_PERMIT_JOIN_STATUS will be raised with @ref zb_zdo_mgmt_permit_joining_req_param_t.permit_duration of 0
+ *
+ * @param buf - a ZBOSS buffer, if zero is passed, a new buffer will be allocated
+ * @return RET_OK if broadcast was successful
+ * @return RET_NO_MEMORY if buffer allocation failed
+ * @return RET_ERROR if any error occured
+ *
+ * @snippet thermostat/thermostat_zr/thermostat_zr.c close_network_example
+ */
+zb_ret_t zb_bdb_close_network(zb_bufid_t buf);
 
 /**
    Check if device is factory new.
@@ -2061,6 +2102,8 @@ zb_bool_t zb_bdb_is_factory_new(void);
 
    @param endpoint - target endpoint
    @return RET_OK if procedure was successfully started
+   @return RET_INVALID_PARAMETER_1 - target endpoint not registered
+   @return RET_INVALID_STATE - Finding and Binding already started or device is not joined
 
    @note: endpoint should be registered on target
 
@@ -2068,6 +2111,19 @@ zb_bool_t zb_bdb_is_factory_new(void);
    @snippet onoff_server/on_off_output_zc.c zb_bdb_finding_binding_target_usage
   */
 zb_ret_t zb_bdb_finding_binding_target(zb_uint8_t endpoint);
+
+  /**
+   @brief Starts EZ-Mode Finding and binding mechanism at the target's endpoint with a given timeout
+
+   @param endpoint - target endpoint
+   @param commissioning_time_secs - time interval for device to be in identifying mode in seconds. Can't be less than 3 minutes
+
+   @return RET_OK on success
+   @return RET_INVALID_PARAMETER_1 - target endpoint not registered
+   @return RET_INVALID_PARAMETER_2 - commissioning_time_secs is less than ZB_BDBC_MIN_COMMISSIONING_TIME_S
+   @return RET_INVALID_STATE - Finding and Binding already started or device is not joined
+  */
+zb_ret_t zb_bdb_finding_binding_target_ext(zb_uint8_t endpoint, zb_uint8_t commissioning_time_secs);
 
 
 /**
@@ -2248,14 +2304,11 @@ typedef zb_bool_t (*zb_zcl_read_attr_resp_handler_t)(zb_bufid_t);
 #if defined ZB_ENABLE_SE || defined ZB_BDB_ENABLE_FINDING_BINDING || defined ZB_ZCL_SUPPORT_CLUSTER_WWAH
 typedef struct zb_zcl_func_selector_s
 {
-#ifdef ZB_ENABLE_SE
-  zb_zcl_is_high_freq_msg_func_t is_high_freq_msg;
-#endif /* ZB_ENABLE_SE */
 
 #if defined ZB_SE_COMMISSIONING || (defined ZB_ZCL_SUPPORT_CLUSTER_WWAH && defined ZB_ZCL_ENABLE_WWAH_SERVER)
   zb_zcl_block_zcl_cmd_t block_zcl_cmd;
   zb_zcl_read_attr_resp_handler_t read_attr_resp_handler;
-#endif /* ZB_SE_COMMISSINONING || (ZB_ZCL_SUPPORT_CLUSTER_WWAH && ZB_ZCL_ENABLE_WWAH_SERVER) */
+#endif /* ZB_SE_COMMISSIONING || (ZB_ZCL_SUPPORT_CLUSTER_WWAH && ZB_ZCL_ENABLE_WWAH_SERVER) */
 
 #ifdef ZB_BDB_ENABLE_FINDING_BINDING
   zb_callback_t process_identify_query_res;
@@ -2323,9 +2376,6 @@ typedef struct zb_zcl_globals_s
 #endif /* ZB_CONTROL4_NETWORK_SUPPORT */
   zb_uint8_t zcl_handlers_cnt;
   zb_discover_cmd_list_t *zb_zcl_cluster_cmd_list;
-#ifdef ZB_ZCL_SUPPORT_CLUSTER_SUBGHZ
-  zb_zcl_subghz_ctx_t subghz_ctx;         /* Sub-GHz cluster context of current device */
-#endif /* ZB_ZCL_SUPPORT_CLUSTER_SUBGHZ */
 #if (defined ZB_ZCL_SUPPORT_CLUSTER_WWAH && (defined ZB_ZCL_ENABLE_WWAH_SERVER || defined ZB_ZCL_ENABLE_WWAH_CLIENT))
   /* TODO: Split (client/server) ! */
   zb_zcl_wwah_context_t wwah_ctx;
@@ -2394,8 +2444,5 @@ zb_bool_t zb_zcl_send_default_handler(zb_uint8_t param,
 void zb_zcl_send_default_resp_ext(zb_uint8_t param,
   const zb_zcl_parsed_hdr_t *cmd_info, zb_zcl_status_t status);
 
-#if defined ZB_APS_ENCRYPTION_PER_CLUSTER
-void zb_zcl_set_cluster_encryption(zb_uint8_t endpoint_id, zb_uint16_t cluster_id, zb_uint8_t encrypt);
-#endif /* ZB_APS_ENCRYPTION_PER_CLUSTER */
 
 #endif /* ZBOSS_API_ZCL_H */

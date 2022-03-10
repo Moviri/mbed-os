@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2022 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* PURPOSE: On/Off cluster definitions
 */
@@ -43,7 +62,6 @@
  *
  *    Other two commands can be sent in the same way using appropriate macros.
  *
- *    For more information see 5.7.3_onoff_server sample
  */
 
 /* Cluster ZB_ZCL_CLUSTER_ID_ON_OFF */
@@ -164,6 +182,8 @@ enum zb_zcl_on_off_cmd_e
 
 #define ZB_ZCL_CLUSTER_ID_ON_OFF_SERVER_ROLE_RECEIVED_CMD_LIST ZB_ZCL_CLUSTER_ID_ON_OFF_CLIENT_ROLE_GENERATED_CMD_LIST
 
+/** @endcond */ /* internals_doc */
+
 /*! @brief General macro for sending On/Off cluster command
     @param buffer to put data to
     @param addr - address of the device to send command to
@@ -185,8 +205,6 @@ enum zb_zcl_on_off_cmd_e
   ZB_ZCL_SEND_COMMAND_SHORT(                                                            \
       buffer, addr, dst_addr_mode, dst_ep, ep, prof_id, ZB_ZCL_CLUSTER_ID_ON_OFF, cb);  \
 }
-
-/** @endcond */ /* internals_doc */
 
 /*! Specific macro for sending Off command */
 #define ZB_ZCL_ON_OFF_SEND_OFF_REQ(                                         \
@@ -326,7 +344,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_on_off_on_with_timed_off_req_s
   */
 #define ZB_ZCL_ON_OFF_GET_OFF_WITH_EFFECT_REQ(data_ptr, buffer, status)             \
 {                                                                                   \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_on_off_off_with_effect_req_t))          \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_on_off_off_with_effect_req_t))           \
   {                                                                                 \
    (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                                          \
   }                                                                                 \
@@ -348,7 +366,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_on_off_on_with_timed_off_req_s
   */
 #define ZB_ZCL_ON_OFF_GET_ON_WITH_TIMED_OFF_REQ(data_ptr, buffer, status)           \
 {                                                                                   \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_on_off_on_with_timed_off_req_t))        \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_on_off_on_with_timed_off_req_t))         \
   {                                                                                 \
    (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                                          \
   }                                                                                 \

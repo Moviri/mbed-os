@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2021 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*  PURPOSE: ZBOSS core API header. Time, scheduler and memory buffers API.
 */
@@ -40,7 +59,6 @@
  *
  *   @param param - callback parameter - usually, but not always, ref to packet buf
  *
- *   See any sample
  */
 typedef void (ZB_CODE * zb_callback_t)(zb_uint8_t param);
 
@@ -51,7 +69,6 @@ typedef void (ZB_CODE * zb_callback_t)(zb_uint8_t param);
  *   @param param - callback parameter - usually, but not always, ref to packet buf
  *   @param cb_param - additional 2-byte callback parameter, user data.
  *
- *   See any sample
  */
 typedef void (ZB_CODE * zb_callback2_t)(zb_uint8_t param, zb_uint16_t cb_param);
 /*! @} */
@@ -175,17 +192,37 @@ zb_time_t zb_timer_get(void);
 
 
 #ifdef ZB_TIMER_32
+
 /**
-  Convert time from milliseconds to beacon intervals (32-bit platforms).
+  Convert time from milliseconds to beacon intervals (32-bit platforms). Round the result up.
 */
-#define ZB_MILLISECONDS_TO_BEACON_INTERVAL(ms) (((zb_time_t)(ms) * 1000U + (ZB_BEACON_INTERVAL_USEC - 1U)) / ZB_BEACON_INTERVAL_USEC)
+#define ZB_MILLISECONDS_TO_BEACON_INTERVAL_CEIL(ms) (((zb_time_t)(ms) * 1000U + (ZB_BEACON_INTERVAL_USEC - 1U)) / ZB_BEACON_INTERVAL_USEC)
+
+/**
+  Convert time from milliseconds to beacon intervals (32-bit platforms). Round the result down.
+*/
+#define ZB_MILLISECONDS_TO_BEACON_INTERVAL_FLOOR(ms) ((zb_time_t)(ms) * 1000U / ZB_BEACON_INTERVAL_USEC)
+
 #else
 /**
   Convert time from milliseconds to beacon intervals
-  Try to not cause overflow in 16-bit arithmetic (with some precision lost...)
+  Try to not cause overflow in 16-bit arithmetic (with some precision lost...).
+  Round the result down.
 */
-#define ZB_MILLISECONDS_TO_BEACON_INTERVAL(ms) (((10UL * (zb_time_t)(ms) + (ZB_BEACON_INTERVAL_USEC / 100U - 1U)) / (ZB_BEACON_INTERVAL_USEC / 100U)))
+#define ZB_MILLISECONDS_TO_BEACON_INTERVAL_FLOOR(ms) (((10UL * (zb_time_t)(ms) + 0U) / (ZB_BEACON_INTERVAL_USEC / 100U)))
+
+/**
+  Convert time from milliseconds to beacon intervals
+  Try to not cause overflow in 16-bit arithmetic (with some precision lost...).
+  Round the result up.
+*/
+#define ZB_MILLISECONDS_TO_BEACON_INTERVAL_CEIL(ms) (((10UL * (zb_time_t)(ms) + (ZB_BEACON_INTERVAL_USEC / 100U - 1U)) / (ZB_BEACON_INTERVAL_USEC / 100U)))
 #endif
+
+/**
+  Convert time from milliseconds to beacon intervals.
+*/
+#define ZB_MILLISECONDS_TO_BEACON_INTERVAL(ms) ZB_MILLISECONDS_TO_BEACON_INTERVAL_CEIL(ms)
 
 /**
  * Beacon interval in microseconds
@@ -283,7 +320,6 @@ zb_time_t zb_timer_get(void);
 
     @return RET_OK or error code.
 
-    See sched sample
 */
 zb_ret_t zb_schedule_app_callback(zb_callback_t func, zb_uint8_t param);
 /** @endcond */ /* internals_doc */
@@ -297,7 +333,6 @@ zb_ret_t zb_schedule_app_callback(zb_callback_t func, zb_uint8_t param);
 
    @return RET_OK or RET_OVERFLOW.
 
-   See sched sample
  */
 #ifndef ZB_SCHEDULE_APP_CALLBACK
 #define ZB_SCHEDULE_APP_CALLBACK(func, param) zb_schedule_app_callback(func, param)
@@ -327,7 +362,6 @@ zb_ret_t zb_schedule_app_callback2(zb_callback2_t func, zb_uint8_t param, zb_uin
    @param user_param - zb_uint16_t user parameter - usually, but not always short address
 
    @return RET_OK or RET_OVERFLOW.
-   See sched sample
  */
 #ifndef ZB_SCHEDULE_APP_CALLBACK2
 #define ZB_SCHEDULE_APP_CALLBACK2(func, param, user_param) zb_schedule_app_callback2(func, param, user_param)
@@ -350,7 +384,6 @@ zb_ret_t zb_schedule_app_alarm(zb_callback_t func, zb_uint8_t param, zb_time_t r
    @param timeout_bi - timeout, in beacon intervals
    @return RET_OK or RET_OVERFLOW
 
-   See any sample
  */
 #ifndef ZB_SCHEDULE_APP_ALARM
 #define ZB_SCHEDULE_APP_ALARM(func, param, timeout_bi) zb_schedule_app_alarm(func, param, timeout_bi)
@@ -382,7 +415,6 @@ zb_ret_t zb_schedule_app_alarm(zb_callback_t func, zb_uint8_t param, zb_time_t r
    @param p_param - [out] pointer of ref buffer from cancelled flag: free buffer if its alarm will be cancel
    @return RET_OK or error code
 
-   See reporting_srv sample
  */
 zb_ret_t zb_schedule_alarm_cancel(zb_callback_t func, zb_uint8_t param, zb_uint8_t *p_param);
 /** @endcond */ /* internals_doc */
@@ -396,7 +428,6 @@ zb_ret_t zb_schedule_alarm_cancel(zb_callback_t func, zb_uint8_t param, zb_uint8
    @param param - parameter to cancel. \see ZB_ALARM_ANY_PARAM. \see ZB_ALARM_ALL_CB
    @return RET_OK or RET_OVERFLOW
 
-   See reporting_srv sample
  */
 #ifndef ZB_SCHEDULE_APP_ALARM_CANCEL
 #define ZB_SCHEDULE_APP_ALARM_CANCEL(func, param) zb_schedule_alarm_cancel((func), (param), NULL)
@@ -424,6 +455,22 @@ zb_ret_t zb_schedule_get_alarm_time(zb_callback_t func, zb_uint8_t param, zb_tim
    @return RET_OK or error code
 */
 #define ZB_SCHEDULE_GET_ALARM_TIME(func, param, timeout_bi) zb_schedule_get_alarm_time(func, param, timeout_bi)
+
+/** @cond internals_doc */
+/**
+   Is scheduler stop - Is scheduler running now
+
+   @return ZB_TRUE in case of scheduler is stopped or ZB_FALSE otherwise
+ */
+zb_bool_t zb_scheduler_is_stop(void);
+/** @endcond */ /* internals_doc */
+
+/**
+   Is scheduler stop - Is scheduler running now
+
+   @return ZB_TRUE in case of scheduler is stopped or ZB_FALSE otherwise
+*/
+#define ZB_SCHEDULER_IS_STOP() zb_scheduler_is_stop()
 
 /*! @} */
 
@@ -493,7 +540,7 @@ void zb_generate_prbs9(zb_uint8_t *dest, zb_uint16_t cnt, zb_uint16_t seed);
 /**
    Copy 8 byte array (i.e. long address).
  */
-void zb_memcpy8(zb_uint8_t *ptr, zb_uint8_t *src);
+void zb_memcpy8(void *vptr, void *vsrc);
 /** @endcond */ /* internals_doc */
 
 /**

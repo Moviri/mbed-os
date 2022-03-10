@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2021 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* PURPOSE: common definitions for ZGP profile
 */
@@ -313,15 +332,24 @@ zgps_dev_cluster_rec_t;
 
 typedef ZB_PACKED_PRE union zgps_device_id_u
 {
+  /* dev_id.zgpd_dev_id matches with ZGPD Device ID from Commissioning frame @see zb_zgpd_dev_id_t */
   zb_uint8_t  zgpd_dev_id;
+  /* match with app_info.manuf_model_id. */
   zb_uint16_t	zgpd_manuf_model;
 }
 zgps_device_id_t;
 
 typedef ZB_PACKED_PRE struct zgps_dev_match_rec_s
 {
+  /* Cluster idxes possible for that device id. Not used slots must be filled by ZB_ZCL_CLUSTER_IDX_UNDEFINED.
+     Cluster idx - index in zgps_dev_cluster_rec_t clusters_tbl[].
+   */
   zb_uint16_t		clusters[ZB_ZGP_TBL_MAX_CLUSTERS];
   zb_uint16_t           manuf_id;
+  /* match with device info from Commissioning frame:
+     if zgpd_dev_id != ZB_ZGP_MANUF_SPECIFIC_DEV_ID, match by GPD Device id
+     if zgpd_dev_id == ZB_ZGP_MANUF_SPECIFIC_DEV_ID, match by app_info.manuf_model_id
+  */
   zgps_device_id_t 	dev_id;
 }
 ZB_PACKED_STRUCT zgps_dev_match_rec_t;
@@ -329,6 +357,25 @@ ZB_PACKED_STRUCT zgps_dev_match_rec_t;
 #define IS_STANDART_ZGPS_DEVICE(dev_match_rec) \
   (dev_match_rec->manuf_id == ZB_ZGPD_MANUF_ID_UNSPEC)
 /** @endcond */ /* DOXYGEN_INTERNAL_DOC */
+
+
+/*
+  Using of match table.
+
+  Match table is a static const data declared in the application.
+
+  During GPD commissioning, using information from Commissiponing frame, ZBOSS seeks for matched entry in match_tbl.
+  Match is done by device id or model id - see calls to zb_zgps_get_dev_matching_tbl_index() or zb_zgps_get_ms_dev_matching_tbl_index()
+  Entry index is written into the Sink table.
+
+  Command translation (without details about attr reporting):
+  - get Sink table entry by GPD address
+  - get matxh_tbl entry by index in Sink table.
+  - scan entire match_tbl[]: use match_tbl[i].clusters as an index in clusters_tbl.
+  - in each clusters_tbl entry scan clusters_tbl[i].cmd_ids[] for matching GPD command
+  - seek for appropriate clister in out local Simple desc (decide which EP to map to)
+  - map GPD command to ZCL command by scanning cmd_mapping[]
+ */
 
 /**
  * @brief Necessary information for filling translation table for any ZGPD
@@ -340,10 +387,12 @@ ZB_PACKED_STRUCT zgps_dev_match_rec_t;
 typedef struct zb_zgps_match_info_s
 {
   const zb_uint8_t                       match_tbl_size;
+  /* clusters list to be matched by device id or manufacturer id got from Commissioning frame. */
   const ZB_CODE zgps_dev_match_rec_t    *match_tbl;
   const zb_uint8_t                       cmd_mappings_count;
   const ZB_CODE zgp_to_zb_cmd_mapping_t *cmd_mapping;
   const zb_uint8_t                       clusters_tbl_size;
+  /* clusters table used to translate ZB_GPDF_CMD_ATTR_REPORT / ZB_GPDF_CMD_MANUF_SPEC_ATTR_REPORT */
   const ZB_CODE zgps_dev_cluster_rec_t  *clusters_tbl;
 }
 zb_zgps_match_info_t;
@@ -389,8 +438,6 @@ enum zb_zgp_data_handle_e
 #define ZB_CGP_DATA_REQ_USE_MAC_ACK_BIT 0X02
 
 #endif  /* ZB_ENABLE_ZGP_DIRECT */
-/*! @} */
-/*! @endcond */
 
 /********************************************************************/
 /*********************** Proxy definitions **************************/
@@ -430,8 +477,7 @@ typedef enum zgp_commissioning_exit_mode_e
                                                                      ZGP_COMMISSIONING_EXIT_MODE_ON_GP_PROXY_COMMISSIONING_MODE_EXIT)
 } zgp_commissioning_exit_mode_t;
 
-/*! @}
- *  @endcond*/
+/*! @} */
 
 /********************************************************************/
 /******************** Commissioning definitions *********************/
@@ -459,11 +505,11 @@ typedef enum zb_zgp_comm_status_e
   /** No functionality match with commissioning device is found.
    *  Maybe matching table is not provided by user application */
   ZB_ZGP_COMMISSIONING_NO_MATCH_ERROR,
-  /** Commissioning failed, because some internal error occured in stack.
+  /** Commissioning failed, because some internal error occurred in stack.
    * This type of error is recoverable, so next commissioning attempt can
    * be successful */
   ZB_ZGP_COMMISSIONING_INTERNAL_ERROR,
-  /** Commissioning failed, because some critical error has occured.
+  /** Commissioning failed, because some critical error has occurred.
    * Normal functioning of ZGP subsystem is not possible
    * (e.g. physical operational channel can't be changed) */
   ZB_ZGP_COMMISSIONING_CRITICAL_ERROR,
@@ -853,6 +899,10 @@ typedef ZB_PACKED_PRE struct zb_gpdf_comm_switch_gen_cfg_s
   zb_bitfield_t switch_type:2;
   zb_bitfield_t reserved:2;
 }ZB_PACKED_STRUCT zb_gpdf_comm_switch_gen_cfg_t;
+
+/* DEPRECATED: Typo in structure field was fixes -
+ * old name, with the typo, will be removed in the next Major release */
+#define num_of_contacs num_of_contacts
 
 typedef struct zb_gpdf_comm_switch_info_s
 {
@@ -1333,7 +1383,7 @@ void zb_zgps_send_data(zb_uint8_t param);
  * It is safe to call this function when device is already in
  * commissioning mode. In this case function does nothing.
  *
- * @param timeout [in]  Maximum commissioning time in beacon intervals. \n
+ * @param[in] timeout       Maximum commissioning time in beacon intervals. \n
  *                      0 means no timeout. \n
  *                      If timeout occurs, then result of commissioning is
  *                      @ref ZB_ZGP_COMMISSIONING_TIMED_OUT
@@ -1488,11 +1538,11 @@ void zb_zgps_set_communication_mode(zgp_communication_mode_t mode);
  *
  * Note: The translation is done to GPDF command ID, not to ZCL command ID.
  *
- * @param vector_8bit_cmd_id[in] incoming command ID: press (0x69) or release(0x6a)
- * @param switch_type[in] switch type of the command's originator (see ZGP spec. A.4.2.1.1.10)
- * @param num_of_contacts[in] number of contacts command's originator provides
- * @param contact_status[in] contacts status from the payload of the received command
- * @param zgp_cmd_out[out] GPDF command ID to which incoming command should be translated
+ * @param[in] vector_8bit_cmd_id incoming command ID: press (0x69) or release(0x6a)
+ * @param[in] switch_type switch type of the command's originator (see ZGP spec. A.4.2.1.1.10)
+ * @param[in] num_of_contacts number of contacts command's originator provides
+ * @param[in] contact_status contacts status from the payload of the received command
+ * @param[out] zgp_cmd_out GPDF command ID to which incoming command should be translated
  * @return RET_OK if translation is successful.
  *
  * See Green Power Basic specification v1.1.1, chapters A.3.6.2.2.2, A.4.2.2.1 for more information.
@@ -1654,7 +1704,7 @@ void zb_zgp_cluster_gp_pairing_req(zb_uint8_t     param,
                                    zb_callback_t  cb);
 
 /**
- * @brief Perform send zcl gp sink table request for ZGP clister
+ * @brief Perform send zcl gp sink table request for ZGP cluster
  *
  * @param buf_ref        [in]  Buffer reference
  * @param dst_addr       [in]  Destination address
@@ -1676,7 +1726,7 @@ void zgp_cluster_send_gp_sink_table_request(zb_uint8_t    buf_ref,
                                             zb_callback_t cb);
 
 /**
- * @brief Perform send zcl gp proxy table request for ZGP clister
+ * @brief Perform send zcl gp proxy table request for ZGP cluster
  *
  * @param buf_ref        [in]  Buffer reference
  * @param dst_addr       [in]  Destination address
@@ -1713,7 +1763,7 @@ typedef ZB_PACKED_PRE struct zgp_pair_group_list_s
 }
 ZB_PACKED_STRUCT zgp_pair_group_list_t;
 
-/* >> Data structures for Application Desription */
+/* >> Data structures for Application Description */
 typedef enum zgp_app_descr_status_e
 {
   ZGP_APP_TBL_ENT_STATUS_FREE              = 0,
@@ -1756,7 +1806,7 @@ typedef struct zgp_runtime_app_tbl_ent_s
   zgp_app_tbl_ent_t base;
 }zgp_runtime_app_tbl_ent_t;
 
-/* << Data structures for Application Desription */
+/* << Data structures for Application Description */
 
 typedef struct zgp_tbl_ent_s
 {
@@ -1767,7 +1817,7 @@ typedef struct zgp_tbl_ent_s
 
   zb_uint32_t      security_counter; /**< The incoming security frame counter for ZGPD */
   zb_uint8_t       zgpd_key[ZB_CCM_KEY_SIZE]; /**< Security key for the GPD */
-  zb_uint8_t       endpoint;
+  zb_uint8_t       endpoint;                  /**< Endpoint pair of IEEE:EP if App ID is 010.  */
   zb_uint8_t       sec_options;               /**< Security options */
   zb_uint8_t       groupcast_radius;    /**< To limit the range of the groupcast */
 
@@ -1786,9 +1836,9 @@ typedef struct zgp_tbl_ent_s
     } proxy;
     struct zgp_sink_tbl_ent_s
     {
-      zb_uint8_t       device_id;           /**< ZGPD Device ID @see zb_zgpd_dev_id_t */
+      zb_uint8_t       device_id;           /**< ZGPD Device ID fot from Commissioning frame @see zb_zgpd_dev_id_t */
       zgp_pair_group_list_t sgrp[ZB_ZGP_MAX_SINK_GROUP_PER_GPD];
-      zb_uint8_t match_dev_tbl_idx;
+      zb_uint8_t match_dev_tbl_idx; /**< index in matching table matched by device_id or app_info.manuf_model_id  */
       /**
        * Extension to the table (field is not presented in specification).
        *

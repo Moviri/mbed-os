@@ -1,30 +1,51 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2022 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* PURPOSE: ZigBee trace. Application should include it.
 */
 #ifndef ZB_LOGGER_H
 #define ZB_LOGGER_H 1
 
+#ifdef ZB_TRACE_USE_VA_LIST
 #include <stdarg.h>
+#endif
 
 /** @cond DOXYGEN_DEBUG_SECTION */
 /**
@@ -142,6 +163,7 @@ extern zb_uint_t g_trace_inside_intr;
 #define TRACE_SUBSYSTEM_JSON      0x1000000U /**< JSON subsystem */
 #define TRACE_SUBSYSTEM_HTTP      0x2000000U /**< HTTP subsystem */
 #define TRACE_SUBSYSTEM_CLOUD     0x4000000U /**< Interface to the Cloud */
+#define TRACE_SUBSYSTEM_ZBDIRECT  0x8000000U /**< Zigbee Direct subsystem */
 /** @endcond */ /* DOXYGEN_INTERNAL_DOC */
 
 #define TRACE_SUBSYSTEM_INFO      ((zb_uint_t)-1)  /**< Common subsystem */
@@ -153,7 +175,6 @@ extern zb_uint_t g_trace_inside_intr;
 /** @endcond */ /* DSR_TRACE */
 /** @} */ /* ZB_TRACE */
 
-/** @cond DSR_TRACE */
 /**
  * @addtogroup ZB_TRACE Debug trace
  * @{
@@ -164,9 +185,9 @@ extern zb_uint_t g_trace_inside_intr;
  * @{
  */
 
-/** @cond DOXYGEN_INTERNAL_DOC */
+#ifndef DOXYGEN
 #define TRACE_ENABLED_(mask,lev) ((lev) <= ZB_TRACE_LEVEL && ((mask) & ZB_TRACE_MASK))
-/** @endcond */ /* DOXYGEN_INTERNAL_DOC*/
+#endif /* DOXYGEN */
 
 /**
  *  @brief Check that trace is enabled for provided level.
@@ -182,9 +203,9 @@ extern zb_uint_t g_trace_inside_intr;
  */
 #define TRACE_ENABLED(m) TRACE_ENABLED_(m)
 
-/** @cond DOXYGEN_INTERNAL_DOC */
+#ifndef DOXYGEN
 zb_uint32_t zb_trace_get_counter(void);
-/** @endcond */ /* DOXYGEN_INTERNAL_DOC */
+#endif /* DOXYGEN */
 
 #ifdef DOXYGEN
 /**
@@ -219,6 +240,11 @@ zb_bool_t zb_osif_is_inside_isr(void);
 #endif
 /** @endcond */ /* DOXYGEN_INTERNAL_DOC */
 
+/**
+ *  @brief A universal way to print raw string as trace message.
+ */
+void zb_trace_str(const zb_char_t *str);
+
 #if defined ZB_TRACE_TO_FILE || defined ZB_TRACE_TO_SYSLOG || defined DOXYGEN
 /** @cond DOXYGEN_INTERNAL_DOC */
 /**
@@ -228,6 +254,7 @@ zb_bool_t zb_osif_is_inside_isr(void);
 void zb_trace_init_file(zb_char_t *name);
 void zb_trace_deinit_file(void);
 void zb_file_trace_commit(void);
+void zb_trace_disable_deinit(void);
 
 /**
 
@@ -244,9 +271,9 @@ void zb_file_trace_commit(void);
 #define TRACE_DEINIT zb_trace_deinit_file
 
 /** @cond DOXYGEN_INTERNAL_DOC */
-#define _T0(...) __VA_ARGS__
+#define ZB_T0_TRACE(...) __VA_ARGS__
 
-#if defined ZB_BINARY_AND_TEXT_TRACE_MODE || defined ZB_TRACE_TO_SYSLOG || !defined ZB_BINARY_TRACE
+#if defined ZB_TRACE_USE_VA_LIST && (defined ZB_BINARY_AND_TEXT_TRACE_MODE || defined ZB_TRACE_TO_SYSLOG || !defined ZB_BINARY_TRACE)
 /**
  *  @brief Print trace message. Option with va_list
  */
@@ -275,6 +302,7 @@ void zb_trace_msg_bin_file(
     zb_int_t line_number,
     zb_int_t args_size, ...);
 
+#ifdef ZB_TRACE_USE_VA_LIST
 /**
  *  @brief Print binary trace message. Option with va_list
  */
@@ -285,6 +313,7 @@ void zb_trace_msg_bin_file_vl(
     zb_int_t line_number,
     zb_int_t args_size,
     va_list arglist);
+#endif
 
 #if defined ZB_BINARY_AND_TEXT_TRACE_MODE
 #define ZB_TRACE_MODE_BINARY 0U
@@ -298,27 +327,27 @@ void zb_trace_set_mode(zb_uint8_t mode);
 void zb_trace_msg_txt_file(
     zb_uint_t mask,
     zb_uint_t level,
-    zb_char_t *format,
-    zb_char_t *file_name,
+    const zb_char_t *format,
+    const zb_char_t *file_name,
     zb_uint16_t file_id,
     zb_int_t line_number,
     zb_int_t args_size, ...);
 
-#define _T1(s, l, fmts, args)                  \
+#define ZB_T1_TRACE(s, l, fmts, args)                  \
   if ((zb_int_t)ZB_TRACE_LEVEL>=(zb_int_t)l && \
       ((s) & ZB_TRACE_MASK))                   \
   {                                            \
     if (g_trace_text_mode == 0U)               \
     {                                          \
-      zb_trace_msg_bin_file(s, l, _T0 args);   \
+      zb_trace_msg_bin_file(s, l, ZB_T0_TRACE args);   \
     }                                          \
     else                                       \
     {                                          \
-      zb_trace_msg_txt_file(s, l, fmts, _T0 args); \
+      zb_trace_msg_txt_file(s, l, fmts, ZB_T0_TRACE args); \
     }                                          \
   }
 #else
-#define _T1(s, l, fmts, args) if ((zb_int_t)ZB_TRACE_LEVEL>=(zb_int_t)l && ((s) & ZB_TRACE_MASK)) zb_trace_msg_bin_file(s, l, _T0 args)
+#define ZB_T1_TRACE(s, l, fmts, args) if ((zb_int_t)ZB_TRACE_LEVEL>=(zb_int_t)l && ((s) & ZB_TRACE_MASK)) zb_trace_msg_bin_file(s, l, ZB_T0_TRACE args)
 #endif
 #else
 /**
@@ -332,7 +361,7 @@ void zb_trace_msg_txt_file(
     zb_int_t line_number,
     zb_int_t args_size, ...);
 
-#define _T1(s, l, fmts, args) if ((zb_int_t)ZB_TRACE_LEVEL>=(zb_int_t)l && ((s) & ZB_TRACE_MASK)) zb_trace_msg_txt_file(s, l, fmts, _T0 args)
+#define ZB_T1_TRACE(s, l, fmts, args) if ((zb_int_t)ZB_TRACE_LEVEL>=(zb_int_t)l && ((s) & ZB_TRACE_MASK)) zb_trace_msg_txt_file(s, l, fmts, ZB_T0_TRACE args)
 #endif
 /** @endcond */ /* DOXYGEN_INTERNAL_DOC */
 
@@ -348,7 +377,7 @@ void zb_trace_msg_txt_file(
  */
 #define TRACE_MSG(lm, fmts, args) \
   do { \
-    _T1(lm, fmts, args); \
+    ZB_T1_TRACE(lm, fmts, args); \
   } while (0)
 
 /** @cond DOXYGEN_INTERNAL_DOC */
@@ -405,6 +434,7 @@ void zb_trace_msg_port(
   zb_uint16_t line_number,
   zb_uint_t args_size, ...);
 
+#ifdef ZB_TRACE_USE_VA_LIST
 /* Option with va_list */
 void zb_trace_msg_port_vl(
   zb_uint_t mask,
@@ -413,22 +443,23 @@ void zb_trace_msg_port_vl(
   zb_uint16_t line_number,
   zb_uint_t args_size,
   va_list arglist);
+#endif
 
 #endif
 
 #ifdef ZB_BINARY_TRACE
-#define _T0(...) __VA_ARGS__
-#define _T1(s, l, args) if ((zb_int_t)ZB_TRACE_LEVEL>=(zb_int_t)l && ((s) == (zb_uint_t)-1 || (s) & ZB_TRACE_MASK) && !ZB_TRACE_INSIDE_INTR_BLOCK()) zb_trace_msg_port(s, l, _T0 args)
+#define ZB_T0_TRACE(...) __VA_ARGS__
+#define ZB_T1_TRACE(s, l, args) if ((zb_int_t)ZB_TRACE_LEVEL>=(zb_int_t)l && ((s) == (zb_uint_t)-1 || (s) & ZB_TRACE_MASK) && !ZB_TRACE_INSIDE_INTR_BLOCK()) zb_trace_msg_port(s, l, ZB_T0_TRACE args)
 
 #else
-#define _T1(s, l, args) \
+#define ZB_T1_TRACE(s, l, args) \
   if ((zb_int_t)ZB_TRACE_LEVEL>=(zb_int_t)l && ((s) == -1 || ((s) & ZB_TRACE_MASK)) && !ZB_TRACE_INSIDE_INTR_BLOCK()) zb_trace_msg_port args
 #endif
 
 
 #define TRACE_MSG(lm, fmt, args) \
   do { \
-    _T1(lm, args); \
+    ZB_T1_TRACE(lm, args); \
   } while (0)
 
 #else
@@ -543,18 +574,7 @@ typedef struct zb_byte128_struct_s
 
 #ifdef ZB_TRACE_LEVEL
 #ifndef ZB_TRACE_MASK
-#if   defined ZB_UZ2410
 #define ZB_TRACE_MASK ((zb_uint_t)-1)
-/* 1fb == all but MAC */
-//#define ZB_TRACE_MASK 0x1FB
-//#define ZB_TRACE_MASK 0xffff & (~(TRACE_SUBSYSTEM_SECUR|TRACE_SUBSYSTEM_ZCL))
-#elif defined C8051F120
-
-//#define ZB_TRACE_MASK 0xffff & (~(TRACE_SUBSYSTEM_SECUR|TRACE_SUBSYSTEM_ZCL))
-#define ZB_TRACE_MASK ((zb_uint_t)-1)
-#else
-#define ZB_TRACE_MASK ((zb_uint_t)-1)
-#endif  /* uz2410... */
 #endif  /* if not defined trace_mask */
 #endif  /* if defined trace level */
 
@@ -588,35 +608,6 @@ typedef struct zb_byte128_struct_s
 #else
 #define TRACE_ARG_SIZE(n_h, n_d, n_l, n_p, n_a) ZB_TRACE_FILE_ID,__LINE__, (n_h + n_d*2 + n_l*4 + n_p*3 + n_a*8)
 #endif
-
-#elif defined ZB_IAR && defined ZB8051
-
-/* IAR for 8051 passes 1-byte arguments as 2-bytes to vararg functions. Keil uses
- * 3-bytes pointers while IAR - 2-bytes pointers */
-#ifndef ZB_BINARY_TRACE
-#define TRACE_ARG_SIZE(n_h, n_d, n_l, n_p, n_a) __FILE__,__LINE__, (n_h*2 + n_d*2 + n_l*4 + n_p*2 + n_a*8)
-#else
-#define TRACE_ARG_SIZE(n_h, n_d, n_l, n_p, n_a) ZB_TRACE_FILE_ID,__LINE__, (n_h*2 + n_d*2 + n_l*4 + n_p*2 + n_a*8)
-#endif
-
-#elif defined ZB_PLATFORM_XAP5
-
-#ifndef __XAP5_NEAR__
-/* XAP5 passes bytes as shorts */
-#ifndef ZB_BINARY_TRACE
-#define TRACE_ARG_SIZE(n_h, n_d, n_l, n_p, n_a) __FILE__,__LINE__, (n_h*2 + n_d*2 + n_l*4 + n_p*4 + n_a*8)
-#else
-#define TRACE_ARG_SIZE(n_h, n_d, n_l, n_p, n_a) ZB_TRACE_FILE_ID,__LINE__, (n_h*2 + n_d*2 + n_l*4 + n_p*4 + n_a*8)
-#endif
-#else
-#ifndef ZB_BINARY_TRACE
-#define TRACE_ARG_SIZE(n_h, n_d, n_l, n_p, n_a) __FILE__,__LINE__, (n_h*2 + n_d*2 + n_l*4 + n_p*2 + n_a*8)
-#else
-#define TRACE_ARG_SIZE(n_h, n_d, n_l, n_p, n_a) ZB_TRACE_FILE_ID,__LINE__, (n_h*2 + n_d*2 + n_l*4 + n_p*2 + n_a*8)
-#endif
-#endif
-
-
 
 #else  /* IAR & GCC - 32-bit */
 /* IAR for Cortex passes 1-byte abd 2-bytes arguments as 4-bytes to vararg functions.
@@ -771,6 +762,7 @@ typedef struct zb_byte128_struct_s
 #define FMT__H_D_H_D                                    TRACE_ARG_SIZE(2,2,0,0,0)
 #define FMT__H_D_H_D_D                                  TRACE_ARG_SIZE(2,3,0,0,0)
 #define FMT__H_D_H_D_H_H                                TRACE_ARG_SIZE(4,2,0,0,0)
+#define FMT__H_D_H_A                                    TRACE_ARG_SIZE(2,1,0,0,1)
 #define FMT__H_D_H_H                                    TRACE_ARG_SIZE(3,1,0,0,0)
 #define FMT__H_D_H_H_H                                  TRACE_ARG_SIZE(4,1,0,0,0)
 #define FMT__H_D_H_H_H_H                                TRACE_ARG_SIZE(5,1,0,0,0)
@@ -812,9 +804,11 @@ typedef struct zb_byte128_struct_s
 #define FMT__H_H_H_H_H_H_P_P_P_P                        TRACE_ARG_SIZE(6,2,0,4,0)
 #define FMT__H_H_H_H_P_P_P                              TRACE_ARG_SIZE(4,0,0,3,0)
 #define FMT__H_H_H_P                                    TRACE_ARG_SIZE(3,0,0,1,0)
+#define FMT__H_D_H_P                                    TRACE_ARG_SIZE(2,1,0,1,0)
 #define FMT__H_H_L                                      TRACE_ARG_SIZE(2,0,1,0,0)
 #define FMT__H_H_L_H                                    TRACE_ARG_SIZE(3,0,1,0,0)
 #define FMT__H_H_H_L                                    TRACE_ARG_SIZE(3,0,1,0,0)
+#define FMT__H_H_H_H_L                                  TRACE_ARG_SIZE(4,0,1,0,0)
 #define FMT__H_H_L_H_P                                  TRACE_ARG_SIZE(3,0,1,4,0)
 #define FMT__H_H_P                                      TRACE_ARG_SIZE(2,0,0,1,0)
 #define FMT__H_H_P_D                                    TRACE_ARG_SIZE(2,1,0,1,0)
@@ -979,6 +973,7 @@ typedef struct zb_byte128_struct_s
 #define FMT__H_B_H_B                                    TRACE_ARG_SIZE(2,0,0,0,4)
 #define FMT__B_A                                        TRACE_ARG_SIZE(0,0,0,0,3)
 #define FMT__D_H_A                                      TRACE_ARG_SIZE(1,1,0,0,1)
+#define FMT__D_H_A_H                                    TRACE_ARG_SIZE(2,1,0,0,1)
 #define FMT__D_A_H                                      TRACE_ARG_SIZE(1,1,0,0,1)
 #define FMT__D_D_D_A_B                                  TRACE_ARG_SIZE(0,3,0,0,3)
 #define FMT__D_B_A                                      TRACE_ARG_SIZE(0,1,0,0,3)
@@ -1029,6 +1024,8 @@ typedef struct zb_byte128_struct_s
 #define FMT__H_P_P_H                                    TRACE_ARG_SIZE(2,0,0,2,0)
 #define FMT__D_P_D_D_P                                  TRACE_ARG_SIZE(0,3,0,2,0)
 #define FMT__D_D_D_A_A                                  TRACE_ARG_SIZE(0,3,0,0,2)
+#define FMT__H_D_A_D_D_D                                TRACE_ARG_SIZE(1,4,0,0,1)
+#define FMT__H_D_A_P                                    TRACE_ARG_SIZE(1,1,0,1,1)
 
 /** @} */ /* TRACE_DATA_FORMAT */
 
@@ -1103,7 +1100,7 @@ typedef struct zb_byte128_struct_s
 #define TRACE_ZSE3 TRACE_SUBSYSTEM_ZSE, 3U
 #define TRACE_ZSE4 TRACE_SUBSYSTEM_ZSE, 4U
 
-/** @cond DOXYGEN_INTERNAL_DOC */
+#ifndef DOXYGEN
 #define TRACE_SPI1 TRACE_SUBSYSTEM_SPI, 1U
 #define TRACE_SPI2 TRACE_SUBSYSTEM_SPI, 2U
 #define TRACE_SPI3 TRACE_SUBSYSTEM_SPI, 3U
@@ -1113,14 +1110,14 @@ typedef struct zb_byte128_struct_s
 #define TRACE_SSL2 TRACE_SUBSYSTEM_SSL, 2U
 #define TRACE_SSL3 TRACE_SUBSYSTEM_SSL, 3U
 #define TRACE_SSL4 TRACE_SUBSYSTEM_SSL, 4U
-/** @endcond */ /* DOXYGEN_INTERNAL_DOC */
+#endif /* DOXYGEN */
 
 #define TRACE_APP1 TRACE_SUBSYSTEM_APP, 1U
 #define TRACE_APP2 TRACE_SUBSYSTEM_APP, 2U
 #define TRACE_APP3 TRACE_SUBSYSTEM_APP, 3U
 #define TRACE_APP4 TRACE_SUBSYSTEM_APP, 4U
 
-/** @cond DOXYGEN_INTERNAL_DOC */
+#ifndef DOXYGEN
 #define TRACE_SPECIAL1 TRACE_SUBSYSTEM_SPECIAL1, 1U
 #define TRACE_SPECIAL2 TRACE_SUBSYSTEM_SPECIAL1, 2U
 #define TRACE_SPECIAL3 TRACE_SUBSYSTEM_SPECIAL1, 3U
@@ -1185,7 +1182,12 @@ typedef struct zb_byte128_struct_s
 #define TRACE_MAC_API2 TRACE_SUBSYSTEM_MAC_API, 2U
 #define TRACE_MAC_API3 TRACE_SUBSYSTEM_MAC_API, 3U
 #define TRACE_MAC_API4 TRACE_SUBSYSTEM_MAC_API, 4U
-/** @endcond */ /* DOXYGEN_INTERNAL_DOC */
+
+#define TRACE_ZBDIRECT1 TRACE_SUBSYSTEM_ZBDIRECT, 1U
+#define TRACE_ZBDIRECT2 TRACE_SUBSYSTEM_ZBDIRECT, 2U
+#define TRACE_ZBDIRECT3 TRACE_SUBSYSTEM_ZBDIRECT, 3U
+#define TRACE_ZBDIRECT4 TRACE_SUBSYSTEM_ZBDIRECT, 4U
+#endif /* DOXYGEN */
 
 #ifndef ZB_SET_TRACE_LEVEL
 
@@ -1198,8 +1200,8 @@ typedef struct zb_byte128_struct_s
 #endif
 
 /** @} */ /* TRACE_FIRST_ARG */
-/** @} */ /* Debug trace */
 /** @endcond */ /* DSR_TRACE */
+/** @} */ /* Debug trace */
 
 #if defined ZB_TRAFFIC_DUMP_ON || defined DOXYGEN
 /**
@@ -1233,7 +1235,6 @@ static ZB_INLINE zb_uint8_t zb_get_traf_dump_state(void)
 #define ZB_GET_TRAF_DUMP_STATE()  0U
 #endif
 
-/** @endcond */
 /** @endcond */ /* DOXYGEN_DEBUG_SECTION */
 
 #endif /* ZB_LOGGER_H */

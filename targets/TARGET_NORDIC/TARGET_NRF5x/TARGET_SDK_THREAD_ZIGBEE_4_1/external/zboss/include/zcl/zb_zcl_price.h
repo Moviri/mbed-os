@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2022 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* PURPOSE: Price cluster definitions
 */
@@ -3018,17 +3037,15 @@ typedef ZB_PACKED_PRE struct zb_zcl_price_publish_price_payload_s
 
 
 /** @def ZB_ZCL_PRICE_PUBLISH_PRICE_PAYLOAD_SIZE_IS_VALID
- *  @brief Returns 'true' if payload is in range [min_payload_size, max_payload_size]
  */
 #define ZB_ZCL_PRICE_PUBLISH_PRICE_PAYLOAD_SIZE_IS_VALID(size) \
-  (size <= sizeof(zb_zcl_price_publish_price_payload_t)) \
-  && (size > (sizeof(zb_zcl_price_publish_price_payload_t) \
-              - ZB_SIZEOF_FIELD(zb_zcl_price_publish_price_payload_t, rate_label)))
+  (size > (sizeof(zb_zcl_price_publish_price_payload_t) \
+           - ZB_SIZEOF_FIELD(zb_zcl_price_publish_price_payload_t, rate_label)))
 
 /** @def ZB_ZCL_PRICE_PUBLISH_PRICE_PAYLOAD_EXPECTED_SIZE
  *  @brief Returns actual size of payload.
  *  @details PublishPrice packet payload doesn't have fixed length because of 'rate_label'
- *  field. This macro can be used to check payload size of incomming packet.
+ *  field. This macro can be used to check payload size of incoming packet.
  */
 #define ZB_ZCL_PRICE_PUBLISH_PRICE_PAYLOAD_EXPECTED_SIZE(pl) \
  (sizeof(*(pl)) \
@@ -3100,7 +3117,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_price_ack_payload_s
 /** Check if @ref ZB_ZCL_PRICE_CLI_CMD_PRICE_ACK "PriceAcknowledgement" Command payload is valid
  */
 #define ZB_ZCL_PRICE_ACK_PAYLOAD_SIZE_IS_VALID(size) \
-  ((size) == sizeof(zb_zcl_price_ack_payload_t))
+  ((size) >= sizeof(zb_zcl_price_ack_payload_t))
 
 /** @ref zb_zcl_price_ack_payload_t initializer */
 #define ZB_ZCL_PRICE_ACK_PAYLOAD_INIT (zb_zcl_price_ack_payload_t) {0}
@@ -3118,6 +3135,27 @@ typedef ZB_PACKED_PRE struct zb_zcl_price_ack_payload_s
 
 /** @endcond */ /* internals_doc */
 
+/** @brief @ref ZB_ZCL_PRICE_CLI_CMD_GET_CURRENT_PRICE "GetCurrentPrice" Command Payload Format
+ */
+typedef ZB_PACKED_PRE struct zb_zcl_price_get_current_price_payload_s
+{
+  /** @e CommandOptions field is 8 Bits in length
+   * @note Zero bit is Requestor Rx On When Idle, others are reserved.
+   */
+  zb_uint8_t command_options;
+} ZB_PACKED_STRUCT zb_zcl_price_get_current_price_payload_t;
+
+/** @def ZB_ZCL_PRICE_GET_CURRENT_PRICE_PAYLOAD_INIT
+ *  @brief Macro for initializing @ref ZB_ZCL_PRICE_CLI_CMD_GET_CURRENT_PRICE "GetCurrentPrice" Command payload
+ */
+#define ZB_ZCL_PRICE_GET_CURRENT_PRICE_PAYLOAD_INIT \
+  (zb_zcl_price_get_current_price_payload_t) {0}
+
+/** @def ZB_ZCL_PRICE_GET_CURRENT_PRICE_PAYLOAD_SIZE_IS_VALID
+ *  @brief Check if @ref ZB_ZCL_PRICE_CLI_CMD_GET_CURRENT_PRICE "GetCurrentPrice" Command payload is valid
+ */
+#define ZB_ZCL_PRICE_GET_CURRENT_PRICE_PAYLOAD_SIZE_IS_VALID(size) \
+  ((size) >= sizeof(zb_zcl_price_get_current_price_payload_t))
 
 /** @brief @ref ZB_ZCL_PRICE_CLI_CMD_GET_SCHEDULED_PRICES "GetScheduledPrices" Command Payload Format
  *  @see SE spec, D.4.2.3.3.1
@@ -3147,10 +3185,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_price_get_scheduled_prices_payload_s
  *  @brief Check if @ref ZB_ZCL_PRICE_CLI_CMD_GET_SCHEDULED_PRICES "GetScheduledPrices" Command payload is valid
  */
 #define ZB_ZCL_PRICE_GET_SCHEDULED_PRICES_PAYLOAD_SIZE_IS_VALID(size) \
-  ((size) == sizeof(zb_zcl_price_get_scheduled_prices_payload_t))
-
-/** @brief @ref ZB_ZCL_PRICE_CLI_CMD_GET_CURRENT_PRICE "GetCurrentPrice" Command Payload Format */
-typedef zb_uint8_t zb_zcl_price_get_current_price_payload_t;
+  ((size) >= sizeof(zb_zcl_price_get_scheduled_prices_payload_t))
 
 /** @ref ZB_ZCL_PRICE_CLI_CMD_GET_BLOCK_PERIOD "GetBlockPeriod" command payload
  * @see SE spec, subclause D.4.2.3.5
@@ -3319,7 +3354,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_price_get_tier_labels_payload_s
 } ZB_PACKED_STRUCT zb_zcl_price_get_tier_labels_payload_t;
 
 #define ZB_ZCL_PRICE_GET_TIER_LABELS_PAYLOAD_SIZE_IS_VALID(size) \
-  ((size) == sizeof(zb_zcl_price_get_tier_labels_payload_t))
+  ((size) >= sizeof(zb_zcl_price_get_tier_labels_payload_t))
 
 /** @ref ZB_ZCL_PRICE_CLI_CMD_GET_BILLING_PERIOD "GetBillingPeriod" command payload
  * @see SE spec, subclause D.4.2.3.13.2
@@ -3500,7 +3535,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_price_publish_block_period_payload_s
 } ZB_PACKED_STRUCT zb_zcl_price_publish_block_period_payload_t;
 
 
-/** @ref ZB_ZCL_PRICE_SRV_CMD_PUBLISH_CONVERSION_FACTOR "PublishConversionFactor" comamdn payload
+/** @ref ZB_ZCL_PRICE_SRV_CMD_PUBLISH_CONVERSION_FACTOR "PublishConversionFactor" command payload
  * @see SE spec, subclause D.4.2.4.3.1
  */
 typedef ZB_PACKED_PRE struct zb_zcl_price_publish_conversion_factor_payload_s

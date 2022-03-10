@@ -1,28 +1,49 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2021 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*  PURPOSE: Public Network layer API
 */
 #ifndef ZB_ZBOSS_API_NWK_H
 #define ZB_ZBOSS_API_NWK_H 1
+
+#include "zboss_api_mm.h"
 
 /** \addtogroup nwk_api */
 /** @{ */
@@ -456,19 +477,20 @@ zb_nlme_status_indication_t;
  */
 typedef struct zb_nwk_pib_cache_s
 {
-  zb_uint16_t             mac_short_address;             /*!< The 16-bit address that the device uses
-                                                           to communicate in the PAN. */
-  zb_uint16_t             mac_pan_id;                    /*!< The 16-bit identifier of the PAN on which
-                                                           the device is operating. If this value is 0xffff,
-                                                           the device is not associated. */
-  zb_ieee_addr_t          mac_extended_address;          /*!< The 64-bit (IEEE) address assigned to the device. */
+  zb_uint16_t          mac_short_address;                              /*!< The 16-bit address that the device uses
+                                                                              to communicate in the PAN. */
+  zb_uint16_t          mac_pan_id;                                     /*!< The 16-bit identifier of the PAN on which
+                                                                              the device is operating. If this value is 0xffff,
+                                                                              the device is not associated. */
+  zb_ieee_addr_t       mac_extended_address;                           /*!< The 64-bit (IEEE) address assigned to the device. */
 
-  zb_uint8_t              mac_association_permit;        /*!< Indication of whether a coordinator is currently
-                                                           allowing association. A value of TRUE indicates*/
-  zb_uint8_t              mac_rx_on_when_idle;           /*!< Indication of whether the MAC sublayer is to enable
-                                                           its receiver during idle periods. */
-  zb_uint8_t              phy_current_page;              /*!< Index of current physical channel page  */
-  zb_uint8_t              phy_current_channel;           /*!< Index of current physical channel */
+  zb_uint8_t           mac_association_permit;                         /*!< Indication of whether a coordinator is currently
+                                                                              allowing association. A value of TRUE indicates*/
+  zb_uint8_t           mac_rx_on_when_idle;                            /*!< Indication of whether the MAC sublayer is to enable
+                                                                              its receiver during idle periods. */
+  zb_uint8_t           phy_current_page[ZB_NWK_MAC_IFACE_TBL_SIZE];    /*!< Index of current physical channel page  */
+  zb_uint8_t           phy_current_channel[ZB_NWK_MAC_IFACE_TBL_SIZE]; /*!< Index of current physical channel */
+  zb_uint8_t           phy_primary_iface;                              /*!< Index of MAC interface that is used for joining */
 } zb_nwk_pib_cache_t;
 
 /** @} */
@@ -524,10 +546,19 @@ zb_nwk_pib_cache_t *zb_nwk_get_pib_cache(void);
 #endif
 /** Cached value of AssociationPermit attribute */
 #define ZB_PIBCACHE_ASSOCIATION_PERMIT() ZB_PIB_CACHE()->mac_association_permit
+
+#define ZB_PIBCACHE_PRIMARY_IFACE()  ZB_PIB_CACHE()->phy_primary_iface
+#define ZB_PIBCACHE_PRIMARY_IFACE_PAGE() ZB_PIB_CACHE()->phy_current_page[ZB_PIB_CACHE()->phy_primary_iface]
+#define ZB_PIBCACHE_PRIMARY_IFACE_CHANNEL() ZB_PIB_CACHE()->phy_current_channel[ZB_PIB_CACHE()->phy_primary_iface]
+
 /** Cached value of CurrentChannel attribute */
-#define ZB_PIBCACHE_CURRENT_CHANNEL()  ZB_PIB_CACHE()->phy_current_channel
+#define ZB_PIBCACHE_CURRENT_CHANNEL()  ZB_PIBCACHE_PRIMARY_IFACE_CHANNEL()
+#define ZB_PIBCACHE_CURRENT_CHANNEL_BY_IFACE(iface_id)  ZB_PIB_CACHE()->phy_current_channel[iface_id]
+#define ZB_PIBCACHE_CURRENT_CHANNELS_LIST() ZB_PIB_CACHE()->phy_current_channel
 /** Cached value of CurrentPage attribute */
-#define ZB_PIBCACHE_CURRENT_PAGE()  ZB_PIB_CACHE()->phy_current_page
+#define ZB_PIBCACHE_CURRENT_PAGE()  ZB_PIBCACHE_PRIMARY_IFACE_PAGE()
+#define ZB_PIBCACHE_CURRENT_PAGE_BY_IFACE(iface_id)  ZB_PIB_CACHE()->phy_current_page[iface_id]
+#define ZB_PIBCACHE_CURRENT_PAGES_LIST() ZB_PIB_CACHE()->phy_current_page
 
 #else /* NCP_MODE_HOST */
 
@@ -636,7 +667,7 @@ void zb_enable_auto_pan_id_conflict_resolution(zb_bool_t status);
 
 /** @cond internals_doc */
 /**
-   Toogles panid conflict resolution.
+   Toggles panid conflict resolution.
 
    Call of that function forces linking of panid conflict resolution
    code and allows switching on/off panid conflict resolution and detection
@@ -722,6 +753,16 @@ void zb_set_nbt_transmit_failure_timeout(zb_uint8_t transmit_failure_timeout);
 /** @addtogroup nwk_management_service NWK management service
  * @{
  */
+
+/**
+   Get own device type.
+
+   @return One of the values from @ref nwk_device_type.
+
+   @snippet onoff_server/on_off_output_zc.c zb_get_device_type_example
+ */
+zb_nwk_device_type_t zb_get_device_type(void);
+
 /**
    Get short address of the parent node.
 
@@ -734,7 +775,7 @@ zb_uint16_t zb_nwk_get_parent(void);
 typedef ZB_PACKED_PRE struct zb_nwk_nbr_iterator_cb_params_s {
    zb_uint16_t index;        /*!< In the callback function:
                               *     Index of the returned neighbour table entry.
-                              *     The falue of ZB_NWK_NBR_ITERATOR_INDEX_EOT
+                              *     The value of ZB_NWK_NBR_ITERATOR_INDEX_EOT
                               *     indicates that the entry was not returned and
                               *     the buffer payload should be ignored.
                               *   If the structure is passed as the API call parameters:
@@ -764,15 +805,9 @@ typedef ZB_PACKED_PRE struct zb_nwk_nbr_iterator_entry_s
                                          *   This field should be present for entries that record the parent or
                                          *   children of a Zigbee router or Zigbee coordinator.
                                          */
-  zb_uint8_t      relationship;         /*!< The relationship between the neighbour and the current device:
-                                         *     0x00=neighbour is the parent
-                                         *     0x01=neighbour is a child
-                                         *     0x02=neighbour is a sibling
-                                         *     0x03=none of the above
-                                         *     0x04=previous child
-                                         *     0x05=unauthenticated child
+  zb_uint8_t      relationship;         /*!< The relationship between the neighbour and the current device.
                                          *   This field shall be present in every neighbour table entry.
-                                         *   Seee @ref nwk_relationship
+                                         *   @if DOXYGEN_INTERNAL_DOC See @ref nwk_relationship @endif
                                          */
   zb_uint8_t      send_via_routing;     /*!< Due to bad link to that device send packets
                                          *   via NWK routing.
@@ -807,7 +842,7 @@ zb_nwk_nbr_iterator_entry_t;
 /**
    Read the next active entry from the NWK neighbour table.
    The index indicates the point, from which the entry will be searched in the neighbour table.
-   This API returns neighbour table entry inisde the buffer payload, that are connected to the same PAN
+   This API returns neighbour table entry inside the buffer payload, that are connected to the same PAN
    and their entries are not marked as stale or timed out.
    The index of the entry is passed as buffer parameters.
 
@@ -817,6 +852,14 @@ zb_nwk_nbr_iterator_entry_t;
 zb_ret_t zb_nwk_nbr_iterator_next(zb_uint8_t bufid, zb_callback_t cb);
 
 /** @} */ /* nwk_management_service */
+
+zb_ret_t zb_mac_enable_interface(zb_uint8_t iface_id);
+zb_ret_t zb_mac_disable_interface(zb_uint8_t iface_id);
+
+zb_bool_t zb_mac_is_interface_active(zb_uint8_t iface_id);
+
+void zb_nwk_mm_set_channel_mask(zb_uint8_t iface_id, zb_uint8_t page_index, zb_uint32_t channel_mask);
+
 /** @} */ /* nwk_api */
 
 #endif /*#ifndef ZB_ZBOSS_API_NWK_H*/

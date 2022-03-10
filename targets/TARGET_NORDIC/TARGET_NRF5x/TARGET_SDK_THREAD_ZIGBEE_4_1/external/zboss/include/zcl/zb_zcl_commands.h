@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2021 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* PURPOSE: Zigbee cluster library commands common for all clusters
 */
@@ -283,8 +302,6 @@ void zb_zcl_send_command_short_schedule(zb_bufid_t buffer,
  *      zb_zcl_default_resp_payload_t* payload = ZB_ZCL_READ_DEFAULT_RESP(zcl_cmd_buf);
  *    @endcode
  *    @par
- *
- *    For more information see any HA sample
  */
 
 /**
@@ -570,8 +587,6 @@ typedef ZB_PACKED_PRE struct zb_zcl_default_resp_payload_s
  *
  *    Read attributes request parsing and response filling and sending is implemented in ZCL
  *    library internal functions.
- *
- *    For more information see any HA sample
  */
 
 /*! @brief ZCL Read Attribute Command frame
@@ -826,8 +841,6 @@ typedef ZB_PACKED_PRE struct zb_zcl_read_attr_res_s
  *    @endcode
  *
  *    Response sending and parsing could be done in the same manner.
- *
- *    For more information see any HA sample
  */
 
 /*! @brief ZCL Write Attribute Command frame
@@ -1134,8 +1147,6 @@ zb_zcl_write_attr_res_t;
  *
  *    Discover attributes request parsing and response filling and sending is implemented in ZCL
  *    library internal functions.
- *
- *    For more information see any HA sample
  */
 
 /*! @brief ZCL Discover Attribute Command frame
@@ -1345,8 +1356,7 @@ typedef zb_uint8_t zb_zcl_disc_complete_t;
  *    If there are several Configure Reporting response records, they could be processed cyclically
  *    in the same manner as Configure Reporting request ones.
  *
- *    For more information see HA samples
-  */
+ */
 
     /** u.clnt: as usual, cluster with client role sends this request
     to a server to configure reporting: how attribute should be reported by a server */
@@ -1617,7 +1627,6 @@ zb_zcl_configure_reporting_res_t;
  *    ZCL spec, subclause 2.4.11. This command can be parsed by cyclical application of @ref
  *    ZB_ZCL_GENERAL_GET_NEXT_REPORT_ATTR_REQ() macro.
  *
- *    For more information see any HA sample
  */
 
 /** @cond internals_doc */
@@ -1992,7 +2001,6 @@ typedef ZB_PACKED_PRE struct zb_zcl_read_reporting_cfg_rsp_s
  *    Discovery commands request has fixed length payload.
  *    Discovery commands response has variable-length payload.
  *
- *    For more information see any HA sample
  */
 
 /********* request commands ************/
@@ -2009,20 +2017,20 @@ typedef ZB_PACKED_PRE struct zb_zcl_disc_cmd_req_s
 zb_zcl_disc_cmd_req_t;
 
 /** @brief Discover commands Generated command
-    @param buffer to put packet to
-    @param direction - direction client-to-server or server-to-client
-    @param def_resp - enable/disable default response
-    @param addr - address to send packet to
-    @param dst_addr_mode - addressing mode
-    @param dst_ep - destination endpoint
-    @param ep - sending endpoint
-    @param profile_id - profile identifier
-    @param cluster_id - cluster identifier
-    @param cb - callback for getting command send status
+    @param _buffer to put packet to
+    @param _direction - direction client-to-server or server-to-client
+    @param _def_resp - enable/disable default response
+    @param _addr - address to send packet to
+    @param _dst_addr_mode - addressing mode
+    @param _dst_ep - destination endpoint
+    @param _ep - sending endpoint
+    @param _profile_id - profile identifier
+    @param _cluster_id - cluster identifier
+    @param _cb - callback for getting command send status
     @param _is_manuf - is discovery manufacturer attributes
     @param _manuf_id - manufacturer ID
-    @param start_attr_id - start command ID
-    @param max_len - max count
+    @param _start_cmd_id - start command ID
+    @param _max_len - max count
 */
 #define ZB_ZCL_GENERAL_DISC_COMMAND_GENERATED_REQ(_buffer, _direction, _def_resp,       \
           _addr, _dst_addr_mode, _dst_ep, _ep, _profile_id, _cluster_id, _cb,           \
@@ -2042,20 +2050,20 @@ zb_zcl_disc_cmd_req_t;
 }
 
 /** @brief Discover commands Received command
-    @param buffer to put packet to
-    @param direction - direction client-to-server or server-to-client
-    @param def_resp - enable/disable default response
-    @param addr - address to send packet to
-    @param dst_addr_mode - addressing mode
-    @param dst_ep - destination endpoint
-    @param ep - sending endpoint
-    @param profile_id - profile identifier
-    @param cluster_id - cluster identifier
-    @param cb - callback for getting command send status
+    @param _buffer to put packet to
+    @param _direction - direction client-to-server or server-to-client
+    @param _def_resp - enable/disable default response
+    @param _addr - address to send packet to
+    @param _dst_addr_mode - addressing mode
+    @param _dst_ep - destination endpoint
+    @param _ep - sending endpoint
+    @param _profile_id - profile identifier
+    @param _cluster_id - cluster identifier
+    @param _cb - callback for getting command send status
     @param _is_manuf - is discovery manufacturer attributes
     @param _manuf_id - manufacturer ID
-    @param start_attr_id - start command ID
-    @param max_len - max count
+    @param _start_cmd_id - start command ID
+    @param _max_len - max count
 */
 #define ZB_ZCL_GENERAL_DISC_COMMAND_RECEIVED_REQ(_buffer, _direction, _def_resp,        \
           _addr, _dst_addr_mode, _dst_ep, _ep, _profile_id, _cluster_id, _cb,           \
@@ -2076,9 +2084,9 @@ zb_zcl_disc_cmd_req_t;
 
 /** @brief Get parameter of Discovery command request.
 
-   @param data_buf -  ID zb_bufid_t of a buffer containing part of Discover command request data
-   @param data_ptr - out pointer to zb_zcl_disc_cmd_req_t, containing Discover command data
-   @status - result parse, see @ref zb_zcl_parse_status_t
+   @param _buffer - buffer containing part of Discover command request data
+   @param _data_ptr - out pointer to zb_zcl_disc_cmd_req_t, containing Discover command data
+   @param _status - result parse, see @ref zb_zcl_parse_status_t
  */
 #define ZB_ZCL_GENERAL_GET_DISC_COMMAND(_data_ptr, _buffer, _status) \
 {                                                               \

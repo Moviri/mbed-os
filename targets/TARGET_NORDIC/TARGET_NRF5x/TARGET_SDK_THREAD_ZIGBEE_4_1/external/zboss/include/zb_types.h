@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2021 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* PURPOSE: general-purpose typedefs
 */
@@ -60,23 +79,17 @@ typedef void *             zb_voidp_t;
 #endif
 #endif
 
-#if defined ZB8051
-#define ZB_8BIT_WORD
-#elif defined ZB_PLATFORM_XAP5
-#define ZB_16BIT_WORD
-#else
 #define ZB_32BIT_WORD
-#endif
 
 /* Really need xdata declaration here, not in osif: don't want to include osif.h here */
 #ifdef ZB_IAR
 #define ZB_XDATA
 #define ZB_CODE
-#ifdef ZB8051
-#define ZB_IAR_CODE  __code
-#else
 #define ZB_IAR_CODE
-#endif
+#elif defined __LINT__
+#define ZB_XDATA
+#define ZB_CODE
+#define ZB_IAR_CODE
 #elif defined KEIL
 #define ZB_XDATA xdata
 #define ZB_CODE  code
@@ -84,11 +97,7 @@ typedef void *             zb_voidp_t;
 #else
 #define ZB_XDATA
 #define ZB_CODE
-#ifdef ZB8051
-#define ZB_IAR_CODE code
-#else
 #define ZB_IAR_CODE
-#endif
 #endif
 
 /* register modifier for variables. Can be defined to "register". Will it help to the compiler? */
@@ -132,9 +141,6 @@ enum zb_param_e
 #if defined WIN32 && !defined ZB_WINDOWS
 #define ZB_WINDOWS
 #endif
-#if defined ZB_WINDOWS && !defined ZB_LITTLE_ENDIAN
-#define ZB_LITTLE_ENDIAN
-#endif
 
 #if !defined ZB_USE_STDINT && defined UNIX && !defined ZB_WINDOWS
 #define ZB_USE_STDINT
@@ -155,27 +161,7 @@ typedef signed char        zb_int8_t;
 typedef unsigned short     zb_uint16_t;
 
 typedef signed short       zb_int16_t;
-#if defined ZB8051
-typedef unsigned long      zb_uint32_t;
-
-typedef signed long        zb_int32_t;
-
-typedef zb_uint16_t        zb_bitfield_t;
-typedef zb_uint16_t        zb_lbitfield_t;
-
-typedef zb_int16_t         zb_sbitfield_t;
-
-typedef zb_uint16_t        zb_size_t;
-
-#ifdef ZB_CC25XX
-
-/* Warning: just for an alignment in the macsplit!
-   long long arithmetic won't work */
-typedef zb_uint32_t zb_uint64_t[2];
-
-#endif
-
-#elif defined ZB_16BIT_WORD
+#if   defined ZB_16BIT_WORD
 
 typedef unsigned long      zb_uint32_t;
 
@@ -244,8 +230,8 @@ typedef int16_t            zb_int16_t;
 typedef uint32_t           zb_uint32_t;
 typedef int32_t            zb_int32_t;
 
-typedef long long          zb_int64_t;
-typedef unsigned long long zb_uint64_t;
+typedef int64_t            zb_int64_t;
+typedef uint64_t           zb_uint64_t;
 
 typedef char               zb_char_t;
 typedef unsigned char      zb_uchar_t;
@@ -804,8 +790,8 @@ void* zb_put_next_2_htole32(zb_uint8_t *dst, zb_uint32_t val1, zb_uint32_t val2)
 #define ZB_GET_LOW_BYTE(val) (zb_uint8_t)((val) & 0xFFU)
 #define ZB_GET_HI_BYTE(val)  (zb_uint8_t)(((val) >> 8U) & 0xFFU)
 
-#define ZB_SET_LOW_BYTE(res, val) (res) = ((((zb_uint16_t)res) & 0xFF00U) | (((zb_uint16_t)val) & 0xFFU))
-#define ZB_SET_HI_BYTE(res, val) (res) = (((((zb_uint16_t)val) << 8U) & 0xFF00U) | (((zb_uint16_t)res) & 0xFFU))
+#define ZB_SET_LOW_BYTE(res, val) (res) = ((((zb_uint16_t)(res)) & 0xFF00U) | (((zb_uint16_t)(val)) & 0xFFU))
+#define ZB_SET_HI_BYTE(res, val) (res) = (((((zb_uint16_t)(val)) << 8U) & 0xFF00U) | (((zb_uint16_t)(res)) & 0xFFU))
 
 #define ZB_PKT_16B_ZERO_BYTE 0U
 #define ZB_PKT_16B_FIRST_BYTE 1U

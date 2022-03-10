@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2021 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* PURPOSE: Zigbee address management
 */
@@ -32,6 +51,22 @@
 /*! @cond internals_doc */
 
 #define ZB_UNKNOWN_SHORT_ADDR 0xFFFFU
+
+#ifdef ZB_DEBUG_ADDR
+#define TRACE_ADDR_PROTO_VOID    zb_uint16_t from_file, zb_uint16_t from_line
+#define TRACE_ADDR_CALL_VOID     ZB_TRACE_FILE_ID, __LINE__
+#define TRACE_ADDR_FORWARD_VOID  from_file, from_line
+#define TRACE_ADDR_PROTO         TRACE_ADDR_PROTO_VOID ,
+#define TRACE_ADDR_CALL          TRACE_ADDR_CALL_VOID ,
+#define TRACE_ADDR_FORWARD       TRACE_ADDR_FORWARD_VOID ,
+#else
+#define TRACE_ADDR_PROTO_VOID
+#define TRACE_ADDR_CALL_VOID
+#define TRACE_ADDR_FORWARD_VOID
+#define TRACE_ADDR_PROTO
+#define TRACE_ADDR_CALL
+#define TRACE_ADDR_FORWARD
+#endif  /* ZB_DEBUG_ADDR */
 
 /**
    Compressed IEEE address. One byte  device manufacturer - reference to
@@ -164,7 +199,6 @@ zb_bool_t zb_address_compressed_cmp(zb_ieee_addr_compressed_t *one, zb_ieee_addr
         }
 @endcode
 
-    See nwk_addr sample
  */
 zb_ret_t zb_address_set_pan_id(zb_uint16_t short_pan_id, zb_ext_pan_id_t pan_id, zb_address_pan_id_ref_t *ref);
 
@@ -196,7 +230,6 @@ zb_ret_t zb_address_set_pan_id(zb_uint16_t short_pan_id, zb_ext_pan_id_t pan_id,
     ZB_SCHEDULE_CALLBACK(zb_nlme_network_discovery_confirm, param);
 @endcode
 
-    See nwk_addr sample
  */
 void zb_address_get_pan_id(zb_address_pan_id_ref_t pan_id_ref, zb_ext_pan_id_t pan_id);
 
@@ -207,7 +240,6 @@ void zb_address_get_pan_id(zb_address_pan_id_ref_t pan_id_ref, zb_ext_pan_id_t p
 
    @return nothing
 
-   See zdo_startup_complete_int code
  */
 void zb_address_clear_pan_id_table(zb_ext_pan_id_t pan_id);
 
@@ -216,7 +248,6 @@ void zb_address_clear_pan_id_table(zb_ext_pan_id_t pan_id);
 
    @return nothing
 
-   See zdo_startup_complete_int code
  */
 void zb_address_reset_pan_id_table(void);
 
@@ -314,7 +345,6 @@ zb_bool_t zb_address_cmp_pan_id_by_ref(zb_address_pan_id_ref_t pan_id_ref, zb_ex
   }
 @endcode
 
-  See nwk_addr sample
  */
 zb_ret_t zb_address_update(zb_ieee_addr_t ieee_address, zb_uint16_t short_address, zb_bool_t lock, zb_address_ieee_ref_t *ref_p);
 
@@ -337,13 +367,12 @@ void zb_long_address_update_by_ref(zb_ieee_addr_t ieee_address, zb_address_ieee_
     zb_address_by_ref(resp->extended_address, &resp->network_address, addr_ref);
 @endcode
 
-  See nwk_addr sample
  */
 void zb_address_by_ref(zb_ieee_addr_t ieee_address, zb_uint16_t *short_address_p, zb_address_ieee_ref_t ref);
 
 /**
    Get IEEE address with address reference.
-   
+
    Get existing IEEE address(long address) with address reference. Update address alive time if it not locked.
 
    @param ieee_address  - (out) long address
@@ -359,7 +388,6 @@ void func(zb_neighbor_tbl_ent_t *nbt)
 }
 @endcode
 
-  See tp_pro_bv-32 sample
  */
 void zb_address_ieee_by_ref(zb_ieee_addr_t ieee_address, zb_address_ieee_ref_t ref);
 
@@ -383,7 +411,6 @@ void zb_address_ieee_by_ref(zb_ieee_addr_t ieee_address, zb_address_ieee_ref_t r
     }
 @endcode
 
-  See tp_pro_bv-32 sample
  */
 void zb_address_short_by_ref(zb_uint16_t *short_address_p, zb_address_ieee_ref_t ref);
 
@@ -413,7 +440,6 @@ void zb_address_short_by_ref(zb_uint16_t *short_address_p, zb_address_ieee_ref_t
   }
 @endcode
 
-  See nwk_addr sample
  */
 zb_ret_t zb_address_by_ieee(const zb_ieee_addr_t ieee, zb_bool_t create, zb_bool_t lock, zb_address_ieee_ref_t *ref_p);
 
@@ -430,7 +456,6 @@ zb_ret_t zb_address_by_ieee(const zb_ieee_addr_t ieee, zb_bool_t create, zb_bool
    @snippet thermostat/thermostat_zc/thermostat_zc.c address_short_by_ieee
    @par
 
-   See thermostat sample
  */
 zb_uint16_t zb_address_short_by_ieee(zb_ieee_addr_t ieee_address);
 
@@ -446,7 +471,6 @@ zb_uint16_t zb_address_short_by_ieee(zb_ieee_addr_t ieee_address);
    @b Example
    @snippet light_sample_HA_1_2_bulb/light_coordinator_HA_1_2_bulb/light_zc_HA_1_2_bulb.c address_ieee_by_short
 
-   See light_sample
  */
 zb_ret_t zb_address_ieee_by_short(zb_uint16_t short_addr, zb_ieee_addr_t ieee_address);
 
@@ -466,7 +490,6 @@ zb_ret_t zb_address_ieee_by_short(zb_uint16_t short_addr, zb_ieee_addr_t ieee_ad
    @b Example
    @snippet simple_gw/simple_gw.c address_by_short
 
-    See simple_gw sample
  */
 zb_ret_t zb_address_by_short(zb_uint16_t short_address, zb_bool_t create, zb_bool_t lock, zb_address_ieee_ref_t *ref_p);
 
@@ -512,7 +535,9 @@ zb_bool_t zb_address_is_locked(zb_address_ieee_ref_t ref);
 
    @return RET_OK or RET_ERROR
  */
-zb_ret_t zb_address_lock(zb_address_ieee_ref_t ref);
+#define zb_address_lock(ref) zb_address_lock_func(TRACE_ADDR_CALL ref)
+
+zb_ret_t zb_address_lock_func(TRACE_ADDR_PROTO zb_address_ieee_ref_t ref);
 
 
 /**
@@ -521,7 +546,9 @@ zb_ret_t zb_address_lock(zb_address_ieee_ref_t ref);
 
    @param ref - IEEE/network address pair reference
  */
-void zb_address_unlock(zb_address_ieee_ref_t ref);
+#define zb_address_unlock(ref) zb_address_unlock_func(TRACE_ADDR_CALL ref)
+
+void zb_address_unlock_func(TRACE_ADDR_PROTO zb_address_ieee_ref_t ref);
 
 /**
    Delete address.

@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2021 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*  PURPOSE: Common constants and definitions, mainly related to Zigbee protocol.
 */
@@ -35,13 +54,6 @@ Do not put there ifdefs depending on defines made in the middle of zb_config.h!
 /* To compile MAC only build;
    TODO: Fix it. there should probably be another way to build without security
 */
-#ifdef ZB_MACSPLIT_DEVICE
-#define ZB_CCM_M 4U
-#define ZB_CCM_KEY_SIZE 16U
-#ifndef ZB_BUILD_DATE
-#define ZB_BUILD_DATE "19700101"
-#endif
-#endif
 /** @endcond *//* internals_doc */
 /****************************Security options**************************/
 
@@ -252,12 +264,12 @@ key. They use same algorithm.
 /*!
  APS: The base amount of delay before each broadcast parent announce is sent.
  */
-#define ZB_APS_PARENT_ANNOUNCE_BASE_TIMER  (10U * ZB_TIME_ONE_SECOND)
+#define ZB_APS_PARENT_ANNOUNCE_BASE_TIMER (ZB_SECONDS_TO_BEACON_INTERVAL(10U))
 
 /*!
 The max amount of jitter that is added to the apsParentAnnounceBaseTimer before each broadcast parent announce is sent.
 */
-#define ZB_APS_PARENT_ANNOUNCE_JITTER_MAX (10U * ZB_TIME_ONE_SECOND)
+#define ZB_APS_PARENT_ANNOUNCE_JITTER_MAX (ZB_SECONDS_TO_BEACON_INTERVAL(10U) - 2U)
 /** @endcond */ /*internals_doc*/
 
 /**
@@ -587,7 +599,7 @@ At the worst case our NWK can skip long address at tx: 8 bytes of reserve.
    NWK Mesh route stuff: route discovery table size
 */
 #ifndef ZB_NWK_ROUTE_DISCOVERY_TABLE_SIZE
-#define ZB_NWK_ROUTE_DISCOVERY_TABLE_SIZE 5U
+#define ZB_NWK_ROUTE_DISCOVERY_TABLE_SIZE 6U
 #endif
 
 /* nwkcRouteDiscoveryTime == 0x2710 ms == 10 sec. Expiry function called once
@@ -655,7 +667,7 @@ At the worst case our NWK can skip long address at tx: 8 bytes of reserve.
 #endif
 
 /* 01/15/2019 EE CR:MINOR Can't it be better to keep ZB_NWK_MAX_BROADCAST_JITTER_INTERVAL define but internally define it using octets?
-   In such case you minimize code modifications. same for all similar cases. Why movve "octets" to the upper layer? */
+   In such case you minimize code modifications. same for all similar cases. Why move "octets" to the upper layer? */
 /* nwkcMaxBroadcastJitter */
 /* 01/15/2019 EE CR:MINOR Add reference to the specification: here and in similar cases */
 #define ZB_NWKC_MAX_BROADCAST_JITTER_OCTETS 0x7d0U
@@ -880,7 +892,7 @@ Workaround for secure rejoin
 #define ZB_ZDO_1_MIN_TIMEOUT (ZB_TIME_ONE_SECOND * 60U)
 
 /* Default values: see HA spec 9.6.4.2 Attribute Settings and Battery Life Considerations */
-/** @endcond *//* intrenals_doc */
+/** @endcond *//* internals_doc */
 /*!
    Default fast poll timeout
  */
@@ -940,7 +952,7 @@ Workaround for secure rejoin
 /*!
    Minimal possible turbo poll interval
  */
-#if defined ZB_SUBGHZ_ONLY_MODE || defined ZB_R22_MULTIMAC_MODE
+#if defined ZB_SUBGHZ_ONLY_MODE || defined ZB_R22_MULTIMAC_MODE && !defined SNCP_MODE
 #define ZB_PIM_DEFAULT_MIN_TURBO_POLL_INTERVAL ZB_MILLISECONDS_TO_BEACON_INTERVAL(250U)
 #else
 #define ZB_PIM_DEFAULT_MIN_TURBO_POLL_INTERVAL ZB_MILLISECONDS_TO_BEACON_INTERVAL(100U)
@@ -1210,12 +1222,28 @@ The CCA detection time shall be equal to 8 symbol periods.
 /*! Percentage of failures. Use it as divider to get 25 % */
 #define ZB_FAILS_PERCENTAGE   4U
 /*! MAC queue size */
+/* Since the ZB_MAC_RX_QUEUE_CAP can be configured by the Vendor, the ZB_MAC_QUEUE_SIZE
+ * should be configurable too.
+ *
+ * If ZB_MAC_RX_QUEUE_CAP is larger than ZB_MAC_QUEUE_SIZE and the node is flooded
+ * with requests, that require a response to be sent, the node enters a weird state:
+ *  - For each request a response is generated.
+ *  - Each response is scheduled.
+ *  - Part of the responses are not sent and the error -774 is returned in the callback for the response packet.
+ * This is a totally valid behavior, but there is no clean way of handling this case
+ * in the application logic.
+ *
+ * If the ZB_MAC_RX_QUEUE_CAP is smaller than ZB_MAC_QUEUE_SIZE this situation is avoided,
+ * since the node stops sending MAC ACKs for frames that it cannot send a response to immediately.
+ */
+#ifndef ZB_MAC_QUEUE_SIZE
 #if defined ZB_SUBGHZ_ONLY_MODE || defined ZB_R22_MULTIMAC_MODE
 /* Increased MAC queue size for Sub-GHz because the LBT mechanism periodically blocks the radio */
 #define ZB_MAC_QUEUE_SIZE 7U
 #else
 #define ZB_MAC_QUEUE_SIZE 5U
 #endif
+#endif /* ZB_MAC_QUEUE_SIZE */
 
 /*
 The maximum time, in
@@ -1230,13 +1258,7 @@ request command frame.
    Maximum time to wait for a response command frame, range 2-64
    Default is 32, 64 set for better compatibility
 */
-#ifndef ZB_NSNG
 #define ZB_MAC_RESPONSE_WAIT_TIME 32U
-#else
-/* Too fast for NSNG causing retransmits. TODO: check why can't it work with
- * normal timeouts.  */
-#define ZB_MAC_RESPONSE_WAIT_TIME (32U)
-#endif
 
 /*! Make all MAC PIB attributes configurable */
 #define ZB_CONFIGURABLE_MAC_PIB
@@ -1340,6 +1362,7 @@ request command frame.
 *
  */
 #define ZB_EU_FSK_REFERENCE_SENSITIVITY -99
+#define ZB_NA_FSK_REFERENCE_SENSITIVITY -91
 
 /*
  * 02/01/2021: After discussions in ZigBee Sub-GHz task group, agreed that
@@ -1378,7 +1401,7 @@ request command frame.
  */
 #define ZB_MAC_SUB_GHZ_PHR_LEN_BYTES 2U
 
-/* @breief CCA period for Sub-GHz PHY in symbols */
+/* @brief CCA period for Sub-GHz PHY in symbols */
 #define ZB_MAC_SUB_GHZ_CCA_PERIOD_SYMBOLS 16U
 
 /* IMPORTANT!!!
@@ -1420,13 +1443,54 @@ request command frame.
 #define ZB_MAC_GB_EU_FSK_LBT_GRANULARITY_SYMBOLS 50U
 #define ZB_MAC_NA_FSK_LBT_GRANULARITY_SYMBOLS    200U
 
+/* aLBTAckWindowStart */
+/* 450 us */
+/*!
+*   The minimum pause before acknowledging a received packet.
+*   This is to allow a transmitting device to change from
+*   transmit to receive mode. Starting an ACK before this time
+*   may result in the transmitter missing the ACK.
+*/
+#define ZB_MAC_GB_EU_FSK_LBT_ACK_WINDOW_START_SYMBOLS 45U
+#define ZB_MAC_NA_FSK_LBT_ACK_WINDOW_START_SYMBOLS    225U
+
+/* aLBTAckWindow */
+/* 1ms */
+/*!
+*   The maximum wait time before acknowledging a received
+*   packet (includes @ref ZB_MAC_LBT_ACK_WINDOW_START_SYMBOLS).
+*   This time MUST be shorter than @ref ZB_MAC_LBT_MIN_FREE_SYMBOLS otherwise other
+*   devices could interpret the quiet as an opportunity to transmit.
+*/
+#define ZB_MAC_GB_EU_FSK_LBT_ACK_WINDOW_SYMBOLS 100U
+#define ZB_MAC_NA_FSK_LBT_ACK_WINDOW_SYMBOLS 500U
+
+/*aTxRxTurnAround */
+/*!
+*  Time for radio to switch between transmit and receive
+*/
+#define ZB_MAC_GB_EU_FSK_LBT_TX_RX_SWITCH_TIME_SYMBOLS 45U
+#define ZB_MAC_NA_FSK_LBT_TX_RX_SWITCH_TIME_SYMBOLS 225U
+
+/* aLBTTimeout */
+/* 6 ms */
+/*!
+*   Time before aborting LBT if it cannot find a free slot.
+*   This value should be set to at least
+*   [@ref ZB_MAC_LBT_MIN_FREE_SYMBOLS  + @ref ZB_MAC_LBT_MAX_TX_RETRIES * (@ref ZB_MAC_LBT_MIN_FREE_SYMBOLS + @ref ZB_MAC_LBT_MAX_RANDOM_SYMBOLS) + @ref ZB_MAC_LBT_TX_RX_SWITCH_TIME_SYMBOLS )]
+*   to ensure that all re-tries can occur.
+*/
+#define ZB_MAC_GB_EU_FSK_LBT_TIMEOUT_SYMBOLS 6000UL
+#define ZB_MAC_NA_FSK_LBT_TIMEOUT_SYMBOLS 30000U
+
+
 /* aLBTThresholdLevelLp */
 /*!
 *   The level (in dBm) at which the receiver determines whether there
 *   is activity in a low power channel (+14 dBm Tx).
 */
-#define ZB_MAC_LBT_GB_THRESHOLD_LEVEL_LP  (-80)
-#define ZB_MAC_LBT_EU_THRESHOLD_LEVEL_LP  (-80)
+#define ZB_MAC_LBT_GB_THRESHOLD_LEVEL_LP  (-87)
+#define ZB_MAC_LBT_EU_THRESHOLD_LEVEL_LP  (-87)
 #define ZB_MAC_LBT_NA_THRESHOLD_LEVEL_LP  (-79) /* 08/25/2020: see TP/154/PHYRFS1/RECEIVER-07 test */
 
 /* aLBTThresholdLevelHp */
@@ -1445,52 +1509,13 @@ request command frame.
 */
 #define ZB_MAC_LBT_MAX_TX_RETRIES 3U
 
-/* aLBTAckWindowStart */
-/* 450 us */
-/*!
-*   The minimum pause before acknowledging a received packet.
-*   This is to allow a transmitting device to change from
-*   transmit to receive mode. Starting an ACK before this time
-*   may result in the transmitter missing the ACK.
-*/
-#define ZB_MAC_LBT_ACK_WINDOW_START_SYMBOLS 45U
-
-/* aLBTAckWindow */
-/* 1ms */
-/*!
-*   The maximum wait time before acknowledging a received
-*   packet (includes @ref ZB_MAC_LBT_ACK_WINDOW_START_SYMBOLS).
-*   This time MUST be shorter than @ref ZB_MAC_LBT_MIN_FREE_SYMBOLS otherwise other
-*   devices could interpret the quiet as an opportunity to transmit.
-*/
-#define ZB_MAC_LBT_ACK_WINDOW_SYMBOLS 100U
-
-/*aTxRxTurnAround */
-/*!
-*  Time for radio to switch between transmit and receive
-*/
-#define ZB_MAC_LBT_TX_RX_SWITCH_TIME_SYMBOLS 45U
-/* aLBTTimeout */
-/* 6 ms */
-/*!
-*   Time before aborting LBT if it cannot find a free slot.
-*   This value should be set to at least
-*   [@ref ZB_MAC_LBT_MIN_FREE_SYMBOLS  + @ref ZB_MAC_LBT_MAX_TX_RETRIES * (@ref ZB_MAC_LBT_MIN_FREE_SYMBOLS + @ref ZB_MAC_LBT_MAX_RANDOM_SYMBOLS) + @ref ZB_MAC_LBT_TX_RX_SWITCH_TIME_SYMBOLS )]
-*   to ensure that all re-tries can occur.
-*/
-#define ZB_MAC_LBT_TIMEOUT_SYMBOLS 6000UL
-
 /* Tuned to fit to 2 beacon intervals */
 /*! LBT transmition wait period in ms */
 #define ZB_MAC_LBT_TX_WAIT_QUANT_MS        33U
 
 /* aDUTYCYCLEMeasurementPeriod */
 /*! The period over which the duty cycle is calculated. */
-#ifndef ZB_MAC_TESTING_MODE
 #define ZB_MAC_DUTY_CYCLE_MEASUREMENT_PERIOD_SYMBOLS 360000000U
-#else
-#define ZB_MAC_DUTY_CYCLE_MEASUREMENT_PERIOD_SYMBOLS 24000000U
-#endif /* ZB_MAC_TESTING_MODE */
 
 /* aDUTYCYCLERampUp */
 #ifndef ZB_MAC_DUTY_CYCLE_RAMP_UP_SYMBOLS
@@ -1504,24 +1529,15 @@ request command frame.
 #define ZB_MAC_DUTY_CYCLE_RAMP_DOWN_SYMBOLS   0U
 #endif  /* ZB_MAC_DUTY_CYCLE_RAMP_DOWN_SYMBOLS */
 
-#ifdef ZB_MAC_TESTING_MODE
-
-#define ZB_MAC_DUTY_CYCLE_LIMITED_THRESHOLD_SYMBOLS  6000000U
-
-#define ZB_MAC_DUTY_CYCLE_CRITICAL_THRESHOLD_SYMBOLS 8000000U
-
-#endif  /* ZB_MAC_TESTING_MODE */
 
 
 #ifndef ZB_USE_DUTY_CYCLE_PERCENT_ENABLE
 
-#ifndef ZB_MAC_TESTING_MODE
 /*! MAC duty cycle of limited threshold length */
 #define ZB_MAC_DUTY_CYCLE_LIMITED_THRESHOLD_SYMBOLS  5400000U
 /*! MAC duty cycle of critical threshold length */
 #define ZB_MAC_DUTY_CYCLE_CRITICAL_THRESHOLD_SYMBOLS 7500000U
 
-#endif
 /*! MAC duty cycle of limited threshold length */
 /*! Length of regulated MAC duty cycle pages 29 and 29 */
 #define ZB_MAC_DUTY_CYCLE_REGULATED_SYMBOLS_PAGES_28_29 10000000U
@@ -1542,13 +1558,6 @@ request command frame.
 #define ZB_MAC_POWER_CONTROL_INFO_TABLE_SIZE 10U
 /*! MAC power control expiration time out */
 #define ZB_MAC_POWER_CONTROL_EXPIRATION_TIMEOUT (10U * ZB_TIME_ONE_SECOND)
-/*!
-*   Optimal signal level for Eu FSK should be +20dB above the reference sensitivity @ref ZB_EU_FSK_REFERENCE_SENSITIVITY
-*
-*   See reference document 05-3474-22 section D.9.2.4.2. Zigbee Specification R22
- */
-#define ZB_MAC_POWER_CONTROL_OPT_SIGNAL_LEVEL (ZB_EU_FSK_REFERENCE_SENSITIVITY + 20U)
-
 
 #ifndef ZB_MAC_DEFAULT_TX_POWER_GB_EU_SUB_GHZ
 /*! Default MAC transmission power for GB and EU Sub-GHz PHY */
@@ -1690,12 +1699,6 @@ request command frame.
 #define ZB_APS_MAX_WINDOW_SIZE 1U
 #define ZB_APS_INTERFRAME_DELAY 50U /* milliseconds */
 
-#if defined(ZB_SE_ENABLE_SERVICE_DISCOVERY_PROCESSING)
-
-#define ZB_SE_SERVICE_DISCOVERY_PERIODIC_RESTART_TIME (ZB_TIME_ONE_SECOND * 60U * 60U * 3U)
-#define ZB_SE_SERVICE_DISCOVERY_CLUSTER_TIME (ZB_TIME_ONE_SECOND * 40U)
-
-#endif
 
 #define ZB_SE_STEADY_STATE_CLUSTER_MATCH_DESC_TIME (ZB_TIME_ONE_SECOND * 20U)
 #define ZB_SE_STEADY_STATE_MAX_FAILURE_CNT 3U

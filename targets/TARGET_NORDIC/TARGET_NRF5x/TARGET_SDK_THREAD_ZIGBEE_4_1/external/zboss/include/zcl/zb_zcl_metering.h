@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2022 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* PURPOSE: Metering cluster definitions
 */
@@ -1602,7 +1621,7 @@ enum zb_zcl_metering_profile_interval_period_e
 };
 
 #define ZB_ZCL_METERING_GET_PROFILE_PAYLOAD_SIZE_IS_VALID(current_size) \
-  ((current_size == sizeof(zb_zcl_metering_get_profile_payload_t) ? ZB_TRUE : ZB_FALSE))
+  ((current_size >= sizeof(zb_zcl_metering_get_profile_payload_t) ? ZB_TRUE : ZB_FALSE))
 
 /** @ref ZB_ZCL_METERING_SRV_CMD_GET_PROFILE_RESPONSE "GetProfileResponse" command payload
  *  @see SE spec, subclause D.3.2.3.1.1.1
@@ -1750,24 +1769,25 @@ typedef ZB_PACKED_PRE struct zb_zcl_metering_get_snapshot_payload_s
  */
 enum zb_zcl_metering_snapshot_cause_e
 {
-  ZB_ZCL_METERING_CAUSE_GENERAL                         =  0,  /**< General */
-  ZB_ZCL_METERING_CAUSE_END_OF_BILLING_PERIOD           =  1,  /**< End of Billing Period */
-  ZB_ZCL_METERING_CAUSE_END_OF_BLOCK_PERIOD             =  2,  /**< End of Block Period */
-  ZB_ZCL_METERING_CAUSE_CHANGE_OF_TARIFF_INFORMATION    =  3,  /**< Change of Tariff Information */
-  ZB_ZCL_METERING_CAUSE_CHANGE_OF_PRICE_MATRIX          =  4,  /**< Change of Price Matrix */
-  ZB_ZCL_METERING_CAUSE_CHANGE_OF_BLOCK_THRESHOLDS      =  5,  /**< Change of Block Thresholds */
-  ZB_ZCL_METERING_CAUSE_CHANGE_OF_CV                    =  6,  /**< Change of CV */
-  ZB_ZCL_METERING_CAUSE_CHANGE_OF_CF                    =  7,  /**< Change of CF */
-  ZB_ZCL_METERING_CAUSE_CHANGE_OF_CALENDAR              =  8,  /**< Change of Calendar */
-  ZB_ZCL_METERING_CAUSE_CRITICAL_PEAK_PRICING           =  9,  /**< Critical Peak Pricing */
-  ZB_ZCL_METERING_CAUSE_MANUALLY_TRIGGERED_FROM_CLIENT  = 10,  /**< Manually Triggered from Client */
-  ZB_ZCL_METERING_CAUSE_END_OF_RESOLVE_PERIOD           = 11,  /**< End of Resolve Period */
-  ZB_ZCL_METERING_CAUSE_CHANGE_OF_TENANCY               = 12,  /**< Change of Tenancy */
-  ZB_ZCL_METERING_CAUSE_CHANGE_OF_SUPPLIER              = 13,  /**< Change of Supplier */
-  ZB_ZCL_METERING_CAUSE_CHANGE_OF_METER_MODE            = 14,  /**< Change of (Meter) Mode */
-  ZB_ZCL_METERING_CAUSE_DEBT_PAYMENT                    = 15,  /**< Debt Payment */
-  ZB_ZCL_METERING_CAUSE_SCHEDULED_SNAPSHOT              = 16,  /**< Scheduled Snapshot */
-  ZB_ZCL_METERING_CAUSE_OTA_FIRMWARE_DOWNLOAD           = 17   /**< OTA Firmware Download */
+  ZB_ZCL_METERING_CAUSE_GENERAL                         = 1 << 0,  /**< General */
+  ZB_ZCL_METERING_CAUSE_END_OF_BILLING_PERIOD           = 1 << 1,  /**< End of Billing Period */
+  ZB_ZCL_METERING_CAUSE_END_OF_BLOCK_PERIOD             = 1 << 2,  /**< End of Block Period */
+  ZB_ZCL_METERING_CAUSE_CHANGE_OF_TARIFF_INFORMATION    = 1 << 3,  /**< Change of Tariff Information */
+  ZB_ZCL_METERING_CAUSE_CHANGE_OF_PRICE_MATRIX          = 1 << 4,  /**< Change of Price Matrix */
+  ZB_ZCL_METERING_CAUSE_CHANGE_OF_BLOCK_THRESHOLDS      = 1 << 5,  /**< Change of Block Thresholds */
+  ZB_ZCL_METERING_CAUSE_CHANGE_OF_CV                    = 1 << 6,  /**< Change of CV */
+  ZB_ZCL_METERING_CAUSE_CHANGE_OF_CF                    = 1 << 7,  /**< Change of CF */
+  ZB_ZCL_METERING_CAUSE_CHANGE_OF_CALENDAR              = 1 << 8,  /**< Change of Calendar */
+  ZB_ZCL_METERING_CAUSE_CRITICAL_PEAK_PRICING           = 1 << 9,  /**< Critical Peak Pricing */
+  ZB_ZCL_METERING_CAUSE_MANUALLY_TRIGGERED_FROM_CLIENT  = 1 << 10,  /**< Manually Triggered from Client */
+  ZB_ZCL_METERING_CAUSE_END_OF_RESOLVE_PERIOD           = 1 << 11,  /**< End of Resolve Period */
+  ZB_ZCL_METERING_CAUSE_CHANGE_OF_TENANCY               = 1 << 12,  /**< Change of Tenancy */
+  ZB_ZCL_METERING_CAUSE_CHANGE_OF_SUPPLIER              = 1 << 13,  /**< Change of Supplier */
+  ZB_ZCL_METERING_CAUSE_CHANGE_OF_METER_MODE            = 1 << 14,  /**< Change of (Meter) Mode */
+  ZB_ZCL_METERING_CAUSE_DEBT_PAYMENT                    = 1 << 15,  /**< Debt Payment */
+  ZB_ZCL_METERING_CAUSE_SCHEDULED_SNAPSHOT              = 1 << 16,  /**< Scheduled Snapshot */
+  ZB_ZCL_METERING_CAUSE_OTA_FIRMWARE_DOWNLOAD           = 1 << 17,   /**< OTA Firmware Download */
+  ZB_ZCL_METERING_CAUSE_SELECT_ALL_SNAPSHOTS            = 0xFFFFFFFF  /**< Select All Snapshots */
 };
 
 

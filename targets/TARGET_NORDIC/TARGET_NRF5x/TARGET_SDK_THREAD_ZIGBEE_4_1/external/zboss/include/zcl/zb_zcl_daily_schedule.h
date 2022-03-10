@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2022 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* PURPOSE: Daily Schedule cluster defintions
 */
@@ -183,13 +202,18 @@ typedef enum zb_zcl_daily_schedule_srv_cmd_e
                                                                 that all data associated with
                                                                 a particular schedule instance
                                                                 should be discarded. */
+  /* (O) */
+  ZB_ZCL_DAILY_SCHEDULE_SRV_CMD_CANCEL_ALL_SCHEDULES = 0x06,  /**< The CancelAllSchedules command indicates
+                                                                that all data associated with
+                                                                all schedules should be discarded. */
 } zb_zcl_daily_schedule_srv_cmd_t;
 
 /* Daily schedule cluster commands list : only for information - do not modify */
 #define ZB_ZCL_CLUSTER_ID_DAILY_SCHEDULE_SERVER_ROLE_GENERATED_CMD_LIST                    \
                                       ZB_ZCL_DAILY_SCHEDULE_SRV_CMD_PUBLISH_SCHEDULE,      \
                                       ZB_ZCL_DAILY_SCHEDULE_SRV_CMD_PUBLISH_DAY_PROFILE,   \
-                                      ZB_ZCL_DAILY_SCHEDULE_SRV_CMD_CANCEL_SCHEDULE
+                                      ZB_ZCL_DAILY_SCHEDULE_SRV_CMD_CANCEL_SCHEDULE,       \
+                                      ZB_ZCL_DAILY_SCHEDULE_SRV_CMD_CANCEL_ALL_SCHEDULES
 
 #define ZB_ZCL_CLUSTER_ID_DAILY_SCHEDULE_CLIENT_ROLE_RECEIVED_CMD_LIST ZB_ZCL_CLUSTER_ID_DAILY_SCHEDULE_SERVER_ROLE_GENERATED_CMD_LIST
 
@@ -268,14 +292,14 @@ typedef ZB_PACKED_PRE struct zb_zcl_daily_schedule_get_schedule_payload_s
  * @param size - size of received data payload
  */
 #define ZB_ZCL_DAILY_SCHEDULE_GET_SCHEDULE_PL_SIZE_IS_VALID(size) \
-  ((size == sizeof(zb_zcl_daily_schedule_get_schedule_payload_t) ? ZB_TRUE : ZB_FALSE))
+  ((size >= sizeof(zb_zcl_daily_schedule_get_schedule_payload_t) ? ZB_TRUE : ZB_FALSE))
 
 
 /** Check if @ref ZB_ZCL_DAILY_SCHEDULE_CLI_CMD_GET_DAY_PROFILE "GetDayProfile" command payload size is valid
  * @param size - size of received data payload
  */
 #define ZB_ZCL_DAILY_SCHEDULE_GET_DAY_PROFILE_PL_SIZE_IS_VALID(size) \
-  ((size == sizeof(zb_zcl_daily_schedule_get_day_profile_payload_t) ? ZB_TRUE : ZB_FALSE))
+  ((size >= sizeof(zb_zcl_daily_schedule_get_day_profile_payload_t) ? ZB_TRUE : ZB_FALSE))
 
 
 /** This enumeration presents possible values of Schedule Time Reference field
@@ -310,6 +334,10 @@ typedef ZB_PACKED_PRE struct zb_zcl_daily_schedule_publish_schedule_payload_s
   /** Unique identifier generated by the commodity Supplier to identify a particular schedule.
    */
   zb_uint32_t schedule_id;       /* (M) */
+
+  /** Unique identifier generated by the commodity supplier.
+   */
+  zb_uint16_t day_id;       /* (M) */
 
   /** A UTC Time field to denote the time at which the published schedule becomes
    * valid. A start date/time of 0x00000000 shall indicate that the command
@@ -366,7 +394,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_daily_schedule_publish_schedule_payload_s
  * @param size - size of received data payload
  */
 #define ZB_ZCL_DAILY_SCHEDULE_PUBLISH_SCHEDULE_PL_SIZE_IS_VALID(pl, size) \
-  ((size == ZB_ZCL_DAILY_SCHEDULE_PUBLISH_SCHEDULE_PL_EXPECTED_SIZE((zb_zcl_daily_schedule_publish_schedule_payload_t *)pl)) ? ZB_TRUE : ZB_FALSE)
+  ((size >= ZB_ZCL_DAILY_SCHEDULE_PUBLISH_SCHEDULE_PL_EXPECTED_SIZE((zb_zcl_daily_schedule_publish_schedule_payload_t *)pl)) ? ZB_TRUE : ZB_FALSE)
 
 
 /** Check if @ref ZB_ZCL_DAILY_SCHEDULE_SRV_CMD_PUBLISH_DAY_PROFILE "PublishDayProfile" command payload size is valid
@@ -380,7 +408,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_daily_schedule_publish_schedule_payload_s
  * @param size - size of received data payload
  */
 #define ZB_ZCL_DAILY_SCHEDULE_CANCEL_SCHEDULE_PL_SIZE_IS_VALID(size) \
-  ((size == sizeof(zb_zcl_daily_schedule_cancel_schedule_payload_t) ? ZB_TRUE : ZB_FALSE))
+  ((size >= sizeof(zb_zcl_daily_schedule_cancel_schedule_payload_t) ? ZB_TRUE : ZB_FALSE))
 
 
 /** Linky Schedules Command Sub-Payload structure
@@ -427,6 +455,10 @@ typedef ZB_PACKED_PRE struct zb_zcl_daily_schedule_publish_day_profile_payload_s
    * field allows devices to determine which information is newer.
    */
   zb_uint32_t issuer_event_id;                   /* (M) */
+
+  /** Unique identifier generated by the commodity supplier. The Day ID is used as a reference to assign a Day Profile to a Daily Schedule
+   */
+  zb_uint16_t day_id;                   /* (M) */
 
   /** Unique identifier generated by the commodity Supplier to identify a particular schedule.
    */
@@ -612,6 +644,20 @@ void zb_zcl_daily_schedule_send_cmd_cancel_schedule(zb_uint8_t param,
   zb_callback_t cb
 );
 
+/** Function for send @ref ZB_ZCL_DAILY_SCHEDULE_SRV_CMD_CANCEL_ALL_SCHEDULES "CancelAllSchedules" command.
+ * @param param - Reference to buffer.
+ * @param dst_addr - Address of the device to send command to.
+ * @param dst_addr_mode - Address mode for dst_addr.
+ * @param dst_ep - Destination endpoint.
+ * @param src_ep - Current endpoint.
+ * @param cb - Callback which should be called when the ZCL stack receives
+ * APS ack.
+ */
+void zb_zcl_daily_schedule_send_cmd_cancel_all_schedules(zb_uint8_t param,
+  const zb_addr_u *dst_addr, zb_aps_addr_mode_t dst_addr_mode,
+  zb_uint8_t dst_ep, zb_uint8_t src_ep,
+  zb_callback_t cb
+);
 
 /** Macro for calling @ref zb_zcl_daily_schedule_send_cmd_publish_schedule function
  */
@@ -636,6 +682,12 @@ void zb_zcl_daily_schedule_send_cmd_cancel_schedule(zb_uint8_t param,
   zb_zcl_daily_schedule_send_cmd_cancel_schedule(_param, _dst_addr, _addr_mode,        \
                                            _dst_ep, _src_ep, _payload, NULL)
 
+/** Macro for call @ref zb_zcl_daily_schedule_send_cmd_cancel_all_schedules function
+ */
+#define ZB_ZCL_DAILY_SCHEDULE_SEND_CMD_CANCEL_ALL_SCHEDULES(_param, _dst_addr, _addr_mode,  \
+                                                 _dst_ep, _src_ep)     \
+  zb_zcl_daily_schedule_send_cmd_cancel_all_schedules(_param, _dst_addr, _addr_mode,        \
+                                           _dst_ep, _src_ep, NULL)
 
 /** Macro for call @ref zb_zcl_daily_schedule_send_cmd_get_schedule function
  */

@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2021 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*  PURPOSE: Public ZDO layer API
 */
@@ -234,64 +253,6 @@ typedef zb_uint8_t zb_zdp_status_t;
 /** @cond DOXYGEN_BDB_SECTION */
 #define ZB_SIGNAL_DEVICE_FIRST_START ZB_BDB_SIGNAL_DEVICE_FIRST_START
 #define ZB_SIGNAL_DEVICE_REBOOT      ZB_BDB_SIGNAL_DEVICE_REBOOT
-#ifdef ZB_ENABLE_ZLL
-/**
- * @cond DOXYGEN_TOUCHLINK_FEATURE
- * @addtogroup touchlink
- * @{ */
-
-/** Informs the Touchlink initiator about the new network has been created.
- * @parblock
- * When generated:
- *  - Upon generating the Network Start Response during the Touchlink commissioning procedure.
- *
- * Status codes:
- *  - RET_OK: New Zigbee network created.
- *  - Does not return error status.
- *
- * Signal parameters:
- *  - @ref zb_bdb_signal_touchlink_nwk_started_params_t
- *
- * @snippet lighting/dimmable_light_tl/light_controller_zed.c signal_touchlink_nwk_started
- * @endparblock */
-#define ZB_BDB_SIGNAL_TOUCHLINK_NWK_STARTED 7U
-
-/** Inform the Touchlink initiator that the new router joined the network.
- * @parblock
- * When generated:
- *  - Upon receiving the Commissioning Network Join Router Response.
- *
- * Status codes:
- *  - RET_OK: New router joined the network.
- *  - Does not return error status.
- *
- * Signal parameters:
- *  - @ref zb_bdb_signal_touchlink_nwk_started_params_t
- *
- * @snippet lighting/dimmable_light_tl/light_controller_zed.c signal_touchlink_nwk_joined_router
- * @endparblock */
-#define ZB_BDB_SIGNAL_TOUCHLINK_NWK_JOINED_ROUTER 8U
-
-/** Touchlink commissioning done.
- * @parblock
- * When generated:
- *  - Touchlink initiator device joined the network.
- *
- * Status codes:
- *  - ZB_BDB_STATUS_SUCCESS: Commissioning successful.
- *  - ZB_BDB_STATUS_NO_SCAN_RESPONSE:
- *    1. No Touchlink commissioning cluster scan response inter-PAN commands were received
- *    2. No touchlink commissioning cluster scan response inter-PAN commands were received with the
- *       inter-PAN transaction identifier field equal to that used by the initiator in its scan request
- *       command.
- *
- * Signal parameters:
- *  - none
- * @endparblock */
-#define ZB_BDB_SIGNAL_TOUCHLINK 9U
-/** @} */  /* touchlink */
-/** @endcond */ /* DOXYGEN_TOUCHLINK_FEATURE */
-#endif /*ZB_ENABLE_ZLL*/
 
 /** BDB network steering completed (Network steering only).
  * @parblock
@@ -301,7 +262,7 @@ typedef zb_uint8_t zb_zdp_status_t;
  *
  * Status codes:
  *  - RET_OK: Network steering completed.
- *  - Does not return error status.
+ *  - RET_INTERRUPTED: was cancelled with bdb_cancel_joining()
  *
  * Has additional data of type zb_zdo_signal_leave_indication_params_t.
  *
@@ -318,7 +279,7 @@ typedef zb_uint8_t zb_zdp_status_t;
  *
  * Status codes:
  *  - RET_OK: Network formation completed.
- *  - Does not return error status.
+ *  - RET_INTERRUPTED: was cancelled with bdb_cancel_formation()
  *
  * Signal parameters:
  *  - none
@@ -352,55 +313,6 @@ typedef zb_uint8_t zb_zdp_status_t;
  * @endparblock */
 #define ZB_BDB_SIGNAL_FINDING_AND_BINDING_INITIATOR_FINISHED 13U
 
-#ifdef ZB_ENABLE_ZLL
-/**
- * @cond DOXYGEN_TOUCHLINK_FEATURE
- * @addtogroup touchlink
- * @{ */
-
-/** Touchlink procedure started.
- * @parblock
- * When generated:
- *  - Touchlink procedure started on the Target device.
- *
- * Signal parameters:
- *  - none
- * @endparblock */
-#define ZB_BDB_SIGNAL_TOUCHLINK_TARGET 14U
-
-/** Touchlink Target network started (Target only).
- * @parblock
- * When generated:
- *  - Touchlink target initiated by bdb_touchlink_target_start().
- *
- * Status codes:
- *  - RET_OK: Touchlink network started successfully.
- *  - Does not return error status.
- *
- * Signal parameters:
- *  - none
- * @endparblock */
-#define ZB_BDB_SIGNAL_TOUCHLINK_NWK 15U
-
-/** Touchlink Target finished (Target only).
- * @parblock
- * When generated:
- *  - Touchlink target finished
- *
- * Status codes:
- *  - RET_OK: Touchlink target finished successfully.
- *  - Does not return error status.
- *
- * Signal parameters:
- *  - none
- * @endparblock */
-#define ZB_BDB_SIGNAL_TOUCHLINK_TARGET_FINISHED 16U
-
-#define ZB_BDB_SIGNAL_TOUCHLINK_ADD_DEVICE_TO_NWK 17U
-
-/** @} */ /* touchlink */
-/** @endcond */ /* DOXYGEN_TOUCHLINK_FEATURE */
-#endif /*ZB_ENABLE_ZLL*/
 
 /** @endcond */ /* DOXYGEN_BDB_SECTION */
 
@@ -668,15 +580,6 @@ typedef zb_uint8_t zb_zdp_status_t;
 #define ZB_SIGNAL_SUBGHZ_RESUME 42U
 
 /** @endcond */ /* DOXYGEN_SE_SECTION */
-#ifdef ZB_MACSPLIT
-#define ZB_MACSPLIT_DEVICE_BOOT              43U /*!< macsplit mac device is booted  */
-
-#define ZB_MACSPLIT_DEVICE_READY_FOR_UPGRADE 44U /*!< macsplit mac device is ready for upgrade */
-
-/** macsplit device upgrade event: device ready for upgrade or error indication */
-#define ZB_MACSPLIT_DEVICE_FW_UPGRADE_EVENT  45U
-
-#endif /*ZB_MACSPLIT*/
 
 #ifdef NCP_MODE
 
@@ -758,6 +661,84 @@ typedef zb_uint8_t zb_zdp_status_t;
  * @endparblock */
 #define ZB_BDB_SIGNAL_TC_REJOIN_DONE 53U
 
+
+/** Notifies the Zigbee Trust center or router application about permit join status changed.
+ * @par When generated:
+ *  - Network was just open
+ *  - Network was just closed
+ *
+ * @par Status codes:
+ *  - RET_OK: Device information updated.
+ *  - Does not return error status.
+ *
+ * @par Signal parameters:
+ *  - @ref zb_uint8_t - Open time or zero if network closed. Value of @ref zb_zdo_mgmt_permit_joining_req_param_t.permit_duration
+ *
+ * @par Signal handling:
+ * @snippet thermostat/thermostat_zr/thermostat_zr.c zb_zdo_signal_permit_join_status_example
+ *
+ * @par Signal generation:
+ * - To self:
+ * @snippet thermostat/thermostat_zr/thermostat_zr.c permit_join_request_local_example
+ * - To other devices:
+ * @snippet thermostat/thermostat_zr/thermostat_zr.c permit_join_request_broadcast_example
+ *
+ */
+#define ZB_NWK_SIGNAL_PERMIT_JOIN_STATUS 54U
+
+
+/** BDB steering cancel request processed
+ * @parblock
+ * When generated:
+ *  - after the cancel request called with bdb_cancel_steering() is processed
+ *
+ * Status codes:
+ * - RET_ILLEGAL_REQUEST: device is a ZC
+ * - RET_INVALID_STATE: steering for a node not a network is not in progress
+ * - RET_PENDING: it is too late to cancel a steering, it will be completed soon
+ * - RET_IGNORE: cancellation was already requested
+ * - RET_OK: steering is cancelled successfully
+ *
+ * Signal parameters:
+ *  - none
+ *
+ * @endparblock */
+#define ZB_BDB_SIGNAL_STEERING_CANCELLED 55U
+
+
+/** BDB formation cancel request processed
+ * @parblock
+ * When generated:
+ *  - after the cancel request called with bdb_cancel_formation() is processed
+ *
+ * Status codes:
+ * - RET_INVALID_STATE: formation is not in progress
+ * - RET_PENDING: it is too late to cancel a formation, it will be completed soon
+ * - RET_IGNORE: cancellation was already requested
+ * - RET_OK: formation is cancelled successfully
+ *
+ * Signal parameters:
+ *  - none
+ *
+ * @endparblock */
+#define ZB_BDB_SIGNAL_FORMATION_CANCELLED 56U
+
+/** ZBOSS is ready to shutdown signal
+ * @parblock
+ * When generated:
+ *  - after ZBOSS preparations to shutdown initiated by zboss_start_shut() is done
+ *
+ * After receiving that signal application MUST complete ZBOSS shutdown by
+ * calling zboss_complete_shut(). It is impossible to continue ZBOSS work
+ * without a restart after calling zboss_start_shut().
+ *
+ * Signal parameters:
+ *  - none
+ *
+ * @endparblock */
+#define ZB_SIGNAL_READY_TO_SHUT           57U
+
+
 /** @} */
 
 /**
@@ -774,15 +755,12 @@ typedef zb_zdo_app_signal_type_t zb_zdo_app_signal_t;
 /**
    Obtains pointer to parameters passed with application signal.
 
-   @param sg_p - pointer to application signal
-   @param type - parameter type
+   @param[in] sg_p - pointer to application signal
+   @param[in] type - parameter type
    @return pointer to signal parameters
 
 @b Example
-@code
-  zb_zdo_signal_device_annce_params_t *dev_annce_params = ZB_ZDO_SIGNAL_GET_PARAMS(sg_p, zb_zdo_signal_device_annce_params_t);
-  simple_gw_dev_annce_cb(dev_annce_params->device_short_addr);
-@endcode
+@snippet linky_sample/erl_interface/erl_interface_zed.c zb_zdo_signal_get_params_snippet
   */
 #define ZB_ZDO_SIGNAL_GET_PARAMS(sg_p, type) ((type *)(void *)((((zb_uint8_t *)sg_p) + sizeof(zb_zdo_app_signal_hdr_t))))
 
@@ -914,9 +892,7 @@ typedef struct zb_zdo_signal_can_sleep_params_s
 typedef struct zb_zdo_signal_macsplit_dev_boot_params_s
 {
   zb_uint32_t    dev_version; /*!< macsplit device version */
-#ifdef USE_HW_LONG_ADDR
-  zb_ieee_addr_t extended_address;          /*!< The 64-bit (IEEE) address assigned to the device. */
-#endif
+  zb_ieee_addr_t extended_address; /*!< The 64-bit (IEEE) address assigned to the device. */
 } zb_zdo_signal_macsplit_dev_boot_params_t;
 
 /**
@@ -949,6 +925,41 @@ typedef struct zb_zdo_signal_fb_initiator_finished_params_s
   zb_zdo_fb_initiator_finished_status_t status;
 } zb_zdo_signal_fb_initiator_finished_params_t;
 
+
+/*
+ * Note: These values were members of `enum zb_secur_upd_device_status_e` type but were converted to a
+ * set of macros due to MISRA violations.
+ */
+/**
+ * @name Security/rejoin states of the 'status' field of APSME-Update-Device
+ * @see Table 4.40
+ * @anchor secur_upd_device_status
+ *
+ */
+/** @{ */
+#define ZB_STD_SEQ_SECURED_REJOIN    0U /*!< Device rejoin with standard security */
+#define ZB_STD_SEQ_UNSECURED_JOIN    1U /*!< Device join without security */
+#define ZB_DEVICE_LEFT               2U /*!< Device left */
+#define ZB_STD_SEQ_UNSECURED_REJOIN  3U /*!< Device rejoin without standard security */
+#define ZB_MAX_USED_UPD_DEV_STATUS   ZB_STD_SEQ_UNSECURED_REJOIN
+/** @} */
+/* Obsolete values */
+#define ZB_HIGH_SEQ_SECURED_REJOIN   4U /*!< Device rejoin with high security */
+#define ZB_HIGH_SEQ_UNSECURED_JOIN   5U /*!< Device join without high security */
+#define ZB_HIGH_SEQ_UNSECURED_REJOIN 7U /*!< Device rejoin without high security */
+
+
+/**
+ * @name TC action on incoming Update Device
+ * @anchor secur_tc_action
+ */
+/** @{ */
+#define ZB_TC_ACTION_AUTHORIZE      0u /*!< authorize device  */
+#define ZB_TC_ACTION_DENY           1u /*!< deby authorization - msend Remove device  */
+#define ZB_TC_ACTION_IGNORE         2u /*!< ignore Update Device - that meay lead to authorization deny  */
+/** @} */
+
+
 /**
  * @brief Device Updated signal parameters
  */
@@ -968,10 +979,19 @@ typedef struct zb_zdo_signal_device_update_params_s
    * 0x03 = Standard device trust center rejoin
    * 0x04 – 0x07 = Reserved
    *
+   * @see secur_upd_device_status
+   *
    * see r21 spec, 4.4.3.2 APSME-UPDATE-DEVICE.indication,
    * Table 4.15 APSME-UPDATE-DEVICE.indication Parameters
    */
   zb_uint8_t status;
+  /*!<
+    Action by TC: authorize, send remove dev, ignore
+    @see secur_tc_action
+   */
+  zb_uint8_t tc_action;
+  /*!< Short Address of the updated device parent, 0xffff is unknown */
+  zb_uint16_t parent_short;
 } zb_zdo_signal_device_update_params_t;
 
 
@@ -1037,8 +1057,8 @@ typedef zb_uint8_t zb_zdo_legacy_device_authorization_status_t;
 /**
  * @brief Type for Authorization types for @ref ZB_ZDO_SIGNAL_DEVICE_AUTHORIZED.
  *
- * @deprecated holds one of @ref zdo_tclk_authorization_status. Kept only for backward compatibility
- * as @ref zdo_tclk_authorization_status were declared previously as enum. Can be removed in future
+ * @deprecated holds one of @ref zdo_authorization_type_r21_tclk_status. Kept only for backward compatibility
+ * as @ref zdo_authorization_type_r21_tclk_status were declared previously as enum. Can be removed in future
  * releases.
  */
 typedef zb_uint8_t zb_zdo_tclk_authorization_status_t;
@@ -1126,18 +1146,45 @@ zb_zdo_app_signal_type_t zb_get_app_signal(zb_uint8_t param, zb_zdo_app_signal_h
 /**
    @brief Obtains last known LQI and RSSI values from device with specified short address
 
-   @param short_address - address of device
-   @param lqi [in] - pointer to @ref zb_uint8_t variable to store lqi value
-   @param rssi [in] - pointer to @ref zb_uint8_t variable to store rssi value
+   @param[in] short_address - address of device
+   @param[in,out] lqi - pointer to @ref zb_uint8_t variable to store lqi value
+   @param[in,out] rssi - pointer to @ref zb_uint8_t variable to store rssi value
 
 @b Example:
-@code
-  zb_uint8_t lqi, rssi;
-
-  zb_zdo_get_diag_data(0x0000, &lqi, &rssi);
-@endcode
+@snippet thermostat/thermostat_zr/thermostat_zr.c zb_zdo_get_diag_data_snippet
  */
 void zb_zdo_get_diag_data(zb_uint16_t short_address, zb_uint8_t *lqi, zb_int8_t *rssi);
+
+typedef struct zb_zdo_get_diag_data_req_params_s
+{
+  zb_uint16_t short_address;
+} zb_zdo_get_diag_data_req_params_t;
+
+typedef struct zb_zdo_get_diag_data_resp_params_s
+{
+  zb_ret_t status; /* RET_OK if lqi and rssi values are available for the requested address,
+                      RET_NOT_FOUND if no values are available for the requested address */
+  zb_uint16_t short_address;
+  zb_uint8_t lqi;
+  zb_int8_t rssi;
+} zb_zdo_get_diag_data_resp_params_t;
+
+/**
+ * @brief Obtains last known LQI and RSSI values from the device with the specified short address
+ *
+ * @param buf - a buffer with request params, see zb_zdo_get_diag_data_req_params_t
+ * @param cb - a user's function to call when the response is ready.
+ *             See zb_zdo_get_diag_data_resp_params_t for response params description.
+ *
+ * @return status, RET_OK - request successfully sent,
+ *                 RET_INVALID_PARAMETER_1 if buf is ZB_BUF_INVALID,
+ *                 RET_INVALID_PARAMETER_2 if cb is NULL,
+ *                 RET_BUSY if this request can't be served at the moment
+ *
+ * Example:
+ * @snippet onoff_server/on_off_output_zc.c zb_zdo_get_diag_data_async_example
+ */
+zb_ret_t zb_zdo_get_diag_data_async(zb_bufid_t buf, zb_callback_t cb);
 
 /*! @} */
 
@@ -1226,9 +1273,8 @@ zb_zdo_nwk_addr_resp_ext2_t;
                   performed now (nor enough memory, resources, etc.)
 
 @b Example:
-@snippet doxygen_snippets.dox zboss_api_zdo_h_1
+@snippet lighting/dimmable_light_tl/light_controller_zed.c zb_zdo_nwk_addr_req_snippet
 
-See tp_zdo_bv-31 sample
 */
 zb_uint8_t zb_zdo_nwk_addr_req(zb_uint8_t param, zb_callback_t cb);
 
@@ -1318,57 +1364,14 @@ zb_zdo_ieee_addr_resp_ext2_t;
   *                performed now (nor enough memory, resources, etc.)
   *
   * @b Example:
-  * @code
-  * {
-  *   zb_zdo_ieee_addr_req_param_t *req = NULL;
-  *   zb_uint8_t tsn;
+  * @snippet simple_gw/simple_gw.c zb_zdo_ieee_addr_req_snippet
   *
-  *   req = ZB_BUF_GET_PARAM(buf, zb_zdo_ieee_addr_req_param_t);
-  *
-  *   req->nwk_addr = ind->src_addr;
-  *   req->dst_addr = req->nwk_addr;
-  *   req->request_type = ZB_ZDO_SINGLE_DEV_RESPONSE;
-  *   req->start_index = 0;
-  *   tsn = zb_zdo_ieee_addr_req(buf, ieee_addr_callback);
-  *
-  *   if (tsn == ZB_ZDO_INVALID_TSN)
-  *   {
-  *     TRACE_MSG(TRACE_ZDO2, "request failed", (FMT__0));
-  *   }
-  * }
-  *
-  * void ieee_addr_callback(zb_uint8_t param)
-  * {
-  *   zb_bufid_t buf = param;
-  *   zb_zdo_nwk_addr_resp_head_t *resp;
-  *   zb_ieee_addr_t ieee_addr;
-  *   zb_uint16_t nwk_addr;
-  *   zb_address_ieee_ref_t addr_ref;
-  *
-  *   TRACE_MSG(TRACE_ZDO2, "zb_get_peer_short_addr_cb param %hd", (FMT__H, param));
-  *
-  *   resp = (zb_zdo_nwk_addr_resp_head_t*)zb_buf_begin(buf);
-  *   TRACE_MSG(
-  *       TRACE_ZDO2, "resp status %hd, nwk addr %d", (FMT__H_D, resp->status, resp->nwk_addr));
-  *   ZB_DUMP_IEEE_ADDR(resp->ieee_addr);
-  *   if (resp->status == ZB_ZDP_STATUS_SUCCESS)
-  *   {
-  *     ZB_LETOH64(ieee_addr, resp->ieee_addr);
-  *     ZB_LETOH16(&nwk_addr, &resp->nwk_addr);
-  *     zb_address_update(ieee_addr, nwk_addr, ZB_TRUE, &addr_ref);
-  *   }
-      zb_buf_free(buf);
-  * }
-  *
-  * @endcode
-  *
-  * See tp_zdo_bv-31 sample
   */
 zb_uint8_t zb_zdo_ieee_addr_req(zb_uint8_t param, zb_callback_t cb);
 
 /** @cond internals_doc */
 /* Used internally in stack. */
-zb_uint8_t zb_zdo_initiate_ieee_addr_req(zb_uint8_t param, zb_uint16_t nwk_addr);
+zb_uint8_t zb_zdo_initiate_ieee_addr_req_broadcast(zb_uint8_t param, zb_uint16_t nwk_addr);
 /** @endcond */ /* internals_doc */
 
 /** @} */
@@ -1487,9 +1490,6 @@ zb_zdo_power_desc_resp_t;
   * @snippet onoff_server/on_off_switch_zed.c send_node_desc_req
   * @snippet onoff_server/on_off_switch_zed.c node_req_cb
   *
-  * @cond ZBOSS_SAMPLES_API_DOC_LINE
-  * See application/onoff_server sample
-  * @endcond
   */
 zb_uint8_t zb_zdo_node_desc_req(zb_uint8_t param, zb_callback_t cb);
 
@@ -1516,9 +1516,6 @@ typedef ZB_PACKED_PRE struct zb_zdo_power_desc_req_s
   * @snippet onoff_server/on_off_switch_zed.c send_power_desc_req
   * @snippet onoff_server/on_off_switch_zed.c power_desc_cb
   *
-  * @cond ZBOSS_SAMPLES_API_DOC_LINE
-  * See application/onoff_server sample
-  * @endcond
   */
 zb_uint8_t zb_zdo_power_desc_req(zb_uint8_t param, zb_callback_t cb);
 
@@ -1546,9 +1543,6 @@ typedef ZB_PACKED_PRE struct zb_zdo_simple_desc_req_s
   * @snippet onoff_server/on_off_switch_zed.c send_simple_desc_req
   * @snippet onoff_server/on_off_switch_zed.c simple_desc_cb
   *
-  * @cond ZBOSS_SAMPLES_API_DOC_LINE
-  * See application/onoff_server sample
-  * @endcond
   */
 zb_uint8_t zb_zdo_simple_desc_req(zb_uint8_t param, zb_callback_t cb);
 
@@ -1588,9 +1582,6 @@ zb_zdo_ep_resp_t;
  * @snippet onoff_server/on_off_switch_zed.c send_active_ep_req
  * @snippet onoff_server/on_off_switch_zed.c active_ep_cb
  *
- * @cond ZBOSS_SAMPLES_API_DOC_LINE
- * See application/onoff_server sample
- * @endcond
  */
 zb_uint8_t zb_zdo_active_ep_req(zb_uint8_t param, zb_callback_t cb);
 
@@ -1683,8 +1674,6 @@ zb_zdo_match_desc_resp_t;
 
    @b Example:
    @snippet light_sample/light_control/light_control.c zdo_match_desc_req
-
-   See light_sample
 */
 zb_uint8_t zb_zdo_match_desc_req(zb_uint8_t param, zb_callback_t cb);
 
@@ -1734,9 +1723,6 @@ zb_zdo_system_server_discovery_resp_t;
  *  @snippet onoff_server/on_off_switch_zed.c system_server_discovery_req
  *  @snippet onoff_server/on_off_switch_zed.c system_server_discovery_cb
  *
- * @cond ZBOSS_SAMPLES_API_DOC_LINE
- * See application/onoff_server sample
- * @endcond
  */
 zb_uint8_t zb_zdo_system_server_discovery_req(zb_uint8_t param, zb_callback_t cb);
 #endif  /*ZB_LITE_NO_ZDO_SYSTEM_SERVER_DISCOVERY */
@@ -1890,7 +1876,7 @@ void mgmt_nwk_update_ok_cb(zb_uint8_t param)
 }
 @endcode
 
-See TP_PRO_BV-37 sample
+
  */
 zb_uint8_t zb_zdo_mgmt_nwk_update_req(zb_uint8_t param, zb_callback_t cb);
 
@@ -2083,7 +2069,6 @@ zb_zdo_neighbor_table_record_t;
    @b Example:
 @snippet doxygen_snippets.dox zboss_api_zdo_h_2
 
-See zdpo_lqi sample
 */
 zb_uint8_t zb_zdo_mgmt_lqi_req(zb_uint8_t param, zb_callback_t cb);
 
@@ -2199,7 +2184,6 @@ zb_zdo_binding_table_record_t;
   * @return 0xFF if operation cannot be
   *         performed now (nor enough memory, resources, etc.)
   *
-  * See zdo_binding sample
   */
 zb_uint8_t zb_zdo_mgmt_bind_req(zb_uint8_t param, zb_callback_t cb);
 
@@ -2292,9 +2276,8 @@ zb_zdo_bind_resp_t;
    @return 0xFF if operation cannot be performed now (nor enough memory, resources, etc.)
 
    @b Example:
-@snippet doxygen_snippets.dox zboss_api_zdo_h_3
+@snippet simple_gw/simple_gw.c zb_zdo_bind_req_snippet
 
-See tp_zdo_bv-12 sample
  */
 zb_uint8_t zb_zdo_bind_req(zb_uint8_t param, zb_callback_t cb);
 
@@ -2345,8 +2328,7 @@ void unbind_device1_cb(zb_uint8_t param)
 }
 @endcode
 
-  See tp_aps_bv-23-i, tp_zdo_bv-12 samples
- */
+*/
 zb_uint8_t zb_zdo_unbind_req(zb_uint8_t param, zb_callback_t cb);
 
 
@@ -2439,7 +2421,6 @@ void leave_callback(zb_uint8_t param)
 }
 @endcode
 
-See nwk_leave sample
 */
 zb_uint8_t zdo_mgmt_leave_req(zb_uint8_t param, zb_callback_t cb);
 
@@ -2563,7 +2544,6 @@ zb_zdo_mgmt_permit_joining_req_param_t;
 
    @snippet onoff_server/on_off_switch_zed.c zdo_mgmt_permit_joining_req
 
-   See onoff_server sample
  */
 zb_uint8_t zb_zdo_mgmt_permit_joining_req(zb_uint8_t param, zb_callback_t cb);
 
@@ -2648,7 +2628,6 @@ zb_zdo_mgmt_nwk_ieee_joining_list_rsp_t;
    @b Example
    @snippet doxygen_snippets.dox tp_pro_bv-46_zr_certification_TP_PRO_BV-46_tp_pro_bv-46_zr_c
 
-   See tp_pro_bv-46 sample
  */
 void zb_zdo_add_group_req(zb_uint8_t param);
 
@@ -2657,7 +2636,6 @@ void zb_zdo_add_group_req(zb_uint8_t param);
   * @param param - (in/out) buffer with parameters
   * @snippet doxygen_snippets.dox tp_pro_bv-46_zed_certification_TP_PRO_BV-46_tp_pro_bv-46_zed_c
   *
-  * See tp_pro_bv-46 sample
   */
 void zb_zdo_remove_group_req(zb_uint8_t param);
 
@@ -2666,7 +2644,6 @@ void zb_zdo_remove_group_req(zb_uint8_t param);
   *
   * @snippet doxygen_snippets.dox add_remove_all_groups_aps_group_management_aps_group_zc_c
   *
-  * See aps_group_management sample
   */
 void zb_zdo_remove_all_groups_req(zb_uint8_t param);
 
@@ -2675,7 +2652,6 @@ void zb_zdo_remove_all_groups_req(zb_uint8_t param);
   *
   * @snippet doxygen_snippets.dox zb_zdo_get_group_membership_req_aps_group_membership_req_aps_group_zc_c
   *
-  * See aps_group_management sample
   */
 void zb_zdo_get_group_membership_req(zb_uint8_t param);
 
@@ -2819,54 +2795,13 @@ void zb_zdo_rejoin_backoff_cancel(void);
 /*! @} */
 #endif /* ZB_REJOIN_BACKOFF */
 
-#if defined ZB_ENABLE_ZLL
-/** @cond touchlink */
-
-/**
- *  @brief Set Touchlink Master key
- *  @param param [IN] - Touchlink Master key value
- */
-void zb_zdo_touchlink_set_master_key(zb_uint8_t *key);
-
-/**
- *  @brief Set Touchlink NWK channel
- *  @param param [IN] - Touchlink NWK channel value
- */
-void zb_zdo_touchlink_set_nwk_channel(zb_uint8_t channel);
-
-/**
- *  @brief Set Touchlink RSSI threshold (used for Touchlink commissioning procedure)
- *  @param param [IN] - Touchlink RSSI threshold value
- */
-void zb_zdo_touchlink_set_rssi_threshold(zb_uint8_t rssi_threshold);
-
-/**
- *  @brief Get Touchlink RSSI threshold
- *  @return Current Touchlink RSSI threshold value
- */
-zb_uint8_t zb_zdo_touchlink_get_rssi_threshold(void);
-
-/**
- *  @brief Set Touchlink RSSI correction
- *  @param param [IN] - Touchlink RSSI correction value
- */
-void zb_zdo_touchlink_set_rssi_correction(zb_uint8_t rssi_correction);
-
-/**
- *  @brief Get Touchlink RSSI correction
- *  @return Current Touchlink RSSI correction value
- */
-zb_uint8_t zb_zdo_touchlink_get_rssi_correction(void);
-
-/** @endcond */ /* touchlink */
-#endif /* ZB_ENABLE_ZLL */
 
 #define ZB_NWK_LPD_NOTIFICATION  0x01U
 #define ZB_NWK_LPD_REQUEST       0x02U
 
 #ifndef ZB_LITE_NO_CONFIGURABLE_POWER_DELTA
 zb_ret_t zb_zdo_set_lpd_cmd_mode(zb_uint8_t mode);
-void zb_zdo_set_lpd_cmd_timeout(zb_uint8_t timeout);
+void zb_zdo_set_lpd_cmd_timeout(zb_uint16_t timeout);
 #else
 #define zb_zdo_set_lpd_cmd_mode(mode)
 #define zb_zdo_set_lpd_cmd_timeout(timeout)
@@ -2888,11 +2823,12 @@ void zb_zdo_disable_network_mgmt_channel_update(zb_bool_t disable);
  */
 void zb_zdo_set_aps_unsecure_join(zb_bool_t insecure_join);
 
-#ifdef ZB_DISTRIBUTED_SECURITY_ON
 /**
  * @addtogroup zdo_distributed_security
  * @{
  */
+#ifdef ZB_DISTRIBUTED_SECURITY_ON
+
 /**
  *  @brief Set custom distributed key
  *
@@ -2911,8 +2847,19 @@ void zb_zdo_setup_network_as_distributed(void);
    Without that call ZR is not able to create a Distributed network.
  */
 void zb_enable_distributed(void);
-/** @} */ /* zdo_distributed_security */
+
+/**
+ *  @brief Disable distributed security network formation at runtime
+ */
+void zb_disable_distributed(void);
 #endif /* ZB_DISTRIBUTED_SECURITY_ON */
+
+/**
+ *  @brief Check if the current network is a distributed security network
+ */
+zb_bool_t zb_is_network_distributed(void);
+
+/** @} */ /* zdo_distributed_security */
 
 /*! @addtogroup af_api */
 /*! @{ */
@@ -2992,14 +2939,19 @@ void zb_af_set_data_indication(zb_device_handler_t cb);
  */
 void zb_bdb_reset_via_local_action(zb_uint8_t param);
 
+#if defined ZB_BDB_MODE && !defined BDB_OLD
 /**
  *  @brief Starts TC rejoin procedure
- *  The function is intended to be called from ZB_BDB_SIGNAL_TC_REJOIN_DONE signal
- *  when previous TC rejoin attempt fails
+ *
+ * If device doesn't have a TCLK and UnsecureTcRejoinEnabled policy
+ * is set to ZB_FALSE (this is the default setting), TC rejoin won't
+ * be performed and ZB_BDB_SIGNAL_TC_REJOIN_DONE signal with RET_ERROR
+ * status will be raised.
  *
  *  @param param - buffer reference (if 0, buffer will be allocated automatically)
  */
 void zb_bdb_initiate_tc_rejoin(zb_uint8_t param);
+#endif /* ZB_BDB_MODE && !BDB_OLD */
 
 /** @} */ /* af_management_service */
 /*! @} */

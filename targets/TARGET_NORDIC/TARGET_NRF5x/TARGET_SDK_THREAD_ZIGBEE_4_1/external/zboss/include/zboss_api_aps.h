@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2021 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*  PURPOSE: Public APS layer API
 */
@@ -235,6 +254,8 @@ typedef ZB_PACKED_PRE struct zb_aps_hdr_s
   zb_uint8_t tsn;               /*!< Transaction sequence number for ZDO/ZCL command. */
   zb_uint8_t block_num;         /*!< Fragmentation: block number. */
   zb_uint8_t block_ack;         /*!< Fragmentation: block ack. */
+  zb_uint8_t radius;            /*!< radius from nwk header */
+  zb_uint8_t align[3];
 } ZB_PACKED_STRUCT zb_aps_hdr_t;
 
 
@@ -389,8 +410,6 @@ typedef ZB_PACKED_PRE struct zb_apsme_set_confirm_s
   * @par Example
   * @snippet light_sample/light_control/light_control.c apsme_bind_req
   * @par
-  *
-  * See light_sample
   */
 void zb_apsme_bind_request(zb_uint8_t param);
 
@@ -402,7 +421,6 @@ void zb_apsme_bind_request(zb_uint8_t param);
   * @snippet doxygen_snippets.dox zb_apsme_unbind_request_tests_aps_bind_aps_binding_test_c
   * @par
   *
-  * See aps_binding_test sample
   */
 void zb_apsme_unbind_request(zb_uint8_t param);
 
@@ -425,7 +443,6 @@ void zb_aps_check_binding_request(zb_bufid_t param);
   * @snippet scenes/scenes_zed.c apsme_add_group_req
   * @par
   *
-  * See scenes sample
   */
 void zb_apsme_add_group_request(zb_uint8_t param);
 
@@ -440,7 +457,6 @@ void zb_apsme_add_group_request(zb_uint8_t param);
   * @snippet doxygen_snippets.dox zb_apsme_remove_group_request_certification_TP_APS_BV-17_tp_aps_bv-17_zed_c
   * @par
   *
-  * See tp_aps_bv-17 sample
   */
 void zb_apsme_remove_group_request(zb_uint8_t param);
 
@@ -455,7 +471,6 @@ void zb_apsme_remove_group_request(zb_uint8_t param);
   * @snippet doxygen_snippets.dox zb_apsme_remove_all_groups_request_tests_certification_TP_APS_BV-18_tp_aps_bv-18_zed_c
   * @par
   *
-  * See tp_aps_bv-18 sample
   */
 void zb_apsme_remove_all_groups_request(zb_uint8_t param);
 
@@ -558,6 +573,25 @@ zb_uint8_t *zb_aps_get_aps_payload(zb_uint8_t param, zb_uint8_t *aps_payload_siz
  * @param cb - pointer to a callback
  */
 void zb_aps_set_user_data_tx_cb(zb_aps_user_payload_callback_t cb);
+
+/*!
+ * @brief Set callback to be called when ZDO command packet is sent.
+ *
+ * That callback is to be used when application wants to know the fact that ZDO
+ * command send is completed.
+ *
+ * Callback provided to ZBOSS ZDO request function (second parameter of
+ * zb_zdo_node_desc_req and similar function) not always can be used for that
+ * purpose. ZBOSS calls ZDO callback immediately when a) unicast transmit of APS
+ * message failed (no ACK) and b) this is ZDO message that does not suppose to
+ * have an answer, like broadcast NWK Update req.  In other cases if callback is
+ * set using zb_af_set_zdo_data_conf_cb, it is called when outgoing ZDO command
+ * is sent; callback passed to zb_zdo_node_desc_req and friends is called when
+ * ZBOSS got response/responses to ZDO command, or ZDO command is timed out.
+ *
+ * @param cb - callback. The buffer passed to the callback has zb_apsde_data_confirm_t in parameters section.
+ */
+void zb_af_set_zdo_data_conf_cb(zb_callback_t cb);
 
 /** @} */ /* aps_user_payload */
 

@@ -1,23 +1,42 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2022 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /* PURPOSE: OTA Upgrade cluster definitions
 */
@@ -25,12 +44,8 @@
 #ifndef ZB_ZCL_OTA_UPGRADE_H
 #define ZB_ZCL_OTA_UPGRADE_H 1
 
-#ifndef ZB_WINDOWS
 #include "zcl/zb_zcl_common.h"
 #include "zcl/zb_zcl_commands.h"
-#else
-#pragma pack(1)
-#endif
 
 #if defined ZB_ZCL_SUPPORT_CLUSTER_OTA_UPGRADE || defined ZB_USE_OSIF_OTA_ROUTINES || defined DOXYGEN
 
@@ -946,7 +961,7 @@ enum zb_zcl_ota_upgrade_query_next_image_fc_e
     expected_payload_len -= sizeof(zb_uint16_t);                                   \
   }                                                                                \
                                                                                    \
-  if (zb_buf_len((buffer)) != expected_payload_len)                                \
+  if (zb_buf_len((buffer)) < expected_payload_len)                                 \
   {                                                                                \
    (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                                        \
   }                                                                               \
@@ -1057,7 +1072,7 @@ enum zb_zcl_ota_upgrade_image_block_fc_e
   zb_zcl_ota_upgrade_image_block_t *src_ptr =                             \
        (zb_zcl_ota_upgrade_image_block_t*)zb_buf_begin((buffer));         \
                                                                           \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_ota_upgrade_image_block_t) -  \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_ota_upgrade_image_block_t) -   \
       ( !(src_ptr->fc & ZB_ZCL_OTA_UPGRADE_QUERY_IMAGE_BLOCK_IEEE_PRESENT) ? sizeof(zb_ieee_addr_t) : 0) -    \
       ( !(src_ptr->fc & ZB_ZCL_OTA_UPGRADE_QUERY_IMAGE_BLOCK_DELAY_PRESENT) ? sizeof(zb_uint16_t) : 0) )      \
   {                                                                       \
@@ -1167,7 +1182,7 @@ enum zb_zcl_ota_upgrade_image_page_fc_e
   zb_zcl_ota_upgrade_image_page_t *src_ptr =                              \
        (zb_zcl_ota_upgrade_image_page_t*)zb_buf_begin((buffer));          \
                                                                           \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_ota_upgrade_image_page_t) -   \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_ota_upgrade_image_page_t) -    \
       ((src_ptr->fc & ZB_ZCL_OTA_UPGRADE_QUERY_IMAGE_PAGE_IEEE_PRESENT) ? sizeof(zb_ieee_addr_t) : 0) )      \
   {                                                                       \
    (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                                \
@@ -1249,7 +1264,7 @@ enum zb_zcl_ota_upgrade_image_page_fc_e
   zb_zcl_ota_upgrade_upgrade_end_t *src_ptr =                             \
        (zb_zcl_ota_upgrade_upgrade_end_t*)zb_buf_begin((buffer));         \
                                                                           \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_ota_upgrade_upgrade_end_t) )  \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_ota_upgrade_upgrade_end_t) )   \
   {                                                                       \
    (status_) = ZB_ZCL_PARSE_STATUS_FAILURE;                               \
   }                                                                       \
@@ -1319,7 +1334,7 @@ enum zb_zcl_ota_upgrade_image_page_fc_e
   */
 #define ZB_ZCL_OTA_UPGRADE_GET_QUERY_SPECIFIC_FILE_REQ(data_ptr, buffer, status)  \
 {                                                                         \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_ota_upgrade_query_specific_file_t) )  \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_ota_upgrade_query_specific_file_t) )   \
   {                                                                       \
    (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                                \
   }                                                                       \
@@ -1496,7 +1511,7 @@ enum zb_zcl_ota_upgrade_image_notify_payload_type_e
   zb_zcl_ota_upgrade_query_next_image_res_t *src_ptr =                        \
        (zb_zcl_ota_upgrade_query_next_image_res_t*)zb_buf_begin((buffer));    \
                                                                               \
-  if (zb_buf_len((buffer)) != ( (src_ptr->status)==ZB_ZCL_STATUS_SUCCESS ?    \
+  if (zb_buf_len((buffer)) < ( (src_ptr->status)==ZB_ZCL_STATUS_SUCCESS ?     \
      sizeof(zb_zcl_ota_upgrade_query_next_image_res_t) : sizeof(zb_uint8_t))) \
   {                                                                           \
     (status_) = ZB_ZCL_PARSE_STATUS_FAILURE;                                  \
@@ -1651,7 +1666,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ota_upgrade_image_block_res_s
   zb_zcl_ota_upgrade_image_block_res_t *src_ptr =                             \
        (zb_zcl_ota_upgrade_image_block_res_t*)zb_buf_begin((buffer));         \
                                                                               \
-  if (zb_buf_len((buffer)) != sizeof(zb_uint8_t) +                            \
+  if (zb_buf_len((buffer)) < sizeof(zb_uint8_t) +                             \
       ((src_ptr->status)==ZB_ZCL_STATUS_SUCCESS ?                             \
           sizeof(src_ptr->response.success) - sizeof(zb_uint8_t*)+            \
                 src_ptr->response.success.data_size : 0) +                    \
@@ -1750,7 +1765,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ota_upgrade_upgrade_end_res_s
   */
 #define ZB_ZCL_OTA_UPGRADE_GET_UPGRADE_END_RES(data_ptr, buffer, status_)     \
 {                                                                             \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_ota_upgrade_upgrade_end_res_t) )  \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_ota_upgrade_upgrade_end_res_t) )   \
   {                                                                           \
     (status_) = ZB_ZCL_PARSE_STATUS_FAILURE;                                  \
   }                                                                           \
@@ -1827,7 +1842,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_ota_upgrade_upgrade_end_res_s
 {                                                                                   \
   zb_zcl_ota_upgrade_query_specific_file_res_t *src_ptr =                           \
        (zb_zcl_ota_upgrade_query_specific_file_res_t*)zb_buf_begin((buffer));       \
-  if (zb_buf_len((buffer)) != ( (src_ptr->status)==ZB_ZCL_STATUS_SUCCESS ?          \
+  if (zb_buf_len((buffer)) < ( (src_ptr->status)==ZB_ZCL_STATUS_SUCCESS ?           \
       sizeof(zb_zcl_ota_upgrade_query_specific_file_res_t) : sizeof(zb_uint8_t) ) ) \
   {                                                                                 \
     (status_) = ZB_ZCL_PARSE_STATUS_FAILURE;                                  \
@@ -2103,6 +2118,7 @@ typedef struct zb_zcl_ota_upgrade_cli_ctx_s
   zb_zcl_ota_upgrade_image_block_res_t payload_2;
   zb_uint_t resend_retries;
   zb_uint8_t ota_restart_after_rejoin;
+  zb_uint16_t ota_period_backup;
 } zb_zcl_ota_upgrade_cli_ctx_t;
 #endif
 

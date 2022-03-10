@@ -1,25 +1,44 @@
-/* ZBOSS Zigbee software protocol stack
+/*
+ * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2020 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2021 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
  *
- * This is unpublished proprietary source code of DSR Corporation
- * The copyright notice does not evidence any actual or intended
- * publication of such source code.
  *
- * ZBOSS is a registered trademark of Data Storage Research LLC d/b/a DSR
- * Corporation
+ * Use in source and binary forms, redistribution in binary form only, with
+ * or without modification, are permitted provided that the following conditions
+ * are met:
  *
- * Commercial Usage
- * Licensees holding valid DSR Commercial licenses may use
- * this file in accordance with the DSR Commercial License
- * Agreement provided with the Software or, alternatively, in accordance
- * with the terms contained in a written agreement between you and
- * DSR.
+ * 1. Redistributions in binary form, except as embedded into a Nordic
+ *    Semiconductor ASA integrated circuit in a product or a software update for
+ *    such product, must reproduce the above copyright notice, this list of
+ *    conditions and the following disclaimer in the documentation and/or other
+ *    materials provided with the distribution.
+ *
+ * 2. Neither the name of Nordic Semiconductor ASA nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * 3. This software, with or without modification, must only be used with a Nordic
+ *    Semiconductor ASA integrated circuit.
+ *
+ * 4. Any software provided in binary form under this license must not be reverse
+ *    engineered, decompiled, modified and/or disassembled.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/* PURPOSE: Main header for OS and platform depenednt stuff
+/* PURPOSE: Main header for OS and platform dependent stuff
 */
 
 #ifndef ZB_OSIF_H
@@ -71,7 +90,7 @@ zb_osif_platform.h is different in different platforms repo.
  * OSIF timer expiration callback type
  * @param user_data - any user specified data which will be sent to this callback
  * Might be used to determine particular timer which cause callback
- * 
+ *
 */
 typedef void (*zb_osif_timer_exp_cb_t)(void *user_data);
 
@@ -145,10 +164,6 @@ void zb_osif_serial_transport_init();
 void zb_osif_serial_transport_put_bytes(zb_uint8_t *buf, zb_short_t len);
 #endif
 
-/** @cond DOXYGEN_UART_SECTION */
-/*! \addtogroup uart */
-/*! @{ */
-
 #ifndef ZB_SERIAL_INT_DISABLE
 #define ZB_SERIAL_INT_DISABLE()  ZB_OSIF_GLOBAL_LOCK()
 #endif /* ZB_SERIAL_INT_DISABLE */
@@ -161,6 +176,10 @@ void zb_osif_serial_transport_put_bytes(zb_uint8_t *buf, zb_short_t len);
 
 /* Serial interface (trace, traffic dump, serial transport) */
 
+/** @cond DOXYGEN_UART_SECTION */
+/*! \addtogroup uart */
+/*! @{ */
+
 /**
    Initialize UART low level.
 
@@ -171,7 +190,12 @@ void zb_osif_serial_transport_put_bytes(zb_uint8_t *buf, zb_short_t len);
 void zb_osif_serial_init(void);
 
 /**
-   Setup callback to be called when single byte reecived over UART
+   Deinitialize UART low level.
+ */
+void zb_osif_serial_deinit(void);
+
+/**
+   Setup callback to be called when single byte received over UART
 
    @param hnd user's rx callback
  */
@@ -182,22 +206,6 @@ void zb_osif_set_uart_byte_received_cb(zb_callback_t hnd);
 
 #define ZB_ERROR_SERIAL_INIT_FAILED 1U
 #define ZB_ERROR_SERIAL_READ_FAILED 2U
-
-/** @cond internals_doc */
-
-#ifdef ZB_NSNG_CI
-/**
-   Stub callback for single byte receiving over UART
- */
-void zb_osif_uart_byte_received_cb_stub(zb_uint8_t unused);
-
-/**
-   Set callback stub for receiving over UART
-*/
-void zb_osif_set_ns_uart_cb_stub(void);
-#endif /* ZB_NSNG_CI */
-
-/** @endcond*/ /* internals_doc */
 
 /**
    Set user's buffer to be used by UART TX logic.
@@ -356,6 +364,7 @@ int zb_osif_file_is_eof(zb_osif_file_t *f);
 int zb_osif_file_is_err(zb_osif_file_t *f);
 int zb_osif_file_flush(zb_osif_file_t *f);
 int zb_osif_file_seek(zb_osif_file_t *f, zb_uint32_t off, zb_uint8_t mode);
+int zb_osif_file_get_size(zb_osif_file_t *f);
 int zb_osif_file_truncate(zb_osif_file_t *f, zb_uint32_t off);
 int zb_osif_file_sync(zb_osif_file_t *f);
 void zb_osif_trace_get_time(zb_uint_t *sec, zb_uint_t *msec);
@@ -366,6 +375,7 @@ int zb_osif_stream_write(zb_osif_file_t *stream, zb_uint8_t *buf, zb_uint_t len)
 
 enum zb_file_path_base_type_e
 {
+  ZB_FILE_PATH_BASE_NOT_SPECIFIED,     /* not specified base type - allows to use default base path */
   ZB_FILE_PATH_BASE_ROMFS_BINARIES,    /* ROM FS */  /* elf binaries, etc */
   ZB_FILE_PATH_BASE_MNTFS_BINARIES,    /* RW FS */   /* prod config, etc */
   ZB_FILE_PATH_BASE_MNTFS_USER_DATA,   /* RW FS */   /* nvram. etc */
@@ -376,6 +386,10 @@ enum zb_file_path_base_type_e
 
   ZB_FILE_PATH_BASE_MAX_TYPE
 };
+
+#ifndef ZB_TRACE_LOG_FILE_EXTENSION
+#define ZB_TRACE_LOG_FILE_EXTENSION ""
+#endif /* ZB_TRACE_LOG_FILE_EXTENSION */
 
 #define ZB_MAX_FILE_PATH_SIZE 256
 
@@ -458,6 +472,12 @@ zb_uint8_t zb_get_reset_source(void);
  * @brief osif NVRAM initializer
  */
 void zb_osif_nvram_init(const zb_char_t *name);
+
+
+/**
+ * @brief Deinitialize osif-layer NVRAM support
+ */
+void zb_osif_nvram_deinit(void);
 
 /**
  * @brief Get NVRAM page length
@@ -563,7 +583,7 @@ void zb_osif_nvram_wait_for_last_op(void);
 
 /**
  * @brief Flush NVRAM page
- * Flish NVRAM page to file or NVRAM.
+ * Flash NVRAM page to file or NVRAM.
  * Different to hardware device
  *
  */
@@ -794,8 +814,8 @@ zb_bool_t zb_osif_prod_cfg_check_presence(void);
 
 /* Read data from production configuration header
  *
- * @param prod_cfg_hdr - pointer to production configarution header
- * @param hdr_len - size of production configarution header
+ * @param prod_cfg_hdr - pointer to production configuration header
+ * @param hdr_len - size of production configuration header
  *
  * @return RET_OK is success, RET_ERROR otherwise
  */
@@ -814,7 +834,7 @@ zb_ret_t zb_osif_prod_cfg_read(zb_uint8_t *buffer, zb_uint16_t len, zb_uint16_t 
 #ifdef ZB_OSIF_CONFIGURABLE_TX_POWER
 /* Set transmit power of radio on selected channel
  *
- * @param channel - channle on which radio applies new transmit power
+ * @param channel - channel on which radio applies new transmit power
  * @param power - transmit power in dBm
  *
  * return RET_OK if power was set successfully, RET_ERROR otherwise

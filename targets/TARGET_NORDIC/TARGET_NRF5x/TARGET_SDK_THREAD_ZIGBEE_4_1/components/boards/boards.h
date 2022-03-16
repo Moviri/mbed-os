@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 - 2020, Nordic Semiconductor ASA
+ * Copyright (c) 2014 - 2022, Nordic Semiconductor ASA
  *
  * All rights reserved.
  *
@@ -83,6 +83,9 @@
   #include STRINGIFY(CUSTOM_BOARD_INC.h)
 #elif defined(BOARD_CUSTOM)
   #include "custom_board.h"
+// #else
+// #error "Board is not defined"
+
 #endif
 
 #if defined (SHIELD_BSP_INC)

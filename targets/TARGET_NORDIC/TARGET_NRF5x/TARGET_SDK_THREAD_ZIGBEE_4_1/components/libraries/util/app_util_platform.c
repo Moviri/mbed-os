@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 - 2020, Nordic Semiconductor ASA
+ * Copyright (c) 2014 - 2022, Nordic Semiconductor ASA
  *
  * All rights reserved.
  *
@@ -39,8 +39,6 @@
  */
 #include "app_util_platform.h"
 
-#include "mbed_critical.h"
-
 #ifdef SOFTDEVICE_PRESENT
 /* Global nvic state instance, required by nrf_nvic.h */
 nrf_nvic_state_t nrf_nvic_state;
@@ -73,11 +71,7 @@ void app_util_critical_region_enter(uint8_t *p_nested)
     /* return value can be safely ignored */
     (void) sd_nvic_critical_region_enter(p_nested);
 #else
-    /** Mbed modification
-     *  Retarget nRF SDK to use Mbed critical section API
-     */
-    //app_util_disable_irq();
-    core_util_critical_section_enter();
+    app_util_disable_irq();
 #endif
 }
 
@@ -91,11 +85,7 @@ void app_util_critical_region_exit(uint8_t nested)
     /* return value can be safely ignored */
     (void) sd_nvic_critical_region_exit(nested);
 #else
-    /** Mbed modification
-     *  Retarget nRF SDK to use Mbed critical section API
-     */
-    //app_util_enable_irq();
-    core_util_critical_section_exit();
+    app_util_enable_irq();
 #endif
 }
 

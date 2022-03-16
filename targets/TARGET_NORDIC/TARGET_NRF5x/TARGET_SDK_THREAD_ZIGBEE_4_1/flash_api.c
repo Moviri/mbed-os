@@ -55,10 +55,10 @@
 #define WORD_SIZE_IN_BYTES 4
 
 #ifndef ZB_NVRAM_FLASH_AUTO_ADDRESS
-#define NVRAM_FULL_SIZE 0x9000
+#define ZIGBEE_NVRAM_FULL_SIZE 0x9000
 #else
 #include "sdk_config.h"
-#define NVRAM_FULL_SIZE (ZIGBEE_NVRAM_PAGE_SIZE * ZIGBEE_NVRAM_PAGE_COUNT + ZIGBEE_NVRAM_CONFIG_PAGE_SIZE * ZIGBEE_NVRAM_CONFIG_PAGE_COUNT)
+#define ZIGBEE_NVRAM_FULL_SIZE (ZIGBEE_NVRAM_PAGE_SIZE * ZIGBEE_NVRAM_PAGE_COUNT + ZIGBEE_NVRAM_CONFIG_PAGE_SIZE * ZIGBEE_NVRAM_CONFIG_PAGE_COUNT)
 #endif
 
 NRF_FSTORAGE_DEF(static nrf_fstorage_t nordic_fstorage) = { 0 };
@@ -79,7 +79,7 @@ int32_t flash_init(flash_t *obj)
         nordic_fstorage.p_flash_info    = NULL;
         nordic_fstorage.evt_handler     = NULL;
         nordic_fstorage.start_addr      = 0;
-        nordic_fstorage.end_addr        = NRF_FICR->CODESIZE * NRF_FICR->CODEPAGESIZE - NVRAM_FULL_SIZE;
+        nordic_fstorage.end_addr        = NRF_FICR->CODESIZE * NRF_FICR->CODEPAGESIZE - ZIGBEE_NVRAM_FULL_SIZE;
 
         /* Initialize either SoftDevice API or NVMC API. 
          * SoftDevice API should work both when the SoftDevice is enabled or disabled.

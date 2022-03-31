@@ -6454,7 +6454,8 @@
             "ZB_TRACE_MASK=0", 
             "ENABLE_FEM",
             "NRF5",
-            "ZBOSS_BUILD"
+            "ZBOSS_BUILD",
+            "NRF_802154_INTERNAL_RADIO_IRQ_HANDLING=0"
         ],
         "macros_remove": [
             "BOARD_PCA10056"

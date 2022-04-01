@@ -49,11 +49,10 @@
  * symbols defined by ZBOSS source code Kconfig, which can be found in NCS
  * platform repository.
  */
-// #ifdef LIBZBOSS_CONFIG_FILE
-// #include LIBZBOSS_CONFIG_FILE
-// #endif
+#ifdef LIBZBOSS_CONFIG_FILE
+#include LIBZBOSS_CONFIG_FILE
+#endif
 
-#include "libzboss_config.h"
 #include "zb_config_platform.h"
 #include "zb_version.h"
 #include "zb_revision_r22.h"

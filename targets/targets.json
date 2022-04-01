@@ -6455,7 +6455,8 @@
             "ENABLE_FEM",
             "NRF5",
             "ZBOSS_BUILD",
-            "NRF_802154_INTERNAL_RADIO_IRQ_HANDLING=0"
+            "NRF_802154_INTERNAL_RADIO_IRQ_HANDLING=0",
+            "LIBZBOSS_CONFIG_FILE=\"libzboss_config.h\""
         ],
         "macros_remove": [
             "BOARD_PCA10056"

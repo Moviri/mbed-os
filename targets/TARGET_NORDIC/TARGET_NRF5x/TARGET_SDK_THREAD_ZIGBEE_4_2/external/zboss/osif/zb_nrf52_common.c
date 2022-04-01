@@ -44,7 +44,6 @@ PURPOSE: Platform specific for NRF52 SoC.
 #include <stdlib.h>
 #include "zboss_api.h"
 #include "zb_nrf52_internal.h"
-#include "zb_nrf52_zboss_deps.h"
 
 #include "sdk_config.h"
 #if !defined SOFTDEVICE_PRESENT
@@ -78,7 +77,6 @@ extern nrf_drv_uart_t m_uart;
 static void zb_osif_rng_init(void);
 static zb_uint32_t zb_osif_read_rndval(void);
 static void zb_osif_aes_init(void);
-void osif_sleep_using_transc_timer(zb_time_t timeout);
 
 #if defined SOFTDEVICE_PRESENT
 /**
@@ -125,6 +123,45 @@ static void soc_evt_handler(uint32_t sys_evt, void * p_context)
 }
 #endif
 
+#ifndef CONFIG_ZB_TEST_MODE_MAC
+/**
+ * WORKAROUND for KRKNWK-12678 / ZBS-692:
+ * There is a bug in ZBOSS, leading to unbalanced address locks once a device looses
+ * its connectivity with the network.
+ * It is better to skip the address lock assertion and continue operation than halt or reset
+ * the device.
+ * In order to implement a selective assertion masking, the additional error handler has to be registered.
+ * Its prototype as well as registering function are part of private ZBOSS API (see zb_sdo.h).
+ * They are copied here just to implement the workaround.
+ */
+#define ZB_ADDRESS_FILE_ID                112
+#define ZB_ADDRESS_UNLOCK_ASSERT_LINE_NUM 788
+
+typedef void (*zb_assert_indication_cb_t)(zb_uint16_t file_id, zb_int_t line_number);
+
+/**
+  Register a callback which should be called when application falls into assert
+ */
+void zb_zdo_register_assert_indication_cb(zb_assert_indication_cb_t assert_cb);
+
+static zb_bool_t m_skip_assertion = ZB_FALSE;
+
+void assert_indication_cb(zb_uint16_t file_id, zb_int_t line_number)
+{
+  NRF_LOG_ERROR("ZBOSS assertion in file: %d, line: %d", file_id, line_number);
+  zb_osif_serial_flush();
+
+  if ((file_id == ZB_ADDRESS_FILE_ID) && (line_number == ZB_ADDRESS_UNLOCK_ASSERT_LINE_NUM) && (!ZB_JOINED()))
+  {
+    m_skip_assertion = ZB_TRUE;
+  }
+  else
+  {
+    m_skip_assertion = ZB_FALSE;
+  }
+}
+#endif /* !defined(CONFIG_ZB_TEST_MODE_MAC) */
+
 /**
    SoC general initialization
 */
@@ -139,6 +176,9 @@ void zb_osif_init(void)
 
   m_initialized = ZB_TRUE;
 
+#ifndef CONFIG_ZB_TEST_MODE_MAC
+  zb_zdo_register_assert_indication_cb(assert_indication_cb);
+#endif
   /* Initialise system timer */
   zb_osif_timer_init();
 #if defined ZB_TRACE_OVER_USART && defined ZB_TRACE_LEVEL
@@ -176,6 +216,22 @@ void zb_osif_init(void)
 
 void zb_osif_abort(void)
 {
+  NRF_LOG_ERROR("ZBOSS assertion occurred");
+  zb_osif_serial_flush();
+
+#ifndef CONFIG_ZB_TEST_MODE_MAC
+  if (m_skip_assertion)
+  {
+    NRF_LOG_ERROR("KRKNWK-12678: Skip assertion handler.");
+    return;
+  }
+#endif /* !defined(CONFIG_ZB_TEST_MODE_MAC) */
+
+#if (defined CONFIG_ZBOSS_RESET_ON_ASSERT) && (CONFIG_ZBOSS_RESET_ON_ASSERT)
+  zb_reset(0);
+#endif
+
+#if (defined CONFIG_ZBOSS_HALT_ON_ASSERT) && (CONFIG_ZBOSS_HALT_ON_ASSERT)
   while(1)
   {
 #if defined ZB_NRF_TRACE && (defined ZB_TRACE_LEVEL || defined ZB_TRAFFIC_DUMP_ON)
@@ -183,6 +239,7 @@ void zb_osif_abort(void)
     zb_osif_serial_flush();
 #endif /* ZB_NRF_TRACE */
   }
+#endif
 }
 
 void zb_reset(zb_uint8_t param)
@@ -190,6 +247,9 @@ void zb_reset(zb_uint8_t param)
   ZVUNUSED(param);
   
 #ifdef ZB_NRF_INTERNAL
+  NRF_LOG_ERROR("Reset MCU from ZBOSS");
+  zb_osif_serial_flush();
+
   NVIC_SystemReset();
 #endif
 }
@@ -226,42 +286,9 @@ zb_uint32_t zb_get_utc_time(void)
   return ZB_TIME_BEACON_INTERVAL_TO_MSEC(ZB_TIMER_GET()) / 1000;
 }
 
-/**
-   Get current time, us.
-
-   Use transceiver timer when possible.
-*/
-zb_time_t osif_transceiver_time_get(void)
-{
-  return zb_osif_timer_get();
-}
-
-
 void zb_osif_busy_loop_delay(zb_uint32_t count)
 {
   ZVUNUSED(count);
-}
-
-
-void osif_sleep_using_transc_timer(zb_time_t timeout)
-{
-  zb_time_t tstart = osif_transceiver_time_get();
-  zb_time_t tend   = tstart + timeout;
-
-  if (tend < tstart)
-  {
-    while (tend < osif_transceiver_time_get())
-    {
-      zb_osif_busy_loop_delay(10);
-    }
-  }
-  else
-  {
-    while (osif_transceiver_time_get() < tend)
-    {
-      zb_osif_busy_loop_delay(10);
-    }
-  }
 }
 
 
@@ -409,9 +436,6 @@ __WEAK void zb_nrf52_priph_disable(void)
   nrf_drv_uart_uninit(&m_uart);
 #endif /* #if defined(NRF_LOG_BACKEND_UART_ENABLED) && NRF_LOG_BACKEND_UART_ENABLED */
 #endif
-
-#else /* defined ZB_NRF_TRACE */
-  zb_osif_uart_int_disable();
 #endif
 }
 
@@ -435,9 +459,6 @@ __WEAK void zb_nrf52_priph_enable(void)
   nrf_log_backend_uart_init();
 #endif /* #if defined(NRF_LOG_BACKEND_UART_ENABLED) && NRF_LOG_BACKEND_UART_ENABLED */
 #endif
-
-#else /* defined ZB_NRF_TRACE */
-  zb_osif_uart_int_enable();
 #endif /* defined ZB_NRF_TRACE */
 }
 
@@ -455,15 +476,6 @@ __WEAK zb_uint32_t zb_osif_sleep(zb_uint32_t sleep_tmo)
     return sleep_tmo;
   }
 
-#if (ZIGBEE_TRACE_LEVEL != 0)
-  /* In case of trace libraries - the Zigbee stack may generate logs on each loop iteration, resulting in immediate
-   * return from zb_osif_wait_for_event() each time. In such case, Zigbee stack should not be forced to
-   * increment counters. Such solution may break the internal logic of the stack.
-   */
-  ZVUNUSED(time_slept_ms);
-  return ZB_SLEEP_INVALID_VALUE;
-#else
-
   /* Disable Zigbee stack-related peripherals to save energy. */
   zb_nrf52_priph_disable();
 
@@ -480,7 +492,6 @@ __WEAK zb_uint32_t zb_osif_sleep(zb_uint32_t sleep_tmo)
   zb_nrf52_priph_enable();
 
   return time_slept_ms;
-#endif
 }
 
 /**@brief Function which is called after zb_osif_sleep

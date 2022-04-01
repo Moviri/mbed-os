@@ -262,7 +262,7 @@ typedef zb_uint8_t zb_zdp_status_t;
  *
  * Status codes:
  *  - RET_OK: Network steering completed.
- *  - RET_INTERRUPTED: was cancelled with bdb_cancel_steering()
+ *  - RET_INTERRUPTED: was cancelled with bdb_cancel_joining()
  *
  * Has additional data of type zb_zdo_signal_leave_indication_params_t.
  *
@@ -723,6 +723,22 @@ typedef zb_uint8_t zb_zdp_status_t;
  * @endparblock */
 #define ZB_BDB_SIGNAL_FORMATION_CANCELLED 56U
 
+/** ZBOSS is ready to shutdown signal
+ * @parblock
+ * When generated:
+ *  - after ZBOSS preparations to shutdown initiated by zboss_start_shut() is done
+ *
+ * After receiving that signal application MUST complete ZBOSS shutdown by
+ * calling zboss_complete_shut(). It is impossible to continue ZBOSS work
+ * without a restart after calling zboss_start_shut().
+ *
+ * Signal parameters:
+ *  - none
+ *
+ * @endparblock */
+#define ZB_SIGNAL_READY_TO_SHUT           57U
+
+
 /** @} */
 
 /**
@@ -909,6 +925,41 @@ typedef struct zb_zdo_signal_fb_initiator_finished_params_s
   zb_zdo_fb_initiator_finished_status_t status;
 } zb_zdo_signal_fb_initiator_finished_params_t;
 
+
+/*
+ * Note: These values were members of `enum zb_secur_upd_device_status_e` type but were converted to a
+ * set of macros due to MISRA violations.
+ */
+/**
+ * @name Security/rejoin states of the 'status' field of APSME-Update-Device
+ * @see Table 4.40
+ * @anchor secur_upd_device_status
+ *
+ */
+/** @{ */
+#define ZB_STD_SEQ_SECURED_REJOIN    0U /*!< Device rejoin with standard security */
+#define ZB_STD_SEQ_UNSECURED_JOIN    1U /*!< Device join without security */
+#define ZB_DEVICE_LEFT               2U /*!< Device left */
+#define ZB_STD_SEQ_UNSECURED_REJOIN  3U /*!< Device rejoin without standard security */
+#define ZB_MAX_USED_UPD_DEV_STATUS   ZB_STD_SEQ_UNSECURED_REJOIN
+/** @} */
+/* Obsolete values */
+#define ZB_HIGH_SEQ_SECURED_REJOIN   4U /*!< Device rejoin with high security */
+#define ZB_HIGH_SEQ_UNSECURED_JOIN   5U /*!< Device join without high security */
+#define ZB_HIGH_SEQ_UNSECURED_REJOIN 7U /*!< Device rejoin without high security */
+
+
+/**
+ * @name TC action on incoming Update Device
+ * @anchor secur_tc_action
+ */
+/** @{ */
+#define ZB_TC_ACTION_AUTHORIZE      0u /*!< authorize device  */
+#define ZB_TC_ACTION_DENY           1u /*!< deby authorization - msend Remove device  */
+#define ZB_TC_ACTION_IGNORE         2u /*!< ignore Update Device - that meay lead to authorization deny  */
+/** @} */
+
+
 /**
  * @brief Device Updated signal parameters
  */
@@ -928,10 +979,19 @@ typedef struct zb_zdo_signal_device_update_params_s
    * 0x03 = Standard device trust center rejoin
    * 0x04 – 0x07 = Reserved
    *
+   * @see secur_upd_device_status
+   *
    * see r21 spec, 4.4.3.2 APSME-UPDATE-DEVICE.indication,
    * Table 4.15 APSME-UPDATE-DEVICE.indication Parameters
    */
   zb_uint8_t status;
+  /*!<
+    Action by TC: authorize, send remove dev, ignore
+    @see secur_tc_action
+   */
+  zb_uint8_t tc_action;
+  /*!< Short Address of the updated device parent, 0xffff is unknown */
+  zb_uint16_t parent_short;
 } zb_zdo_signal_device_update_params_t;
 
 
@@ -2741,7 +2801,7 @@ void zb_zdo_rejoin_backoff_cancel(void);
 
 #ifndef ZB_LITE_NO_CONFIGURABLE_POWER_DELTA
 zb_ret_t zb_zdo_set_lpd_cmd_mode(zb_uint8_t mode);
-void zb_zdo_set_lpd_cmd_timeout(zb_uint8_t timeout);
+void zb_zdo_set_lpd_cmd_timeout(zb_uint16_t timeout);
 #else
 #define zb_zdo_set_lpd_cmd_mode(mode)
 #define zb_zdo_set_lpd_cmd_timeout(timeout)
@@ -2879,6 +2939,7 @@ void zb_af_set_data_indication(zb_device_handler_t cb);
  */
 void zb_bdb_reset_via_local_action(zb_uint8_t param);
 
+#if defined ZB_BDB_MODE && !defined BDB_OLD
 /**
  *  @brief Starts TC rejoin procedure
  *
@@ -2890,6 +2951,7 @@ void zb_bdb_reset_via_local_action(zb_uint8_t param);
  *  @param param - buffer reference (if 0, buffer will be allocated automatically)
  */
 void zb_bdb_initiate_tc_rejoin(zb_uint8_t param);
+#endif /* ZB_BDB_MODE && !BDB_OLD */
 
 /** @} */ /* af_management_service */
 /*! @} */

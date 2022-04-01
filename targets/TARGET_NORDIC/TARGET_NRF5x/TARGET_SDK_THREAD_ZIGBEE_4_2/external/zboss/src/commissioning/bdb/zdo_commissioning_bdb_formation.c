@@ -58,6 +58,10 @@
 
 #if defined ZB_FORMATION
 
+#ifndef NCP_MODE_HOST
+static void nwk_cancel_network_formation_response(zb_bufid_t buf);
+#endif /* NCP_MODE_HOST */
+
 static void bdb_formation(zb_uint8_t param)
 {
   TRACE_MSG(TRACE_ZDO3, "bdb_formation param %hd", (FMT__H, param));
@@ -123,6 +127,10 @@ static void bdb_commissioning_formation_channels_mask(zb_channel_list_t list)
 
 static void bdb_formation_force_link(void)
 {
+#ifndef NCP_MODE_HOST
+  /* introduce some kind of setter? To be solved in the scope of ZBS-241 */
+  ZG->nwk.selector.nwk_cancel_nwk_form_resp = nwk_cancel_network_formation_response;
+#endif /* NCP_MODE_HOST */
   zdo_formation_force_link();
 
   FORMATION_SELECTOR().start_formation = bdb_formation;
@@ -165,6 +173,9 @@ void zb_disable_distributed(void)
 
 #endif /* ZB_DISTRIBUTED_SECURITY_ON */
 
+#ifndef NCP_MODE_HOST
+/* these functions are not supported for NCP now.
+   Will be resolved in scope of ZBS-241 */
 
 static void bdb_send_formation_cancelled_signal(zb_bufid_t buf, zb_ret_t status)
 {
@@ -270,11 +281,11 @@ void bdb_cancel_formation(zb_bufid_t buf)
 }
 
 
-void zb_nwk_cancel_network_formation_response(zb_bufid_t buf)
+static void nwk_cancel_network_formation_response(zb_bufid_t buf)
 {
   zb_ret_t status;
 
-  TRACE_MSG(TRACE_ZDO1, ">> zb_nwk_cancel_network_formation_response, buf %d", (FMT__D, buf));
+  TRACE_MSG(TRACE_ZDO1, ">> nwk_cancel_network_formation_response, buf %d", (FMT__D, buf));
 
   ZB_ASSERT(buf != 0U);
 
@@ -300,7 +311,9 @@ void zb_nwk_cancel_network_formation_response(zb_bufid_t buf)
 
   bdb_send_formation_cancelled_signal(buf, status);
 
-  TRACE_MSG(TRACE_ZDO1, "<< zb_nwk_cancel_network_formation_response", (FMT__0));
+  TRACE_MSG(TRACE_ZDO1, "<< nwk_cancel_network_formation_response", (FMT__0));
 }
+
+#endif /* NCP_MODE_HOST */
 
 #endif /* ZB_FORMATION */

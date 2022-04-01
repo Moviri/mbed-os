@@ -102,38 +102,6 @@ static void start_network_rejoin(void);
 static void stop_network_rejoin(zb_uint8_t was_scheduled);
 
 
-#ifndef ZB_ED_ROLE
-void nwk_permit_timeout(zb_uint8_t param);
-
-/**@brief Close network for joining localy as fast as possible.
- *
- * This function is called as a workaround for issue described in KRKNWK-5255.
- *
- * @param[in] bufid   Reference to the Zigbee stack buffer.
-*/
-static void close_network_locally(zb_bufid_t bufid)
-{
-    if (bufid)
-    {
-        zb_nlme_permit_joining_request_t *req_param = ZB_BUF_GET_PARAM(bufid, zb_nlme_permit_joining_request_t);
-        req_param->permit_duration = 0;
-        zb_nlme_permit_joining_request(bufid);
-        NRF_LOG_INFO("Zigbee network closed");
-    }
-    else
-    {
-        /* If it was impossible to get a free buffer immediatelly,
-         * schedule closing the network.
-         */
-        zb_ret_t zb_err_code = zb_buf_get_out_delayed(close_network_locally);
-        if (zb_err_code != RET_OK)
-        {
-            NRF_LOG_ERROR("Unable to get buffer or schedule network close operation.");
-        }
-    }
-}
-#endif
-
 /**@brief Function to set the Erase persistent storage depending on the erase pin
  */
 void zigbee_erase_persistent_storage(zb_bool_t erase)
@@ -474,9 +442,6 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
                     NRF_LOG_INFO("Network steering failed on Zigbee coordinator (status: %d)", status);
                 }
             }
-#ifndef ZB_ED_ROLE
-            zb_enable_auto_pan_id_conflict_resolution(ZB_FALSE);
-#endif
             break;
 
         case ZB_BDB_SIGNAL_FORMATION:
@@ -536,9 +501,6 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
             {
                 NRF_LOG_ERROR("Unable to leave network (status: %d)", status);
             }
-#ifndef ZB_ED_ROLE
-            zb_enable_auto_pan_id_conflict_resolution(ZB_FALSE);
-#endif
             break;
 
         case ZB_ZDO_SIGNAL_LEAVE_INDICATION:
@@ -548,22 +510,6 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
                 zb_zdo_signal_leave_indication_params_t * p_leave_ind_params = ZB_ZDO_SIGNAL_GET_PARAMS(p_sg_p, zb_zdo_signal_leave_indication_params_t);
                 char ieee_addr_buf[17] = {0};
                 int  addr_len;
-
-#ifndef ZB_ED_ROLE
-                /* Close Zigbee network locally due to KRKNWK-5255. */
-                zb_time_t timeout_bi;
-                if ((zb_schedule_get_alarm_time(nwk_permit_timeout, ZB_ALARM_ANY_PARAM, &timeout_bi) != RET_OK) ||
-                    (timeout_bi == 0))
-                {
-                    close_network_locally(zb_buf_get_out());
-                }
-                else
-                {
-                    NRF_LOG_ERROR("Unable to close Zigbee network - network is opened vie permit join command (%d, %d).",
-                        zb_schedule_get_alarm_time(nwk_permit_timeout, ZB_ALARM_ANY_PARAM, &timeout_bi),
-                        timeout_bi);
-                }
-#endif
 
                 addr_len = ieee_addr_to_str(ieee_addr_buf, sizeof(ieee_addr_buf), p_leave_ind_params->device_addr);
                 if (addr_len < 0)
@@ -756,8 +702,11 @@ void zigbee_led_status_update(zb_bufid_t bufid, uint32_t led_idx)
  */
 static void start_network_steering(zb_uint8_t param)
 {
+    zb_bool_t started = bdb_start_top_level_commissioning(ZB_BDB_NETWORK_STEERING);
+
     ZVUNUSED(param);
-    ZVUNUSED(bdb_start_top_level_commissioning(ZB_BDB_NETWORK_STEERING));
+
+    NRF_LOG_INFO("Network steering restarted (started: %d)", started);
 }
 
 /**@brief Process rejoin procedure. To be called in signal handler.
@@ -882,6 +831,7 @@ static void stop_network_rejoin(zb_uint8_t was_scheduled)
         {
             /* Request rejoin procedure stop */
             m_is_rejoin_stop_requested = ZB_TRUE;
+            NRF_LOG_INFO("Network rejoin procedure requested to be stopped.");
         }
     }
 

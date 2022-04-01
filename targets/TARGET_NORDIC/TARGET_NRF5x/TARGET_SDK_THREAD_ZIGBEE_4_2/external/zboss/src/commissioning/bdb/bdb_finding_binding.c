@@ -492,6 +492,9 @@ static zb_ret_t bind_respondent_cluster(zb_bdb_comm_respondent_info_t *responden
 
     respondent->curr_bind_req_buf = param;
     aps_bind_req->confirm_cb = handle_bind_confirm;
+#ifdef SNCP_MODE
+    aps_bind_req->remote_bind = ZB_B2U(ZB_TRUE);
+#endif
     zb_apsme_bind_request(param);
   }
 

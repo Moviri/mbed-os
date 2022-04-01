@@ -42,7 +42,6 @@ PURPOSE: Platform specific for NRF52 SoC.
 #define ZB_TRACE_FILE_ID 36508
 #include "zboss_api.h"
 #include "zb_nrf52_internal.h"
-#include "zb_nrf52_zboss_deps.h"
 
 
 #if defined ZB_NRF_TRACE
@@ -70,8 +69,7 @@ static zb_uint8_t buf8[TRACE_LOG_BUFFER_SIZE];
 static zb_uint_t buffered = 0;
 static zb_bool_t m_initialized = ZB_FALSE;
 
-
-void zb_osif_serial_init()
+void nrf_logger_init(void)
 {
 #ifdef ZB_ASYNC_TRACE_CONTROL
   static zb_bool_t backend_inited = ZB_FALSE;
@@ -106,7 +104,7 @@ void zb_osif_serial_init()
 /* Is called when complete Trace message is put.
  * Triggers sending buffered data.
  */
-void zb_trace_msg_port_do(void)
+void nrf_logger_msg_port_do(void)
 {
   if (buffered)
   {
@@ -115,7 +113,7 @@ void zb_trace_msg_port_do(void)
   }
 }
 
-void zb_osif_serial_put_bytes(const zb_uint8_t *buf, zb_short_t len)
+void nrf_logger_put_bytes(const zb_uint8_t *buf, zb_short_t len)
 {
   zb_short_t bytes_copied = 0;
   zb_uint8_t bytes_to_copy = 0;
@@ -132,7 +130,7 @@ void zb_osif_serial_put_bytes(const zb_uint8_t *buf, zb_short_t len)
     /* Send what is in buffer to free space. */
     if (buffer_free_space == 0)
     {
-      zb_trace_msg_port_do();
+      nrf_logger_msg_port_do();
       continue;
     }
 
@@ -152,19 +150,15 @@ void zb_osif_serial_put_bytes(const zb_uint8_t *buf, zb_short_t len)
   }
 }
 
-#ifdef CONFIG_ZB_NRF_TRACE_RX_ENABLE
 /*Function set UART RX callback function*/
-void zb_osif_set_uart_byte_received_cb(zb_callback_t cb)
+void nrf_logger_set_rx_cb(zb_callback_t cb)
 {
-#if NRF_LOG_ENABLED && defined NRF_LOG_DEFAULT_BACKENDS_SET_RX_CB
-    NRF_LOG_DEFAULT_BACKENDS_SET_RX_CB(cb);
-#endif /*NRF_LOG_ENABLED */
+  /* Not supported */
 }
-#endif /* CONFIG_ZB_NRF_TRACE_RX_ENABLE */
 
-void zb_osif_serial_flush()
+void nrf_logger_flush(void)
 {
-  zb_trace_msg_port_do();
+  nrf_logger_msg_port_do();
   UNUSED_RETURN_VALUE(NRF_LOG_PROCESS());
 }
 

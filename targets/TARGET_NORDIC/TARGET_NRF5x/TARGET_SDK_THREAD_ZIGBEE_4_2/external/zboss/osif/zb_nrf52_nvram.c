@@ -42,7 +42,6 @@ PURPOSE: Platform specific for NRF52 SoC.
 #define ZB_TRACE_FILE_ID 64615
 #include "zboss_api.h"
 #include "zb_nrf52_internal.h"
-#include "zb_nrf52_zboss_deps.h"
 #include "nrf_fstorage.h"
 
 #if defined SOFTDEVICE_PRESENT
@@ -259,7 +258,7 @@ zb_ret_t zb_osif_nvram_read(zb_uint8_t page, zb_uint32_t pos, zb_uint8_t* buf, z
     return RET_PAGE_NOT_FOUND;
   }
 
-  if (pos + len >= ZB_NVRAM_PAGE_SIZE)
+  if (pos + len > ZB_NVRAM_PAGE_SIZE)
   {
     return RET_INVALID_PARAMETER;
   }
@@ -296,7 +295,7 @@ zb_ret_t zb_osif_nvram_read_test(zb_uint8_t page, zb_uint32_t pos, zb_uint8_t* b
     return RET_PAGE_NOT_FOUND;
   }
 
-  if (pos + len >= ZB_NVRAM_PAGE_SIZE)
+  if (pos + len > ZB_NVRAM_PAGE_SIZE)
   {
     return RET_INVALID_PARAMETER;
   }
@@ -345,7 +344,7 @@ zb_ret_t zb_osif_nvram_do_write(zb_uint8_t page, zb_uint32_t pos, void* buf, zb_
     return RET_PAGE_NOT_FOUND;
   }
 
-  if (pos + len >= ZB_NVRAM_PAGE_SIZE)
+  if (pos + len > ZB_NVRAM_PAGE_SIZE)
   {
     return RET_INVALID_PARAMETER;
   }

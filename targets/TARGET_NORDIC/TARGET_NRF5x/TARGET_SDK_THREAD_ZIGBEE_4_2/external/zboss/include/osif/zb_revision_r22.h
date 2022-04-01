@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018 - 2021, Nordic Semiconductor ASA
+ * Copyright (c) 2018 - 2022, Nordic Semiconductor ASA
  *
  * All rights reserved.
  *
@@ -36,6 +36,7 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ * This file implements mappings of Kconfig options enabling and configuring ZBOSS features.
  */
 
 /**
@@ -61,11 +62,11 @@
  *
  * Note: This value is automatically updated by the release script.
  */
-#define ZBOSS_PLATFORM_PATCH 0U
+#define ZBOSS_PLATFORM_PATCH 1U
 
 /**
  * Patch version number of the ZBOSS core.
  *
  * Note: This value is automatically updated by the release script.
  */
-#define ZBOSS_PATCH 0U
+#define ZBOSS_PATCH 1U

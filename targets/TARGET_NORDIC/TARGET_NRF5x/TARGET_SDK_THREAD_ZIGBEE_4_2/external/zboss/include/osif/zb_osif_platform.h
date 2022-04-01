@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018 - 2021, Nordic Semiconductor ASA
+ * Copyright (c) 2018 - 2022, Nordic Semiconductor ASA
  *
  * All rights reserved.
  *
@@ -364,6 +364,12 @@ zb_bool_t zb_osif_is_sleeping(void);
  * @brief Read IEEE long address from FICR registers.
  *
  * @param[out] ieee_eui64  Pointer to a long address structure to be filled.
+ * 								@cond NORDIC_NCS_SPECIAL_FUNCTIONS
+ * 								This structure is filled with the EUI-64 assigned by Nordic Semiconductor. Refer to the Configuring Zigbee in nRF Connect SDK ("IEEE 802.15.4 EUI-64 configuration" section) if you want to change it.
+ * 								@endcond
+ * 								@cond NORDIC_NRF5_SPECIAL_FUNCTIONS
+ * 								The 24 oldest bits are filled in by the ZIGBEE_VENDOR_OUI macro and the remainder is taken from the FICR register.
+ * 								@endcond
  */
 void zb_osif_get_ieee_eui64(zb_ieee_addr_t ieee_eui64);
 

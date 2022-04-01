@@ -53,30 +53,58 @@ PURPOSE: Platform specific for NRF52 SoC.
 #endif  /* ZB_STACK_REGRESSION_TESTING_API */
 
 #include "zb_nrf52_internal.h"
-#include "zb_nrf52_zboss_deps.h"
 #include "timer_scheduler/nrf_802154_timer_sched.h"
 
-#define ZB_NRF52_TIMER_VALUE      15360  /*microseconds in one beacon interval*/
 #define MS_PER_S                  1000UL /* Miliseconds in one second. */
 #define RADIO_DRIVER_RTC_OVRFLW_S 512UL  /* Time that has passed between overflow events. On full RTC speed, it occurs every 512 s. */
 #define ZB_NRF52_MAX_SLEEP_PERIOD_MS  ((RADIO_DRIVER_RTC_OVRFLW_S - 1) * MS_PER_S) /* Zigbee max sleep period to prevent RTC timer overflow. */
 
-static void timer_event_handler(nrf_timer_event_t event_type, void* p_context);
 static void rtc_event_handler(void * p_context);
 
-static nrf_802154_timer_t m_timer;
 static volatile zb_bool_t m_timer_is_init = ZB_FALSE;
+static volatile zb_uint64_t m_timer_us = 0;
+static volatile zb_uint32_t m_last_tstamp_us = 0;
+static nrf_802154_timer_t m_timer;
 static zb_uint32_t m_rtc_sleep_timer_val = 0;
+
+/*
+ * Get uptime value in us.
+ */
+static zb_uint64_t zb_now(void)
+{
+  zb_uint32_t now = nrf_802154_timer_sched_time_get();
+
+  m_timer_us += (zb_uint64_t)(now - m_last_tstamp_us);
+  m_last_tstamp_us = now;
+
+  return m_timer_us;
+}
+
+/*
+ * Get uptime value in us.
+ */
+zb_uint32_t zb_osif_timer_get(void)
+{
+  return (zb_uint32_t)zb_now();
+}
+
+void zb_osif_timer_init()
+{
+  m_last_tstamp_us = nrf_802154_timer_sched_time_get();
+  m_timer_is_init = ZB_TRUE;
+}
+
+/*
+ * Get ZBOSS time value in beacon intervals.
+ * The single beacon interval duration in us is 15360us.
+ */
+zb_time_t zb_timer_get(void)
+{
+  return (zb_now()) / ((zb_uint64_t)(ZB_BEACON_INTERVAL_USEC));
+}
 
 void zb_osif_timer_stop()
 {
-  ZB_OSIF_GLOBAL_LOCK();
-  if (m_timer_is_init == ZB_TRUE)
-  {
-    nrf_drv_timer_uninit(zb_nrf_cfg_get_zboss_timer());
-    m_timer_is_init = ZB_FALSE;
-  }
-  ZB_OSIF_GLOBAL_UNLOCK();
 }
 
 void zb_osif_timer_start()
@@ -86,10 +114,6 @@ void zb_osif_timer_start()
   {
     zb_osif_timer_init();
   }
-  else if (!nrf_drv_timer_is_enabled(zb_nrf_cfg_get_zboss_timer()))
-  {
-    nrf_drv_timer_enable(zb_nrf_cfg_get_zboss_timer());
-  }
   ZB_OSIF_GLOBAL_UNLOCK();
 }
 
@@ -98,65 +122,34 @@ zb_bool_t zb_osif_timer_is_on()
   return m_timer_is_init;
 }
 
-void zb_osif_timer_init()
+/**
+ * Get current time, us.
+ *
+ * Use transceiver timer when possible.
+ */
+zb_time_t osif_transceiver_time_get(void)
 {
-  zb_uint32_t time_ticks;
-  zb_uint32_t time_us = ZB_NRF52_TIMER_VALUE;
-  ret_code_t err_code;
-
-  /*Configure Timer1 at 15360 us = 1 beacon intervel*/
-  nrf_drv_timer_config_t timer_cfg = zb_nrf_cfg_get_timer_default_config();
-  err_code = nrf_drv_timer_init(zb_nrf_cfg_get_zboss_timer(), &timer_cfg, timer_event_handler);
-  NRF_ERR_CHECK(err_code);
-  time_ticks = nrf_drv_timer_us_to_ticks(zb_nrf_cfg_get_zboss_timer(), time_us);
-  /*
-    NRF_TIMER_CC_CHANNEL1 is simple enum in components/drivers_nrf/hal/nrf_timer.h and does not depend on sdk_config.h.
-    NRF_TIMER_SHORT_COMPARE1_CLEAR_MASK is a mask defined in components/drivers_nrf/hal/nrf_timer.h and does not depend on sdk_config.h.
-   */
-  nrf_drv_timer_extended_compare(zb_nrf_cfg_get_zboss_timer(), NRF_TIMER_CC_CHANNEL1, time_ticks, NRF_TIMER_SHORT_COMPARE1_CLEAR_MASK, true);
-  nrf_drv_timer_enable(zb_nrf_cfg_get_zboss_timer());
-
-  /* Disable timer in inactivity periods on all device types. */
-  zb_timer_enable_stop();
-
-  m_timer_is_init = ZB_TRUE;
+  return zb_osif_timer_get();
 }
 
-zb_uint32_t zb_osif_timer_get(void)
+void osif_sleep_using_transc_timer(zb_time_t timeout)
 {
-  zb_uint32_t time_sys;
-  zb_uint32_t time_cur;
+  zb_time_t tstart = osif_transceiver_time_get();
+  zb_time_t tend   = tstart + timeout;
 
-  ZB_OSIF_GLOBAL_LOCK();
-  if (zb_osif_timer_is_on() == ZB_TRUE)
+  if (tend < tstart)
   {
-    time_cur = nrfx_timer_capture(zb_nrf_cfg_get_zboss_timer(), NRF_TIMER_CC_CHANNEL2);
+    while (tend < osif_transceiver_time_get())
+    {
+      zb_osif_busy_loop_delay(10);
+    }
   }
   else
   {
-    time_cur = 0;
-  }
-  time_sys = ZB_TIME_BEACON_INTERVAL_TO_USEC(ZB_TIMER_GET());
-  ZB_OSIF_GLOBAL_UNLOCK();
-
-  return time_sys + time_cur;
-}
-
-/*
-  timer interrupt handler
-*/
-static void timer_event_handler(nrf_timer_event_t event_type, void* p_context)
-{
-  ZVUNUSED(p_context);
-  switch (event_type)
-  {
-    case NRF_TIMER_EVENT_COMPARE1:
-      zb_osif_zboss_timer_tick();
-      break;
-
-    default:
-      /*Do nothing*/
-      break;
+    while (osif_transceiver_time_get() < tend)
+    {
+      zb_osif_busy_loop_delay(10);
+    }
   }
 }
 
@@ -185,6 +178,7 @@ void zb_nrf52_sched_sleep(zb_uint32_t sleep_tmo)
   m_timer.dt        = 1000 * ((sleep_tmo > (ZB_NRF52_MAX_SLEEP_PERIOD_MS)) ? (ZB_NRF52_MAX_SLEEP_PERIOD_MS) : (sleep_tmo));
 
   nrf_802154_timer_sched_add(&m_timer, false);
+  ZVUNUSED(zb_now());
 }
 
 zb_uint32_t zb_nrf52_get_time_slept(void)
@@ -193,6 +187,7 @@ zb_uint32_t zb_nrf52_get_time_slept(void)
 
   /* Calculate real completed time (us) */
   rtc_wait_val = nrf_802154_timer_sched_time_get() - m_rtc_sleep_timer_val;
+  ZVUNUSED(zb_now());
 
   return ((rtc_wait_val + 999) / 1000);
 }

@@ -1,7 +1,7 @@
 /*
  * ZBOSS Zigbee 3.0
  *
- * Copyright (c) 2012-2021 DSR Corporation, Denver CO, USA.
+ * Copyright (c) 2012-2022 DSR Corporation, Denver CO, USA.
  * www.dsr-zboss.com
  * www.dsr-corporation.com
  * All rights reserved.
@@ -344,7 +344,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_on_off_on_with_timed_off_req_s
   */
 #define ZB_ZCL_ON_OFF_GET_OFF_WITH_EFFECT_REQ(data_ptr, buffer, status)             \
 {                                                                                   \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_on_off_off_with_effect_req_t))          \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_on_off_off_with_effect_req_t))           \
   {                                                                                 \
    (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                                          \
   }                                                                                 \
@@ -366,7 +366,7 @@ typedef ZB_PACKED_PRE struct zb_zcl_on_off_on_with_timed_off_req_s
   */
 #define ZB_ZCL_ON_OFF_GET_ON_WITH_TIMED_OFF_REQ(data_ptr, buffer, status)           \
 {                                                                                   \
-  if (zb_buf_len((buffer)) != sizeof(zb_zcl_on_off_on_with_timed_off_req_t))        \
+  if (zb_buf_len((buffer)) < sizeof(zb_zcl_on_off_on_with_timed_off_req_t))         \
   {                                                                                 \
    (status) = ZB_ZCL_PARSE_STATUS_FAILURE;                                          \
   }                                                                                 \

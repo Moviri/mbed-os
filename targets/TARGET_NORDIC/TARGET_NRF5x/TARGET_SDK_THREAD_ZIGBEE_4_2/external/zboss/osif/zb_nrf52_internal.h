@@ -72,30 +72,9 @@ PURPOSE: Platform specific for NRF52 SoC.
 
 #include "zboss_api.h"
 
-const nrf_drv_timer_t *zb_nrf_cfg_get_zboss_timer(void);
-nrf_drv_timer_config_t zb_nrf_cfg_get_timer_default_config(void);
-
 void zb_nrf52_sched_sleep(zb_uint32_t sleep_tmo);
 zb_uint32_t zb_nrf52_get_time_slept(void);
 void zb_osif_wait_for_event(void);
-
-/* void mac_nrf52_trans_set_rx_on_off(zb_bool_t rx_on); */
-#if defined SOFTDEVICE_PRESENT
-/**@brief Function for informing the radio driver about the SoC events of the SoftDevice.
- *        Copied from the nRF radio driver header files to avoid additional external dependencies inside SDK examples.
- */
-void nrf_raal_softdevice_soc_evt_handler(uint32_t evt_id);
-#endif
-
-#if defined ZB_TRACE_LEVEL && defined ZB_TRACE_OVER_USART && !defined ZB_NRF_TRACE
-#include "nordic_common.h"
-#include "nrf_drv_uart.h"
-
-const nrf_drv_uart_t* zb_nrf_cfg_get_nrf52_uart(void);
-const nrf_drv_uart_config_t* zb_nrf_cfg_get_nrf52_uart_config(void);
-void zb_osif_uart_int_disable(void);
-void zb_osif_uart_int_enable(void);
-#endif
 
 #if (defined(DEBUG_NRF) || defined(DEBUG_NRF_USER))
 #define NRF_ERR_CHECK(err_code) ASSERT(err_code == NRF_SUCCESS)

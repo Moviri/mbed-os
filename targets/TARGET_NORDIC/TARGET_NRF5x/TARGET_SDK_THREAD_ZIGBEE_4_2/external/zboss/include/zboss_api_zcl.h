@@ -1197,6 +1197,14 @@ typedef enum zb_zcl_device_callback_id_e
    *
    */
   ZB_ZCL_DAILY_SCHEDULE_CANCEL_SCHEDULE_CB_ID,
+  /** @b Client. Inform user about CancelAllSchedules cmd.
+   *
+   * One of the following statuses must be returned:
+   * @return RET_OK - command is handled successfully.
+   * @return RET_ERROR - command is handled with errors.
+   *
+   */
+  ZB_ZCL_DAILY_SCHEDULE_CANCEL_ALL_SCHEDULES_CB_ID,
   /** @endcond */ /* DOXYGEN_ZCL_SECTION && DOXYGEN_SE_SECTION */
 #endif /* ZB_ENABLE_SE || ZB_ZCL_SUPPORT_CLUSTER_DAILY_SCHEDULE */
 
@@ -1925,8 +1933,11 @@ enum zb_bdb_error_codes_e
   ZB_BDB_STATUS_NO_IDENTIFY_QUERY_RESPONSE,  /*!< No response to an identify query command has been received during finding and binding.*/
   ZB_BDB_STATUS_BINDING_TABLE_FULL,          /*!< A binding table entry could not be created due to insufficient space in the binding table during finding and binding. */
   ZB_BDB_STATUS_NO_SCAN_RESPONSE,            /*!< No response to a scan request inter-PAN command has been received during touchlink. */
-  ZB_BDB_STATUS_NOT_PERMITTED,               /*!< A touchlink (steal) attempt was made when a node is already connected to a centralized security network.*/
+  ZB_BDB_STATUS_NOT_PERMITTED,               /*!< A touchlink (steal) attempt was made when a node is already connected to a centralized security network.
+                                                  A node was instructed to form a network when it did not have a logical type of either Zigbee coordinator or Zigbee router.*/
   ZB_BDB_STATUS_TCLK_EX_FAILURE,             /*!< The Trust Center link key exchange procedure has failed attempting to join a centralized security network.*/
+  ZB_BDB_STATUS_NOT_ON_A_NETWORK,            /*!< A commissioning procedure was forbidden since the node was not currently on a network.*/
+  ZB_BDB_STATUS_ON_A_NETWORK,                /*!< A commissioning procedure was forbidden since the node was currently on a network.*/
   ZB_BDB_STATUS_CANCELLED                    /*!< The current operation (steering or formation) was cancelled by an app */
 };
 /** @endcond */ /* internals_doc */
@@ -1937,7 +1948,9 @@ enum zb_bdb_error_codes_e
    @{
 */
 
-/** @brief BDB commissioning mode mask bits */
+/** @brief BDB commissioning mode mask bits
+ * This bitmask is out of BDB 3.1 spec but will continue to be used internally and as a parameter to the commissioning API
+*/
 typedef enum zb_bdb_commissioning_mode_mask_e
 {
   /** @cond internals_doc */
@@ -1986,12 +1999,15 @@ typedef enum zb_bdb_commissioning_mode_mask_e
 } zb_bdb_commissioning_mode_mask_t;
 
 /**
-   @brief Start top level commissioning procedure with specified mode mask.
+   @brief Start device commissioning procedure specified step.
+
+   Performs steering and network formation if appropriate for the device type. Finding and binding is not performed by this function (see note at @ref ZB_BDB_FINDING_N_BINDING)
+
    When the selected commissioning procedure finishes one of the following ZBOSS signals is generated:
     - @ref ZB_BDB_SIGNAL_STEERING
     - @ref ZB_BDB_SIGNAL_FORMATION
 
-   @param mode_mask - commissioning modes, see @ref zb_bdb_commissioning_mode_mask_e
+   @param mode_mask - bitmask of commissioning steps to perform, see @ref zb_bdb_commissioning_mode_mask_e
 
    @return ZB_TRUE - in case the device starts successfully
    @return ZB_FALSE - ZB_FALSE -- in case an error occurred (for example: the device has already been running)
@@ -2037,6 +2053,25 @@ void bdb_cancel_joining(zb_bufid_t buf);
    @param buf - a ZBOSS buffer
 */
 void bdb_cancel_formation(zb_bufid_t buf);
+
+/**
+ * @brief Close the network
+ *
+ * Implements BDB 3.0.1 - 8.1.1 "Local disabling of Network Steering."
+ *
+ * Will broadcast a Mgmt_Permit_Joining_req with PermitDuration of 0
+ *
+ * In case it is a router or coordinator it will also issue NLME-PERMIT-JOINING.request primitive with PermitDuration of 0
+ * The ZBOSS signal @ref ZB_NWK_SIGNAL_PERMIT_JOIN_STATUS will be raised with @ref zb_zdo_mgmt_permit_joining_req_param_t.permit_duration of 0
+ *
+ * @param buf - a ZBOSS buffer, if zero is passed, a new buffer will be allocated
+ * @return RET_OK if broadcast was successful
+ * @return RET_NO_MEMORY if buffer allocation failed
+ * @return RET_ERROR if any error occured
+ *
+ * @snippet thermostat/thermostat_zr/thermostat_zr.c close_network_example
+ */
+zb_ret_t zb_bdb_close_network(zb_bufid_t buf);
 
 /**
    Check if device is factory new.

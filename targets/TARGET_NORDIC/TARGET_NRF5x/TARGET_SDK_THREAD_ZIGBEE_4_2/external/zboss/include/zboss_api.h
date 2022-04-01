@@ -651,6 +651,33 @@ zb_ret_t zboss_start_no_autostart(void);
 
 void zboss_start_continue(void);
 
+
+#ifdef ZB_ZBOSS_DEINIT
+
+/**
+   Initiate ZBOSS shut procedure.
+
+   ZBOSS shutdown is meaningful for Linux platform where it is necessary to stop
+   or restart ZBOSS without stopping the current process.
+
+   When ZBOSS is ready to be shut, application receives @ref ZB_SIGNAL_READY_TO_SHUT signal.
+   It then must call @ref zboss_complete_shut() and must not use ZBOSS afterwords.
+ */
+void zboss_start_shut(zb_bufid_t param);
+
+/**
+   Complete ZBOSS shut procedure.
+
+   ZBOSS shutdown is meaningful for Linux platform where it is necessary to stop
+   or restart ZBOSS without stopping the current process.
+
+   That function must be called after application received @ref
+   ZB_SIGNAL_READY_TO_SHUT signal.
+ */
+void zboss_complete_shut(void);
+#endif  /* #ifdef ZB_ZBOSS_DEINIT */
+
+
 #ifdef ZB_PROMISCUOUS_MODE
 
 /**
@@ -811,57 +838,77 @@ zb_uint8_t zb_get_current_channel(void);
 void zb_set_network_coordinator_role(zb_uint32_t channel_mask);
 #endif /* ZB_COORDINATOR_ROLE */
 
+#if defined ZB_ROUTER_ROLE && defined ZB_BDB_MODE && !defined BDB_OLD
 /**
    Initiate device as a Zigbee Zigbee 3.0 (not SE!) router
    @param channel_mask - Zigbee channel mask
 */
 void zb_set_network_router_role(zb_uint32_t channel_mask);
+#endif /* ZB_ROUTER_ROLE && ZB_BDB_MODE && !BDB_OLD */
 
+#if defined ZB_ED_FUNC && defined ZB_BDB_MODE && !defined BDB_OLD
 /**
    Initiate device as a Zigbee Zigbee 3.0 (not SE!) End Device
    @param channel_mask - Zigbee channel mask
 */
 void zb_set_network_ed_role(zb_uint32_t channel_mask);
+#endif /* ZB_ED_FUNC && ZB_BDB_MODE && !BDB_OLD */
 
 #ifndef ZB_USE_INTERNAL_HEADERS
+
+#ifdef ZB_COORDINATOR_ROLE
 /**
    Initiate device as a legacy (pre-r21) Zigbee coordinator
    @param channel_mask - Zigbee channel mask
 */
 void zb_set_network_coordinator_role_legacy(zb_uint32_t channel_mask);
+#endif /* ZB_COORDINATOR_ROLE */
+
+#ifdef ZB_ROUTER_ROLE
 /**
    Initiate device as a legacy (pre-r21) Zigbee router
    @param channel_mask - Zigbee channel mask
 */
 void zb_set_network_router_role_legacy(zb_uint32_t channel_mask);
+#endif /* ZB_ROUTER_ROLE */
+
+#ifdef ZB_ED_FUNC
 /**
    Initiate device as a legacy (pre-r21) Zigbee End Device
    @param channel_mask - Zigbee channel mask
 */
 void zb_set_network_ed_role_legacy(zb_uint32_t channel_mask);
+#endif /* ZB_ED_FUNC */
+
 #endif /* ZB_USE_INTERNAL_HEADERS */
 
 /** @cond DOXYGEN_SUBGHZ_FEATURE */
+#ifdef ZB_COORDINATOR_ROLE
 /**
    Initiate device as a Zigbee 3.0 BDB coordinator with channel list.
    Provides functionality to set mask for Sub-GHz and 2.4GHz page.
    @param channel_list - Zigbee channels list
 */
 void zb_set_network_coordinator_role_ext(zb_channel_list_t channel_list);
+#endif /* ZB_COORDINATOR_ROLE */
 
+#if defined ZB_ROUTER_ROLE && defined ZB_BDB_MODE && !defined BDB_OLD
 /**
    Initiate device as a Zigbee 3.0 BDB router with channel list.
    Provides functionality to set mask for Sub-GHz and 2.4GHz page.
    @param channel_list - Zigbee channels list
 */
 void zb_set_network_router_role_ext(zb_channel_list_t channel_list);
+#endif /* ZB_ROUTER_ROLE && ZB_BDB_MODE && !BDB_OLD */
 
+#if defined ZB_ED_FUNC && defined ZB_BDB_MODE && !defined BDB_OLD
 /**
    Initiate device as a Zigbee 3.0 BDB End Device with channel list.
    Provides functionality to set mask for Sub-GHz and 2.4GHz page.
    @param channel_list - Zigbee channels list
 */
 void zb_set_network_ed_role_ext(zb_channel_list_t channel_list);
+#endif /* ZB_ED_FUNC && ZB_BDB_MODE && !BDB_OLD */
 /** @endcond */ /* DOXYGEN_SUBGHZ_FEATURE */
 
 /** @} */

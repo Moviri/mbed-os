@@ -473,6 +473,12 @@ zb_uint8_t zb_get_reset_source(void);
  */
 void zb_osif_nvram_init(const zb_char_t *name);
 
+
+/**
+ * @brief Deinitialize osif-layer NVRAM support
+ */
+void zb_osif_nvram_deinit(void);
+
 /**
  * @brief Get NVRAM page length
  *

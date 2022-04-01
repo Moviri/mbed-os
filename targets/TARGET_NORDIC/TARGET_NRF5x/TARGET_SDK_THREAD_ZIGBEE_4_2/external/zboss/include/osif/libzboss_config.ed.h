@@ -453,6 +453,14 @@
 #define CONFIG_ZB_MAC_QUEUE_SIZE 17
 
 /**
+ * Acceptable noise floor (in ED units) to form a network
+ *
+ * If the MAC LL layer returns energy higher than this value for a given channel,
+ * the node will skip this channel after passive channel scan.
+ */
+#define CONFIG_ZB_NWK_CHANNEL_ACCEPT_LEVEL 200
+
+/**
  * Enable internal clusters through filters
  */
 /* #undef CONFIG_ZB_FILTER_OUT_CLUSTERS */

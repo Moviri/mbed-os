@@ -81,6 +81,9 @@ void bdb_after_mgmt_permit_joining_cb(zb_uint8_t param);
 static void bdb_rejoin_machine(zb_uint8_t param);
 static void schedule_wwah_rejoin_backoff_attempt(zb_uint8_t param);
 #endif
+#ifndef NCP_MODE_HOST
+static void nwk_cancel_network_discovery_response(zb_bufid_t buf);
+#endif /* NCP_MODE_HOST */
 
 zb_bool_t bdb_not_ever_joined()
 {
@@ -1596,6 +1599,8 @@ static void bdb_restore_saved_rr(zb_uint8_t param)
 
   {
     zb_neighbor_tbl_ent_t *nent = NULL;
+
+    /* TODO: [Multi-MAC] set iface_id */
     if (zb_nwk_neighbor_get(ZG->nwk.handle.parent, ZB_TRUE, &nent) == RET_OK)
     {
       nent->relationship = ZB_NWK_RELATIONSHIP_PARENT;
@@ -2361,8 +2366,11 @@ static void bdb_handle_no_active_links_left_signal(zb_bufid_t param)
 static zb_bool_t bdb_must_use_installcode(zb_bool_t is_client)
 {
   ZVUNUSED(is_client);
-
+#ifdef ZB_SECURITY_INSTALLCODES
   return (zb_bool_t)ZB_TCPOL().require_installcodes;
+#else
+  return ZB_FALSE;
+#endif /* ZB_SECURITY_INSTALLCODES */
 }
 
 #ifdef ZB_BDB_TOUCHLINK
@@ -2461,6 +2469,10 @@ void bdb_force_link(void)
 #if defined ZB_BDB_TOUCHLINK && !defined NCP_MODE_HOST
   ZG->nwk.selector.should_accept_frame_before_join = bdb_should_accept_frame_before_join;
 #endif /* ZB_BDB_TOUCHLINK && !NCP_MODE_HOST */
+#ifndef NCP_MODE_HOST
+  /* introduce some kind of setter? To be solved in the scope of ZBS-241 */
+  ZG->nwk.selector.nwk_cancel_nwk_disc_resp = nwk_cancel_network_discovery_response;
+#endif
 
   COMM_SELECTOR().signal = bdb_handle_comm_signal;
   COMM_SELECTOR().is_in_tc_rejoin = bdb_is_in_tc_rejoin;
@@ -2569,6 +2581,10 @@ zb_bool_t zb_bdb_is_factory_new()
   return (zb_bool_t)!bdb_joined();
 }
 
+
+#ifndef NCP_MODE_HOST
+/* these functions are not supported for NCP now.
+   Will be resolved in scope of ZBS-241 */
 
 #ifdef ZB_JOIN_CLIENT
 
@@ -2720,11 +2736,11 @@ void bdb_cancel_joining(zb_bufid_t buf)
 }
 
 
-void zb_nwk_cancel_network_discovery_response(zb_bufid_t buf)
+static void nwk_cancel_network_discovery_response(zb_bufid_t buf)
 {
   zb_ret_t status;
 
-  TRACE_MSG(TRACE_ZDO1, ">> zb_nwk_cancel_network_discovery_response, buf %d", (FMT__D, buf));
+  TRACE_MSG(TRACE_ZDO1, ">> nwk_cancel_network_discovery_response, buf %d", (FMT__D, buf));
 
   ZB_ASSERT(buf != 0U);
 
@@ -2758,10 +2774,78 @@ void zb_nwk_cancel_network_discovery_response(zb_bufid_t buf)
 
   bdb_send_steering_cancelled_signal(buf, status);
 
-  TRACE_MSG(TRACE_ZDO1, "<< zb_nwk_cancel_network_discovery_response", (FMT__0));
+  TRACE_MSG(TRACE_ZDO1, "<< nwk_cancel_network_discovery_response", (FMT__0));
 }
 
 #endif /* ZB_JOIN_CLIENT */
+
+#endif /* NCP_MODE_HOST */
+
+static void zb_bdb_close_network_local(zb_bufid_t buf)
+{
+  zb_zdo_mgmt_permit_joining_req_param_t *req_param;
+
+  req_param = ZB_BUF_GET_PARAM(buf, zb_zdo_mgmt_permit_joining_req_param_t);
+
+  ZB_BZERO(req_param, sizeof(zb_zdo_mgmt_permit_joining_req_param_t));
+  req_param->dest_addr = ZB_PIBCACHE_NETWORK_ADDRESS();
+  req_param->permit_duration = 0;
+  req_param->tc_significance = 1;
+
+  (void)zb_zdo_mgmt_permit_joining_req(buf, NULL);
+}
+
+
+zb_ret_t zb_bdb_close_network(zb_bufid_t buf)
+{
+  zb_ret_t ret = RET_OK;
+  zb_uint8_t tsn = ZB_ZDO_INVALID_TSN;
+
+  if (buf == ZB_BUF_INVALID)
+  {
+    buf = zb_buf_get_out();
+  }
+
+  if (buf != ZB_BUF_INVALID)
+  {
+    zb_zdo_mgmt_permit_joining_req_param_t *req_param;
+
+
+    TRACE_MSG(TRACE_ZDO3, ">> zb_bdb_close_network", (FMT__0));
+
+    req_param = ZB_BUF_GET_PARAM(buf, zb_zdo_mgmt_permit_joining_req_param_t);
+
+    ZB_BZERO(req_param, sizeof(zb_zdo_mgmt_permit_joining_req_param_t));
+    req_param->dest_addr = ZB_NWK_BROADCAST_ROUTER_COORDINATOR;
+    req_param->permit_duration = 0;
+    req_param->tc_significance = 1;
+
+    if (zb_get_device_type() == ZB_NWK_DEVICE_TYPE_COORDINATOR ||
+        zb_get_device_type() == ZB_NWK_DEVICE_TYPE_ROUTER)
+    {
+      tsn = zb_zdo_mgmt_permit_joining_req(buf, zb_bdb_close_network_local);
+    }
+    else
+    {
+      tsn = zb_zdo_mgmt_permit_joining_req(buf, NULL);
+    }
+
+    if (tsn == ZB_ZDO_INVALID_TSN)
+    {
+      TRACE_MSG(TRACE_ERROR, "Failed to create permit request", (FMT__0));
+      ret = RET_ERROR;
+    }
+  }
+  else
+  {
+    TRACE_MSG(TRACE_ERROR, "Unable to get buffer", (FMT__0));
+    ret = RET_NO_MEMORY;
+  }
+
+  TRACE_MSG(TRACE_ZDO3, "<< zb_bdb_close_network", (FMT__0));
+  return ret;
+}
+
 
 /*! @} */
 

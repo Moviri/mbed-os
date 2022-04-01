@@ -278,8 +278,16 @@ typedef struct zb_zdo_globals_s
 {
   zp_zdo_handle_t handle;                           /*!< */
   zb_uint8_t      tsn;                              /*!< */
+  zb_zdo_tsn_policy_t tsn_policy;                   /*!< see zb_zdo_tsn_policy_e */
+#ifdef ZBOSS_ZDO_APP_TSN_ENABLE
+  zdo_app_tsn_entry_t app_tsn_table[ZBOSS_ZDO_APP_TSN_TABLE_SIZE];
+#endif
   zb_device_handler_t   af_data_cb;                 /*!< Callback of zb_apsde_data_indication
                                                      * function */
+  /*!< callback which called when ZDO command is sent (except cases when it
+   * failed to be sent, or when no answers are supposed - in such case ZDO
+   * callback passed to ZDO call is called) */
+  zb_callback_t   af_zdo_data_conf_cb;
   zb_uint8_t      max_parent_threshold_retry;       /*!< */
   zb_uint8_t      parent_threshold_retry;           /*!< */
   zdo_cb_hash_ent_t zdo_cb[ZDO_TRAN_TABLE_SIZE];    /*!< */

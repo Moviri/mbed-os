@@ -52,8 +52,6 @@
  * @addtogroup base_types
  * @{
  */
-typedef void               zb_void_t;
-typedef void *             zb_voidp_t;
 
 /*
  * C standard being used during compilation.
@@ -790,8 +788,8 @@ void* zb_put_next_2_htole32(zb_uint8_t *dst, zb_uint32_t val1, zb_uint32_t val2)
 #define ZB_GET_LOW_BYTE(val) (zb_uint8_t)((val) & 0xFFU)
 #define ZB_GET_HI_BYTE(val)  (zb_uint8_t)(((val) >> 8U) & 0xFFU)
 
-#define ZB_SET_LOW_BYTE(res, val) (res) = ((((zb_uint16_t)res) & 0xFF00U) | (((zb_uint16_t)val) & 0xFFU))
-#define ZB_SET_HI_BYTE(res, val) (res) = (((((zb_uint16_t)val) << 8U) & 0xFF00U) | (((zb_uint16_t)res) & 0xFFU))
+#define ZB_SET_LOW_BYTE(res, val) (res) = ((((zb_uint16_t)(res)) & 0xFF00U) | (((zb_uint16_t)(val)) & 0xFFU))
+#define ZB_SET_HI_BYTE(res, val) (res) = (((((zb_uint16_t)(val)) << 8U) & 0xFF00U) | (((zb_uint16_t)(res)) & 0xFFU))
 
 #define ZB_PKT_16B_ZERO_BYTE 0U
 #define ZB_PKT_16B_FIRST_BYTE 1U
